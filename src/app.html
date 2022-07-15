@@ -7,11 +7,18 @@
 		<link rel="stylesheet" href="/main.css" />
 
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<script src="wasm_exec.js"></script>
+
+		<script defer src="/wasm_exec.js"></script>
+		<script defer src="/mathquill.min.js"></script>
+
+		<script>
+			/*to prevent Firefox FOUC, this must be here*/
+			let FF_FOUC_FIX;
+		</script>
 
 		%sveltekit.head%
 	</head>
 	<body>
-		<div>%sveltekit.body%</div>
+		%sveltekit.body%
 	</body>
 </html>

@@ -1,0 +1,231 @@
+<script lang="ts">
+	import { fade } from 'svelte/transition';
+	import { quintOut } from 'svelte/easing';
+	import { onMount, tick } from 'svelte';
+
+	export let label: string;
+	export let position: 'top' | 'bottom' | 'left' | 'right' = 'left';
+
+	let visible: boolean = false;
+	let hidden: boolean = true;
+	let container: HTMLDivElement;
+	let trigger: HTMLButtonElement;
+	let tooltip: HTMLParagraphElement;
+	let windowWidth: number;
+	let windowHeight: number;
+
+	async function open() {
+		visible = true;
+		hidden = false;
+		await tick();
+		checkBoundingBox();
+	}
+
+	function hide() {
+		visible = false;
+		hidden = true;
+	}
+
+	function handleKeyDown(e: KeyboardEvent) {
+		if (visible) {
+			if (e.key === 'Escape' || e.key === 'Esc') {
+				hide();
+			}
+		}
+	}
+
+	function handlePointerDown(e: MouseEvent) {
+		switch (e.target) {
+			case container:
+			case trigger:
+			case tooltip:
+				e.preventDefault();
+				break;
+			default:
+				hide();
+				trigger.blur();
+		}
+	}
+
+	// Calculate if the tooltip is within the viewport
+	function checkBoundingBox() {
+		let bounds = tooltip.getBoundingClientRect();
+
+		checkHorizontalBounding(bounds);
+		checkVerticalBounding(bounds);
+	}
+
+	function checkHorizontalBounding(bounds: DOMRect) {
+		// If the tooltip overlaps on both sides, throw an error
+		if (bounds.right > windowWidth && bounds.left < 0) {
+			throw new Error('Tooltip width too wide for the window');
+		}
+
+		// Check if the right side of the tooltip is beyond the right side of the viewport
+		if (bounds.right > windowWidth) {
+			moveTooltipLeft(bounds, windowWidth);
+		}
+
+		// Check if the left side of the tooltip is beyond the left side of the viewport
+		if (bounds.left < 0) {
+			moveTooltipRight(bounds);
+		}
+	}
+
+	function checkVerticalBounding(bounds: DOMRect) {
+		// If the tooltip overlaps on both sides, throw an error
+		if (bounds.bottom > windowHeight && bounds.top < 0) {
+			throw new Error('Tooltip height too high for the window');
+		}
+
+		// Check if the bottom of the tooltip is below the bottom of the viewport
+		if (bounds.bottom > windowHeight) {
+			moveTooltipUp();
+		}
+
+		// Check if the top of the tooltip is above the top of the viewport
+		if (bounds.top < 0) {
+			moveTooltipDown();
+		}
+	}
+
+	// Move the tooltip so it fits within the viewport
+	function moveTooltipUp() {
+		container.classList.add('top');
+	}
+
+	function moveTooltipRight(bounds: DOMRect) {
+		let numToMove = Math.floor(bounds.width / 2);
+		tooltip.style.left = `${numToMove}px`;
+	}
+
+	function moveTooltipDown() {
+		container.classList.remove('top');
+	}
+
+	function moveTooltipLeft(bounds: DOMRect, windowWidth: number) {
+		let translateAmount = windowWidth - Math.round(bounds.right) - Math.round(bounds.width) / 1.6;
+		tooltip.style.transform = `translateX(${translateAmount}px)`;
+	}
+
+	// Reset the changes made by the bounding box functions
+	function resetBoundingBox() {
+		if (tooltip.style.left || tooltip.style.transform) {
+			tooltip.style.left = null;
+			tooltip.style.transform = null;
+		}
+	}
+</script>
+
+<svelte:window
+	on:keydown={handleKeyDown}
+	on:pointerdown={handlePointerDown}
+	bind:innerWidth={windowWidth}
+	bind:innerHeight={windowHeight}
+/>
+
+<div
+	bind:this={container}
+	class="container"
+	class:visible
+	class:top={position === 'top'}
+	class:bottom={position === 'bottom'}
+	on:mouseenter={open}
+	on:mouseleave={hide}
+	data-tooltip-position={position}
+>
+	<button
+		bind:this={trigger}
+		class="trigger"
+		type="button"
+		aria-describedby="description"
+		data-tooltip-trigger
+		data-state={visible ? 'open' : 'closed'}
+		on:focus={open}
+		on:blur={hide}
+	>
+		<slot />
+	</button>
+	<p bind:this={tooltip} id="description" role="tooltip" class:hidden>
+		{label}
+	</p>
+</div>
+
+<style>
+	button {
+		--button-background: transparent;
+		--button-color: var(--hi-contrast);
+		--button-shadow: none;
+	}
+
+	button:hover {
+		--buton-background: var(--slateA3);
+		--button-shadow: none;
+	}
+
+	button:active {
+		--button-background: var(--slateA4);
+	}
+
+	button:focus {
+		--buton-shadow: inset 0 0 1px var(--slateA8), 0 0 0 1px var(--slateA8);
+	}
+
+	button[data-state='open'] {
+		--button-shadow: none;
+	}
+
+	.container {
+		position: relative;
+		display: inline-block;
+		flex-shrink: 0;
+		--tooltip-thingy-height: 0.5em;
+	}
+
+	/* The arrow (or tooltip thingy) that connects the tooltip to the container */
+	.container::before {
+		position: absolute;
+		top: 100%;
+		left: 50%;
+		transform: translateX(-50%);
+		border: var(--tooltip-thingy-height) solid transparent;
+		border-bottom-color: black;
+	}
+
+	/* This allows users to move their cursor from the button to the tooltip */
+	.container::after {
+		position: absolute;
+		right: -20%;
+		top: 100%;
+		left: -20%;
+		display: block;
+		height: calc(var(--tooltip-thingy-height) * 2);
+	}
+
+	.container.top [role='tooltip'] {
+		bottom: calc(100% + var(--tooltip-thingy-height) * 2);
+	}
+
+	/* Tooltip styles */
+	[role='tooltip'] {
+		position: absolute;
+		top: calc(100% + var(--tooltip-thingy-height));
+		left: 50%;
+		transform: translateX(-50%);
+		margin: 0;
+		padding: 0.5em 1em;
+		border-radius: var(--border-0);
+		background: var(--transparent-panel);
+		color: var(--lo-contrast);
+		min-width: max-content;
+		max-width: 10em;
+		box-shadow: var(--shadow-light);
+		font-size: var(--font-size-0);
+		z-index: var(--layer-1);
+	}
+
+	/* Hides the tooltip */
+	.hidden {
+		display: none;
+	}
+</style>

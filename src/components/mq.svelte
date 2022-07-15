@@ -1,10 +1,13 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import '../mathquill.min.js';
 
 	let mq: HTMLElement;
+	let instance: MathQuill.v3.EditableMathQuill = {};
 	export let config: MathQuill.v3.Config = {};
 	export let handlers: MathQuill.v3.HandlerOptions = {};
+
+	export const focus = () => instance.focus();
+	export const blur = () => instance.blur();
 
 	const defaultConfig: MathQuill.v3.Config = {
 		spaceBehavesLikeTab: true,
@@ -27,7 +30,7 @@
 		};
 		// TODO should declare mathquill on window
 		const MQ = window.MathQuill.getInterface(3) as MathQuill.v3.API;
-		MQ.MathField(mq, customConfig);
+		instance = MQ.MathField(mq, customConfig);
 	});
 </script>
 

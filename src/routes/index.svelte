@@ -1,47 +1,132 @@
 <script lang="ts">
-    import {onMount} from 'svelte';
-    import Problem from "../components/Problem.svelte";
-    import Katex from "../components/Katex.svelte";
+	import { onMount } from 'svelte';
+	import Problem from '../components/Problem.svelte';
+	import Katex from '../components/Katex.svelte';
+	import Stack from '../components/layout/Stack.svelte';
+	import Sidebar from '../components/layout/Sidebar.svelte';
+	import { browser } from '$app/env';
 
-    declare class Go {
-        argv: string[];
-        env: { [envKey: string]: string };
-        exit: (code: number) => void;
-        importObject: WebAssembly.Imports;
-        exited: boolean;
-        mem: DataView;
+	declare class Go {
+		argv: string[];
+		env: { [envKey: string]: string };
+		exit: (code: number) => void;
+		importObject: WebAssembly.Imports;
+		exited: boolean;
+		mem: DataView;
 
-        run(instance: WebAssembly.Instance): Promise<void>;
-    }
+		run(instance: WebAssembly.Instance): Promise<void>;
+	}
 
-    let questions: string[] = []
+	let questions: string[] = [];
+	let activeQuestions: string[];
+	let width = browser ? window.innerWidth : 1000;
+	let offset = 0;
 
-    onMount(() => {
-        const go = new Go();
-        WebAssembly.instantiateStreaming(fetch('./main.wasm'), go.importObject).then((result) => {
-            go.run(result.instance);
-        });
-    });
+	$: activeQuestions = questions.sort(() => 0.5 - Math.random()).slice(0, 20);
+	$: mobile = width < 768;
+
+	onMount(() => {
+		const go = new Go();
+		WebAssembly.instantiateStreaming(fetch('./main.wasm'), go.importObject).then((result) => {
+			go.run(result.instance);
+		});
+	});
 </script>
 
-<h1>Welcome to mrm</h1>
+<svelte:head>
+	<title>mrm</title>
+</svelte:head>
 
-<div class="container">
-    <Problem bind:questions={questions}/>
-    <div class="question-container">
-        <h2>Questions</h2>
-        <ol>
-            {#each questions as question}
-                <li><Katex math={question}/></li>
-            {/each}
-        </ol>
-    </div>
+<svelte:window bind:innerWidth={width} />
+
+<div class="outer">
+	<div class="viewport offset-{offset}">
+		<div class="constraints">
+			<Problem bind:questions />
+		</div>
+		<div class="questions">
+			<Stack element="ol">
+				{#each activeQuestions as question}
+					<li><Katex math={question} /></li>
+				{/each}
+			</Stack>
+		</div>
+	</div>
+	{#if mobile}
+		<div class="toggle">
+			<button class:selected={offset === 2} on:click={() => (offset = 2)}> constraints </button>
+			<button class:selected={offset === 1} on:click={() => (offset = 1)}> questions </button>
+		</div>
+	{/if}
 </div>
 
 <style>
-    .container {
-        display: flex;
-        flex-direction: row;
-        gap: 3rem;
-    }
+	.outer {
+		position: relative;
+		height: calc(100vh - var(--nav-h));
+		overflow: hidden;
+		padding-block-end: var(--size-8);
+		box-sizing: border-box;
+	}
+
+	.viewport {
+		display: grid;
+		width: 200%;
+		height: 100%;
+		grid-template-columns: 1fr 1fr;
+		transition: transform 0.3s;
+		grid-auto-rows: 100%;
+	}
+
+	.offset-1 {
+		transform: translate(-50%, 0);
+	}
+
+	button {
+		width: min-content;
+	}
+
+	@media (min-width: 768px) {
+		.outer {
+			padding: 0;
+		}
+		.viewport {
+			width: 100%;
+			height: 100%;
+			display: grid;
+			grid: 1fr / minmax(30%, 50%) 1fr;
+			transition: none;
+		}
+		.offset-1,
+		.offset-2 {
+			transform: none;
+		}
+	}
+	.constraints {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		border-right: 1px solid var(--slate6);
+		box-shadow: 0 -4px 6px var(--shadow-light);
+		padding-block-start: var(--size-3);
+	}
+
+	.questions {
+		padding-block-start: var(--size-3);
+	}
+
+	.toggle {
+		position: fixed;
+		bottom: 0;
+		width: 100%;
+		display: flex;
+		height: var(--size-8);
+		justify-content: center;
+		align-items: center;
+		border-top: 1px solid var(--slate6);
+	}
+	.toggle > button {
+	}
+	.toggle > .selected {
+	}
 </style>

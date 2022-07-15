@@ -6,3 +6,6 @@ node_modules
 .env
 .env.*
 !.env.example
+.idea/vcs.xml
+.idea/codeStyles/codeStyleConfig.xml
+.idea/codeStyles/Project.xml

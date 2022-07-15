@@ -26,7 +26,7 @@
 @import 'colors/brown.css';
 @import 'colors/bronze.css';
 @import 'colors/gold.css';
-@import 'colors/A.css';
+@import 'colors/goldA.css';
 @import 'colors/mauveA.css';
 @import 'colors/slateA.css';
 @import 'colors/sageA.css';
@@ -56,7 +56,7 @@
 @import 'colors/goldA.css';
 @import 'colors/whiteA.css';
 @import 'colors/blackA.css';
-@import 'colors/Dark.css';
+@import 'colors/grayDark.css';
 @import 'colors/mauveDark.css';
 @import 'colors/slateDark.css';
 @import 'colors/sageDark.css';
@@ -84,7 +84,7 @@
 @import 'colors/brownDark.css';
 @import 'colors/bronzeDark.css';
 @import 'colors/goldDark.css';
-@import 'colors/DarkA.css';
+@import 'colors/goldDarkA.css';
 @import 'colors/mauveDarkA.css';
 @import 'colors/slateDarkA.css';
 @import 'colors/sageDarkA.css';

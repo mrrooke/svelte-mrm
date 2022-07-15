@@ -1,43 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <link rel="icon" href="%sveltekit.assets%/favicon.png" />
-  <link rel="stylesheet" href="/mathquill.css" />
-  <link rel="stylesheet" href="/main.css" />
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
+		<link rel="stylesheet" href="/mathquill.css" />
+		<link rel="stylesheet" href="/main.css" />
 
-  <link rel="preload" href="mathquill.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript>
-    <link rel="stylesheet" href="mathquill.css">
-  </noscript>
+		<link
+			rel="preload"
+			href="mathquill.css"
+			as="style"
+			onload="this.onload=null;this.rel='stylesheet'"
+		/>
+		<noscript>
+			<link rel="stylesheet" href="mathquill.css" />
+		</noscript>
 
-  <link rel="preload"
-        href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
-        integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X"
-        crossorigin="anonymous"
-        as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
-      integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X"
-      crossorigin="anonymous" />
-  </noscript>
+		<link
+			rel="preload"
+			href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+			integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X"
+			crossorigin="anonymous"
+			as="style"
+			onload="this.onload=null;this.rel='stylesheet'"
+		/>
+		<noscript>
+			<link
+				rel="stylesheet"
+				href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+				integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X"
+				crossorigin="anonymous"
+			/>
+		</noscript>
 
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+		<script defer src="/wasm_exec.js"></script>
+		<script defer src="/mathquill.min.js"></script>
 
-  <script defer src="/wasm_exec.js"></script>
-  <script defer src="/mathquill.min.js"></script>
+		<script>
+			/*to prevent Firefox FOUC, this must be here*/
+			let FF_FOUC_FIX;
+		</script>
 
-  <script>
-    /*to prevent Firefox FOUC, this must be here*/
-    let FF_FOUC_FIX;
-  </script>
-
-  %sveltekit.head%
-</head>
-<body>
-%sveltekit.body%
-</body>
+		%sveltekit.head%
+	</head>
+	<body>
+		%sveltekit.body%
+	</body>
 </html>

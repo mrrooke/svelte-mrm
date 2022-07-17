@@ -154,12 +154,11 @@ a:hover {
 	text-decoration-line: underline;
 	text-decoration-color: var(--slate7);
 }
+
 a:focus {
-	outline-width: 2px;
-	outline-style: solid;
 	outline-offset: 2px;
 	text-decoration-line: none;
-	outline-color: var(--slate8);
+	outline: var(--slate8) solid 2px;
 }
 
 button {
@@ -172,7 +171,7 @@ button {
 	--button-focus-shadow: var(--button-active-shadow), var(--button-active-shadow);
 	--button-font-weight: var(--font-weight-4);
 	--button-radius: var(--radius-1);
-	--button-height: var(--font--lineheight-2);
+	--button-height: var(--font-lineheight-2);
 	all: unset;
 	align-items: center;
 	box-sizing: border-box;
@@ -183,7 +182,7 @@ button {
 	cursor: pointer;
 	line-height: var(--button-height);
 	font-variant-numeric: tabular-nums;
-	padding: var(----button-padding);
+	padding: var(--button-padding);
 	font-weight: var(--button-font-weight);
 	border-radius: var(--button-radius);
 	background-color: var(--button-background);

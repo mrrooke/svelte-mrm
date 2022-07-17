@@ -1,7 +1,7 @@
 <script context="module" lang="ts">
 	import type {
 		Constraint as ConstraintType,
-		Domain,
+		DomainType,
 		ProblemRequest,
 		ProblemResponse
 	} from './types';
@@ -14,20 +14,25 @@
 	import Stack from './layout/Stack.svelte';
 
 	import Constraint from './Constraint.svelte';
+	import Domain from './Domain.svelte';
 	import { tick } from 'svelte';
-	import { onMount, prevent_default } from 'svelte/internal';
+	import { onMount } from 'svelte/internal';
+	import { flip } from 'svelte/animate';
 	import Tooltip from './Tooltip.svelte';
 
 	export let questions: string[] = [];
+	export let changed: boolean = false;
+
 	let expression: string;
 	let symbols: string[] = [];
-	let domains: Domain[] = [];
-	let activeDomains: Domain[] = [];
+	let domains: DomainType[] = [];
+	let activeDomains: DomainType[] = [];
 	let focusedConstraint: number | undefined = undefined;
 	let constraints: ConstraintType[] = [{ expression: '', id: 0, active: false, err: '' }];
 	let err = '';
 	let valid: boolean;
 	let focusMF: () => void;
+	let problemContainer: HTMLFormElement;
 
 	$: newConstraintId = constraints.length ? Math.max(...constraints.map((t) => t.id)) + 1 : 1;
 	$: domains = updateDomains(domains, symbols);
@@ -37,13 +42,25 @@
 	}
 	$: activeDomains = domains.filter((d) => d.active === true);
 	$: activeVariables = activeDomains.map((d) => d.variable);
+	$: changed = isChanged(expression, activeDomains, constraints);
+
+	function isChanged(expression, activeDomains, constraints) {
+		return true;
+	}
+
+	function getFields() {
+		return [
+			...problemContainer.querySelectorAll(
+				'[aria-label^="Math Input:"]:not([data-delete]),input[type=number]'
+			)
+		];
+	}
 
 	function handleMoveDown() {
-		// TODO use specifically the problem container here
-		const mathFields = Array.from(document.querySelectorAll('[aria-label^="Math Input:"]'));
-		const idx = mathFields.findIndex((mf) => mf === document.activeElement);
-		if (idx < mathFields.length - 1) {
-			mathFields[idx + 1].focus();
+		const fields = getFields();
+		const idx = fields.findIndex((mf) => mf === document.activeElement);
+		if (idx < fields.length - 1) {
+			fields[idx + 1].focus();
 		} else {
 			// end of constraint list so add a new one
 			addConstraint('');
@@ -51,28 +68,32 @@
 	}
 
 	function handleMoveUp() {
-		const mathFields = [...document.querySelectorAll('[aria-label^="Math Input:"]')];
-		const idx = mathFields.findIndex((mf) => mf === document.activeElement);
+		const fields = getFields();
+		const idx = fields.findIndex((mf) => mf === document.activeElement);
 		if (idx > 0) {
-			mathFields[idx - 1].focus();
+			fields[idx - 1].focus();
 		}
 	}
 
-	async function handleDelete(constraint: ConstraintType, force: boolean) {
-		if (constraint.expression === '' || force) {
-			const idx = constraints.findIndex((c) => c.id === constraint.id);
+	async function handleBackspace(constraint: ConstraintType) {
+		if (constraint.expression === '') {
+			const fields = getFields();
+			const idx = fields.findIndex((mf) => mf === document.activeElement);
+			// ensure that a deleted field is not navigable
+			fields[idx].setAttribute('data-delete', 'true');
 			removeConstraint(constraint);
 			await tick();
-			const mathFields = document.querySelectorAll('[aria-label^="Math Input:"]');
-			if (focusedConstraint === constraint.id) {
-				mathFields[idx].focus();
-			} else if (focusedConstraint === -1) {
-				// only move focus if we are focused on constraint being removed
-				mathFields[0].focus();
-			} else {
-				const focusedIdx = constraints.findIndex((c) => c.id === focusedConstraint);
-				mathFields[focusedIdx + 1].focus();
-			}
+			fields[idx - 1].focus();
+		}
+	}
+
+	async function handleDelete(constraint: ConstraintType) {
+		const focused = focusedConstraint === constraint.id;
+		removeConstraint(constraint);
+		await tick();
+		if (focused) {
+			const fields = getFields();
+			fields[idx - 1].focus();
 		}
 	}
 
@@ -80,7 +101,7 @@
 		focusedConstraint = constraint.id;
 	}
 
-	function updateDomains(domains: Domain[], symbols: string[]): Domain[] {
+	function updateDomains(domains: DomainType[], symbols: string[]): DomainType[] {
 		symbols.map((variable) => {
 			const domain = domains.find((d) => d.variable === variable);
 			if (domain === undefined) {
@@ -108,13 +129,13 @@
 		domains = [...domains, { variable, high: 10, low: -10, type: 'integer' }];
 	}
 
-	function removeDomain(domain: Domain) {
+	function removeDomain(domain: DomainType) {
 		const idx = domains.findIndex((d) => d.variable === domain.variable);
 		domains[idx].active = false;
 		domains = domains;
 	}
 
-	function generateProblem() {
+	export function generateProblem() {
 		const problem: ProblemRequest = {
 			constraints: constraints.filter((c) => c.active === true),
 			domains: activeDomains,
@@ -127,6 +148,7 @@
 			return;
 		} else {
 			questions = qs;
+			changed = false;
 		}
 	}
 
@@ -135,9 +157,8 @@
 	});
 </script>
 
-<form on:submit|preventDefault={generateProblem} class="problem">
+<form bind:this={problemContainer} on:submit|preventDefault={generateProblem} class="problem">
 	<Stack space="0">
-		<button style="margin-bottom: 3px;" disabled={!valid}>generate</button>
 		<div
 			class="expression"
 			class:active={focusedConstraint === -1}
@@ -172,32 +193,27 @@
 			</div>
 		</div>
 		{#each activeDomains as domain (domain.variable)}
-			<div class="expression">
-				<span class="label"><Katex math={domain.variable} /></span>
-				<div class="content">
-					<input type="number" bind:value={domain.low} style="width: 3em" />
-					<Katex math={`\\leq ${domain.variable}\\leq`} />
-					<input type="number" style="width: 3em" bind:value={domain.high} />
-					<button
-						style="margin-left: auto;align-self: flex-start;"
-						on:click|preventDefault={() => removeDomain(domain)}
-					>
-						<Icon name="x" />
-					</button>
-				</div>
-			</div>
+			<Domain
+				bind:domain
+				on:delete={() => removeDomain(domain)}
+				on:up={handleMoveUp}
+				on:down={handleMoveDown}
+			/>
 		{/each}
 		{#each constraints as constraint, index (constraint.id)}
-			<Constraint
-				bind:constraint
-				focused={focusedConstraint === constraint.id}
-				{index}
-				variables={activeVariables}
-				{handleDelete}
-				{handleFocus}
-				{handleMoveDown}
-				{handleMoveUp}
-			/>
+			<div animate:flip={{ duration: 200 }}>
+				<Constraint
+					bind:constraint
+					focused={focusedConstraint === constraint.id}
+					{index}
+					variables={activeVariables}
+					{handleBackspace}
+					{handleDelete}
+					{handleFocus}
+					{handleMoveDown}
+					{handleMoveUp}
+				/>
+			</div>
 		{/each}
 	</Stack>
 </form>
@@ -255,5 +271,17 @@
 		flex-wrap: nowrap;
 		justify-content: center;
 		align-items: center;
+	}
+
+	/* Chrome, Safari, Edge, Opera */
+	input::-webkit-outer-spin-button,
+	input::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+
+	/* Firefox */
+	input[type='number'] {
+		-moz-appearance: textfield;
 	}
 </style>

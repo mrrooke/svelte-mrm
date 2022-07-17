@@ -4,14 +4,16 @@
 	import EditableMF from './EditableMF.svelte';
 	import type { Constraint } from './types';
 	import Icon from './Icon.svelte';
-	import { fade } from 'svelte/transition';
+	import { scale, fade } from 'svelte/transition';
 	import { onMount } from 'svelte';
 	import Tooltip from './Tooltip.svelte';
+	import { quintOut } from 'svelte/easing';
 
 	export let constraint: Constraint;
 	export let handleMoveDown: () => void;
 	export let handleMoveUp: () => void;
-	export let handleDelete: (constraint: Constraint, force: boolean) => void;
+	export let handleDelete: (constraint: Constraint) => void;
+	export let handleBackspace: (constraint: Constraint) => void;
 	export let handleFocus: (constraint: Constraint) => void;
 	export let focused: boolean;
 	export let index: number;
@@ -72,9 +74,9 @@
 
 <div
 	class="expression"
+	out:scale={{ duration: 600, easing: quintOut }}
 	class:focused
 	class:inactive={!constraint.active}
-	class:invalid={!valid}
 	on:focusin={() => {
 		constraint = { ...constraint, active: true };
 	}}
@@ -84,9 +86,14 @@
 			{index + 1}
 		{/if}
 		{#if !valid}
-			<div in:fade>
+			<div in:fade={{ delay: 100, duration: 200 }} class:invalid={!valid}>
 				<Tooltip label={err}>
-					<Icon name="alert-circle" />
+					<Icon
+						name="alert-circle"
+						strokeWidth="3px"
+						stroke={focused ? 'currentColor' : 'var(--red11)'}
+						size="40px"
+					/>
 				</Tooltip>
 			</div>
 		{/if}
@@ -95,7 +102,7 @@
 		bind:expression
 		bind:err
 		bind:symbols={constraintSymbols}
-		on:delete={(e) => constraint && handleDelete(constraint, false)}
+		on:delete={(e) => constraint && handleBackspace(constraint)}
 		on:down={handleMoveDown}
 		on:up={handleMoveUp}
 		on:focus={() => constraint && handleFocus(constraint)}
@@ -105,7 +112,7 @@
 	{#if constraint.active}
 		<button
 			style="margin-left: auto;align-self: flex-start;"
-			on:click|preventDefault={() => constraint && handleDelete(constraint, true)}
+			on:click|preventDefault={() => constraint && handleDelete(constraint)}
 		>
 			<Icon name="x" />
 		</button>
@@ -125,6 +132,7 @@
 		border: var(--expression-border-width) solid var(--expression-border-color);
 		cursor: pointer;
 		transition: 0.1s box-shadow ease, 0.1s border ease;
+		height: 100%;
 	}
 
 	.focused {
@@ -155,5 +163,9 @@
 		transition: 0.1s background-color ease;
 		user-select: none;
 		align-self: flex-start;
+	}
+
+	.invalid {
+		color: var(--red11);
 	}
 </style>

@@ -1,4 +1,4 @@
-export type Domain = {
+export type DomainType = {
 	id: string;
 	type: 'integer' | 'rational' | 'real' | 'discrete';
 	active: boolean;
@@ -14,7 +14,7 @@ export type Constraint = {
 };
 export type ProblemRequest = {
 	expression: string;
-	domains: Domain[];
+	domains: DomainType[];
 	constraints: Constraint[];
 };
 

@@ -1,5 +1,4 @@
 export type DomainType = {
-	id: string;
 	type: 'integer' | 'rational' | 'real' | 'discrete';
 	active: boolean;
 	low: number;

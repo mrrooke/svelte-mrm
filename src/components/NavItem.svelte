@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 
-	export let href: string = '/';
+	export let href = '/';
 	export let external: string | undefined = undefined;
 	export let title: string | undefined = undefined;
 </script>

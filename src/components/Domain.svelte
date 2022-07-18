@@ -52,16 +52,6 @@
 		transition: 0.1s box-shadow ease, 0.1s border ease;
 	}
 
-	.active {
-		--label-color: var(--violet5);
-		--expression-border-color: var(--violet5);
-	}
-
-	.invalid {
-		--label-color: var(--red5);
-		--expression-border-color: var(--red5);
-	}
-
 	.label {
 		padding: var(--size-2);
 		background-color: var(--label-color);

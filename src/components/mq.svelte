@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 
 	let mq: HTMLElement;
-	let instance: MathQuill.v3.EditableMathQuill = {};
+	let instance: MathQuill.v3.EditableMathQuill;
 	export let config: MathQuill.v3.Config = {};
 	export let handlers: MathQuill.v3.HandlerOptions = {};
 

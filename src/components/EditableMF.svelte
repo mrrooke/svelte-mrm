@@ -1,9 +1,10 @@
 <script lang="ts">
 	import MQ from './mq.svelte';
 
-	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
+	import { createEventDispatcher } from 'svelte';
 
 	let dispatch = createEventDispatcher();
+	let dispatchFocus = createEventDispatcher<{ blur: FocusEvent; focus: FocusEvent }>();
 	let customHandlers: MathQuill.v3.HandlerOptions;
 	export let expression = '';
 	export let symbols: string[] = [];
@@ -12,14 +13,11 @@
 	export let config: MathQuill.v3.Config = {};
 	export let handlers: MathQuill.v3.HandlerOptions = {};
 
-	export const focus = () => child.focus();
-	export const blur = () => child.blur();
-
-	let child;
+	export let focus: () => MathQuill.v3.EditableMathQuill;
 
 	$: customHandlers = {
 		...handlers,
-		deleteOutOf: (dir, mf) => {
+		deleteOutOf: (_, mf) => {
 			dispatch('delete', mf);
 		},
 		downOutOf: (mf) => {
@@ -49,10 +47,10 @@
 <div
 	class="container"
 	{style}
-	on:focusin={(e) => dispatch('focus', e)}
-	on:focusout={(e) => dispatch('blur', e)}
+	on:focusin={(e) => dispatchFocus('focus', e)}
+	on:focusout={(e) => dispatchFocus('blur', e)}
 >
-	<MQ bind:this={child} handlers={customHandlers} {config} />
+	<MQ bind:focus handlers={customHandlers} {config} />
 </div>
 
 <style>

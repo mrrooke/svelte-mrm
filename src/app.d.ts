@@ -8,3 +8,8 @@ declare namespace App {
 	// interface Session {}
 	// interface Stuff {}
 }
+
+declare interface Window {
+	mrm_parse(s: string): string;
+	mrm_generate(s: string): string;
+}

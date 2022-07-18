@@ -1,7 +1,7 @@
-<script>
+<script lang="ts">
 	import katex from 'katex';
 
-	export let math;
+	export let math: string;
 	export let displayMode = false;
 
 	const options = {
@@ -9,7 +9,7 @@
 		throwOnError: false
 	};
 
-	$: katexString = katex.renderToString(math, options);
+	$: katexString = math ? katex.renderToString(math, options) : '';
 </script>
 
 {@html katexString}

@@ -15,18 +15,18 @@
 	export let handleDelete: (constraint: Constraint) => void;
 	export let handleBackspace: (constraint: Constraint) => void;
 	export let handleFocus: (constraint: Constraint) => void;
+	export let handleBlur: (e: FocusEvent | CustomEvent<FocusEvent>) => void;
 	export let focused: boolean;
 	export let index: number;
 	export let variables: string[];
 
-	let expression: string = '';
-	let err: string = '';
-	let valid: boolean = true;
+	let expression = '';
+	let err = '';
+	let valid = true;
 	let constraintSymbols: string[] = [];
 	let undefinedSymbols: string[] = [];
 
-	let focusMF: () => void;
-	let blurMF: () => void;
+	let focusMF: () => MathQuill.v3.EditableMathQuill;
 
 	function updateConstraint(expr: string, e: string, active: boolean) {
 		if (!active) {
@@ -47,7 +47,7 @@
 		valid = true;
 	}
 
-	function checkVariables(symbols, vars) {
+	function checkVariables(symbols: string[], vars: string[]) {
 		undefinedSymbols = [];
 		symbols.forEach((s) => {
 			if (!vars.includes(s)) {
@@ -92,7 +92,6 @@
 						name="alert-circle"
 						strokeWidth="3px"
 						stroke={focused ? 'currentColor' : 'var(--red11)'}
-						size="40px"
 					/>
 				</Tooltip>
 			</div>
@@ -102,12 +101,12 @@
 		bind:expression
 		bind:err
 		bind:symbols={constraintSymbols}
-		on:delete={(e) => constraint && handleBackspace(constraint)}
+		bind:focus={focusMF}
+		on:delete={() => constraint && handleBackspace(constraint)}
 		on:down={handleMoveDown}
 		on:up={handleMoveUp}
 		on:focus={() => constraint && handleFocus(constraint)}
-		bind:focus={focusMF}
-		bind:blur={blurMF}
+		on:blur={handleBlur}
 	/>
 	{#if constraint.active}
 		<button
@@ -142,11 +141,6 @@
 
 	.inactive {
 		--label-color: var(--violet2);
-	}
-
-	.focused.invalid {
-		--label-color: var(--red5);
-		--expression-border-color: var(--red5);
 	}
 
 	.label {

@@ -21,7 +21,8 @@
 	import Tooltip from './Tooltip.svelte';
 
 	export let questions: string[] = [];
-	export let changed: boolean = false;
+	export let changed = false;
+	export let valid;
 
 	let expression: string;
 	let symbols: string[] = [];
@@ -30,9 +31,9 @@
 	let focusedConstraint: number | undefined = undefined;
 	let constraints: ConstraintType[] = [{ expression: '', id: 0, active: false, err: '' }];
 	let err = '';
-	let valid: boolean;
-	let focusMF: () => void;
+	let focusMF: () => MathQuill.v3.EditableMathQuill;
 	let problemContainer: HTMLFormElement;
+	let lastFocused: HTMLElement;
 
 	$: newConstraintId = constraints.length ? Math.max(...constraints.map((t) => t.id)) + 1 : 1;
 	$: domains = updateDomains(domains, symbols);
@@ -42,15 +43,26 @@
 	}
 	$: activeDomains = domains.filter((d) => d.active === true);
 	$: activeVariables = activeDomains.map((d) => d.variable);
-	$: changed = isChanged(expression, activeDomains, constraints);
+	$: expression,
+		activeDomains,
+		constraints,
+		() => {
+			changed = true;
+		};
 
-	function isChanged(expression, activeDomains, constraints) {
-		return true;
+	function handleBlur(e: CustomEvent<FocusEvent> | FocusEvent) {
+		if (e instanceof CustomEvent<FocusEvent>) {
+			if (e.detail && e.detail.target instanceof HTMLElement) {
+				lastFocused = e.detail.target;
+			}
+		} else if (e instanceof FocusEvent && e.target instanceof HTMLElement) {
+			lastFocused = e.target;
+		}
 	}
 
 	function getFields() {
 		return [
-			...problemContainer.querySelectorAll(
+			...problemContainer.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>(
 				'[aria-label^="Math Input:"]:not([data-delete]),input[type=number]'
 			)
 		];
@@ -88,12 +100,16 @@
 	}
 
 	async function handleDelete(constraint: ConstraintType) {
-		const focused = focusedConstraint === constraint.id;
+		const focused = constraint.id === focusedConstraint;
+		const fields = getFields();
+		const idx = constraints.findIndex((c) => c.id === constraint.id);
 		removeConstraint(constraint);
 		await tick();
 		if (focused) {
-			const fields = getFields();
-			fields[idx - 1].focus();
+			const len = 1 + activeDomains.length;
+			fields[len + idx - 1].focus();
+		} else {
+			lastFocused.focus();
 		}
 	}
 
@@ -105,7 +121,7 @@
 		symbols.map((variable) => {
 			const domain = domains.find((d) => d.variable === variable);
 			if (domain === undefined) {
-				domains.push({ variable, low: -10, high: 10, type: 'integer' });
+				domains.push({ variable, low: -10, high: 10, type: 'integer', active: false });
 				domains.sort((a, b) => a.variable.localeCompare(b.variable));
 			}
 		});
@@ -125,10 +141,6 @@
 		constraints = constraints.filter((c) => c.id !== constraint.id);
 	}
 
-	function addDomain(variable: string) {
-		domains = [...domains, { variable, high: 10, low: -10, type: 'integer' }];
-	}
-
 	function removeDomain(domain: DomainType) {
 		const idx = domains.findIndex((d) => d.variable === domain.variable);
 		domains[idx].active = false;
@@ -146,9 +158,11 @@
 		if (err !== undefined) {
 			console.warn(err);
 			return;
-		} else {
+		} else if (qs !== undefined) {
 			questions = qs;
 			changed = false;
+		} else {
+			console.warn('no questions generated');
 		}
 	}
 
@@ -157,6 +171,14 @@
 	});
 </script>
 
+<p>{focusedConstraint}</p>
+<div style="display:flex; flex-wrap: nowrap; justify-content: space-between; align-content: center">
+	<Icon name="plus" />
+	<Icon name="arrow-left" />
+	<Icon name="arrow-right" />
+	<Icon name="settings" />
+	<Icon name="chevrons-left" />
+</div>
 <form bind:this={problemContainer} on:submit|preventDefault={generateProblem} class="problem">
 	<Stack space="0">
 		<div
@@ -166,6 +188,7 @@
 			on:focusin={() => {
 				focusedConstraint = -1;
 			}}
+			on:focusout={handleBlur}
 		>
 			<span class="label">
 				<Katex math="f(x)" />
@@ -212,6 +235,7 @@
 					{handleFocus}
 					{handleMoveDown}
 					{handleMoveUp}
+					{handleBlur}
 				/>
 			</div>
 		{/each}
@@ -264,24 +288,10 @@
 		user-select: none;
 	}
 
-	.content {
-		width: 100%;
-		display: flex;
-		flex-direction: row;
-		flex-wrap: nowrap;
-		justify-content: center;
-		align-items: center;
-	}
-
 	/* Chrome, Safari, Edge, Opera */
 	input::-webkit-outer-spin-button,
 	input::-webkit-inner-spin-button {
 		-webkit-appearance: none;
 		margin: 0;
-	}
-
-	/* Firefox */
-	input[type='number'] {
-		-moz-appearance: textfield;
 	}
 </style>

@@ -1,13 +1,11 @@
 <script lang="ts">
-	import { fade } from 'svelte/transition';
-	import { quintOut } from 'svelte/easing';
-	import { onMount, tick } from 'svelte';
+	import { tick } from 'svelte';
 
 	export let label: string;
 	export let position: 'top' | 'bottom' | 'left' | 'right' = 'left';
 
-	let visible: boolean = false;
-	let hidden: boolean = true;
+	let visible = false;
+	let hidden = true;
 	let container: HTMLDivElement;
 	let trigger: HTMLButtonElement;
 	let tooltip: HTMLParagraphElement;
@@ -106,14 +104,6 @@
 	function moveTooltipLeft(bounds: DOMRect, windowWidth: number) {
 		let translateAmount = windowWidth - Math.round(bounds.right) - Math.round(bounds.width) / 1.6;
 		tooltip.style.transform = `translateX(${translateAmount}px)`;
-	}
-
-	// Reset the changes made by the bounding box functions
-	function resetBoundingBox() {
-		if (tooltip.style.left || tooltip.style.transform) {
-			tooltip.style.left = null;
-			tooltip.style.transform = null;
-		}
 	}
 </script>
 

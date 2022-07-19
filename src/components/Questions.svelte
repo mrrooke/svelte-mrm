@@ -48,7 +48,7 @@
 		</div>
 	</div>
 {/if}
-<ol class="stack">
+<ol class="stack questions">
 	{#each questions as question}
 		<li>
 			<Katex math={question} />
@@ -58,15 +58,18 @@
 
 <style>
 	.stack {
-		--stack-space: var(--size-1)
+		--stack-space: var(--size-1);
 		display: flex;
 		flex-direction: column;
 		justify-content: flex-start;
-
-		overflow: auto;
 	}
 	.stack > * + * {
 		margin-top: var(--stack-space);
+	}
+
+	.questions {
+		overflow-y: auto;
+		height: 100%;
 	}
 	.overlay {
 		backdrop-filter: blur(3px);

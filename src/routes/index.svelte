@@ -25,7 +25,7 @@
 	let changed: boolean = true;
 	let valid: boolean = false;
 
-	$: activeQuestions = questions.sort(() => 0.5 - Math.random()).slice(0, 20);
+	$: activeQuestions = questions.sort(() => 0.5 - Math.random()).slice(0, 40);
 	$: mobile = width < 768;
 
 	onMount(() => {
@@ -99,7 +99,7 @@
 			width: 100%;
 			height: 100%;
 			display: grid;
-			grid: 1fr / minmax(30%, 35%) 1fr;
+			grid: minmax(0, 1fr) / minmax(30%, 35%) 1fr;
 			transition: none;
 		}
 		.offset {
@@ -110,7 +110,6 @@
 	.constraints {
 		display: flex;
 		flex-direction: column;
-		height: 100%;
 		border-right: 1px solid var(--slate6);
 		box-shadow: 0 -4px 6px var(--shadow-light);
 		padding-block-start: var(--size-3);

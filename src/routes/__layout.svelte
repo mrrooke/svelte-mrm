@@ -32,7 +32,7 @@
 	main {
 		position: relative;
 		margin: 0 auto;
-		padding: var(--nav-h) 0 0 0;
-		overflow: auto;
+		top: var(--nav-h);
+		height: calc(100% - var(--nav-h));
 	}
 </style>

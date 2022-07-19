@@ -43,12 +43,7 @@
 	}
 	$: activeDomains = domains.filter((d) => d.active === true);
 	$: activeVariables = activeDomains.map((d) => d.variable);
-	$: expression,
-		activeDomains,
-		constraints,
-		() => {
-			changed = true;
-		};
+	$: expression, activeDomains, constraints, (changed = true);
 
 	function handleBlur(e: CustomEvent<FocusEvent> | FocusEvent) {
 		if (e instanceof CustomEvent<FocusEvent>) {

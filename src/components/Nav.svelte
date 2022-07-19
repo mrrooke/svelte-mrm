@@ -31,6 +31,7 @@
 		align-items: center;
 		justify-content: space-between;
 		padding-inline: var(--size-8);
+		background-color: var(--lo-contrast);
 	}
 
 	@media (max-width: 768px) {

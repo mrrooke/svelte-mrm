@@ -6,13 +6,14 @@
 	let dispatch = createEventDispatcher();
 	let dispatchFocus = createEventDispatcher<{ blur: FocusEvent; focus: FocusEvent }>();
 	let customHandlers: MathQuill.v3.HandlerOptions;
+	let mfFocus: () => MathQuill.v3.EditableMathQuill;
 	export let expression = '';
 	export let symbols: string[] = [];
 	export let err = '';
 	export let style = '';
 	export let config: MathQuill.v3.Config = {};
 	export let handlers: MathQuill.v3.HandlerOptions = {};
-	export let focus: () => MathQuill.v3.EditableMathQuill;
+	export const focus = () => mfFocus();
 
 	$: customHandlers = {
 		...handlers,
@@ -49,7 +50,7 @@
 	on:focusin={(e) => dispatchFocus('focus', e)}
 	on:focusout={(e) => dispatchFocus('blur', e)}
 >
-	<MQ bind:focus handlers={customHandlers} {config} />
+	<MQ bind:focus={mfFocus} handlers={customHandlers} {config} />
 </div>
 
 <style>

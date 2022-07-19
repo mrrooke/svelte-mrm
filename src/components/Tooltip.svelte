@@ -149,12 +149,12 @@
 	}
 
 	button:hover {
-		--buton-background: var(--slateA3);
+		--buton-background: transparent;
 		--button-shadow: none;
 	}
 
 	button:active {
-		--button-background: var(--slateA4);
+		--buton-background: transparent;
 	}
 
 	button:focus {
@@ -212,10 +212,14 @@
 		box-shadow: var(--shadow-light);
 		font-size: var(--font-size-0);
 		z-index: var(--layer-1);
+		opacity: 100;
+		transition: opacity 0.2s var(--ease-3);
 	}
 
 	/* Hides the tooltip */
 	.hidden {
-		display: none;
+		opacity: 0;
+		transition: opacity 0.2s var(--ease-3);
+		visibility: hidden;
 	}
 </style>

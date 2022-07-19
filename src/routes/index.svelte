@@ -55,13 +55,13 @@
 				bind:questions={activeQuestions}
 			/>
 		</div>
-		{#if mobile}
-			<div class="toggle">
-				<button class:selected={offset === 2} on:click={() => (offset = 2)}> constraints</button>
-				<button class:selected={offset === 1} on:click={() => (offset = 1)}> questions</button>
-			</div>
-		{/if}
 	</div>
+	{#if mobile}
+		<div class="toggle">
+			<button class:selected={offset === 2} on:click={() => (offset = 2)}> constraints</button>
+			<button class:selected={offset === 1} on:click={() => (offset = 1)}> questions</button>
+		</div>
+	{/if}
 </div>
 
 <style>
@@ -82,6 +82,10 @@
 		grid-auto-rows: 100%;
 	}
 
+	.offset-1 {
+		transform: translate(-50%, 0);
+	}
+
 	@media (min-width: 768px) {
 		.outer {
 			padding: 0;
@@ -93,6 +97,10 @@
 			display: grid;
 			grid: 1fr / minmax(30%, 35%) 1fr;
 			transition: none;
+		}
+		.offset-1,
+		.offset-2 {
+			transform: none;
 		}
 	}
 

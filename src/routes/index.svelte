@@ -22,8 +22,8 @@
 	let width = browser ? window.innerWidth : 1000;
 	let offset = 0;
 	let generateProblem: () => void;
-	let changed: boolean;
-	let valid: boolean;
+	let changed: boolean = true;
+	let valid: boolean = false;
 
 	$: activeQuestions = questions.sort(() => 0.5 - Math.random()).slice(0, 20);
 	$: mobile = width < 768;

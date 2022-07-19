@@ -12,7 +12,6 @@
 	export let style = '';
 	export let config: MathQuill.v3.Config = {};
 	export let handlers: MathQuill.v3.HandlerOptions = {};
-
 	export let focus: () => MathQuill.v3.EditableMathQuill;
 
 	$: customHandlers = {

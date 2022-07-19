@@ -171,7 +171,6 @@
 	});
 </script>
 
-<p>{focusedConstraint}</p>
 <div style="display:flex; flex-wrap: nowrap; justify-content: space-between; align-content: center">
 	<Icon name="plus" />
 	<Icon name="arrow-left" />
@@ -204,6 +203,7 @@
 				bind:err
 				on:down={handleMoveDown}
 				on:up={handleMoveUp}
+				on:focus={() => console.log('focus')}
 				bind:focus={focusMF}
 			/>
 			<div style="display: flex; align-items: center">

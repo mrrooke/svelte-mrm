@@ -25,7 +25,6 @@
 	let valid = true;
 	let constraintSymbols: string[] = [];
 	let undefinedSymbols: string[] = [];
-
 	let focusMF: () => MathQuill.v3.EditableMathQuill;
 
 	function updateConstraint(expr: string, e: string, active: boolean) {
@@ -80,8 +79,9 @@
 	on:focusin={() => {
 		constraint = { ...constraint, active: true };
 	}}
+	on:click|stopPropagation={focusMF}
 >
-	<span class="label">
+	<span class="label" on:click|stopPropagation={focusMF}>
 		{#if constraint.active}
 			{index + 1}
 		{/if}
@@ -111,7 +111,7 @@
 	{#if constraint.active}
 		<button
 			style="margin-left: auto;align-self: flex-start;"
-			on:click|preventDefault={() => constraint && handleDelete(constraint)}
+			on:click|preventDefault|stopPropagation={() => constraint && handleDelete(constraint)}
 		>
 			<Icon name="x" />
 		</button>

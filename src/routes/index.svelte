@@ -20,7 +20,7 @@
 	let questions: string[] = [];
 	let activeQuestions: string[];
 	let width = browser ? window.innerWidth : 1000;
-	let offset = 0;
+	let offset = false;
 	let generateProblem: () => void;
 	let changed: boolean = true;
 	let valid: boolean = false;
@@ -43,7 +43,7 @@
 <svelte:window bind:innerWidth={width} />
 
 <div class="outer">
-	<div class="viewport offset-{offset}">
+	<div class="viewport" class:offset>
 		<div class="constraints">
 			<Problem bind:questions bind:valid bind:generateProblem bind:changed />
 		</div>
@@ -58,8 +58,12 @@
 	</div>
 	{#if mobile}
 		<div class="toggle">
-			<button class:selected={offset === 2} on:click={() => (offset = 2)}> constraints</button>
-			<button class:selected={offset === 1} on:click={() => (offset = 1)}> questions</button>
+			<button class:selected={!offset} on:click={() => (offset = false)} disabled={!offset}>
+				constraints</button
+			>
+			<button class:selected={offset} on:click={() => (offset = true)} disabled={offset}>
+				questions</button
+			>
 		</div>
 	{/if}
 </div>
@@ -82,7 +86,7 @@
 		grid-auto-rows: 100%;
 	}
 
-	.offset-1 {
+	.offset {
 		transform: translate(-50%, 0);
 	}
 
@@ -98,8 +102,7 @@
 			grid: 1fr / minmax(30%, 35%) 1fr;
 			transition: none;
 		}
-		.offset-1,
-		.offset-2 {
+		.offset {
 			transform: none;
 		}
 	}

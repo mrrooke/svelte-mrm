@@ -48,15 +48,26 @@
 		</div>
 	</div>
 {/if}
-<Stack element="ol">
+<ol class="stack">
 	{#each questions as question}
 		<li>
 			<Katex math={question} />
 		</li>
 	{/each}
-</Stack>
+</ol>
 
 <style>
+	.stack {
+		--stack-space: var(--size-1)
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
+
+		overflow: auto;
+	}
+	.stack > * + * {
+		margin-top: var(--stack-space);
+	}
 	.overlay {
 		backdrop-filter: blur(3px);
 		cursor: pointer;
@@ -85,6 +96,12 @@
 		border-radius: var(--border-size-3);
 		box-shadow: var(--shadow-3);
 		z-index: var(--layer-important);
+	}
+
+	@media (max-width: 768px) {
+		.dialog {
+			min-inline-size: 100%;
+		}
 	}
 
 	.dialog > header {

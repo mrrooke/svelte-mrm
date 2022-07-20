@@ -3,7 +3,7 @@
 	import NavItem from '../components/NavItem.svelte';
 	import SkipLink from '../components/SkipLink.svelte';
 
-	import { page, navigating, session } from '$app/stores';
+	import { page } from '$app/stores';
 </script>
 
 <SkipLink href="#main" />

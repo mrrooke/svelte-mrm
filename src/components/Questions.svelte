@@ -2,7 +2,6 @@
 	import { fade } from 'svelte/transition';
 	import Icon from './Icon.svelte';
 	import Katex from './Katex.svelte';
-	import Stack from './layout/Stack.svelte';
 
 	export let generate: () => void;
 	export let questions: string[];

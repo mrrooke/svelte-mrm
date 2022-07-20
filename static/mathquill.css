@@ -500,7 +500,8 @@
 .mq-editable-field .mq-selection .mq-non-leaf,
 .mq-math-mode .mq-selection .mq-scaled,
 .mq-editable-field .mq-selection .mq-scaled {
-	background: #b4d5fe !important;
+	background-color: var(--violetA5) !important;
+	color: var(--violet12) !important;
 }
 .mq-math-mode .mq-selection.mq-blur,
 .mq-editable-field .mq-selection.mq-blur,

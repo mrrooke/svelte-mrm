@@ -1,21 +1,21 @@
 <script lang="ts">
-	import MQ from './mq.svelte';
-
+	import { mathquill } from '../useMq';
 	import { createEventDispatcher } from 'svelte';
 
 	let dispatch = createEventDispatcher();
 	let dispatchFocus = createEventDispatcher<{ blur: FocusEvent; focus: FocusEvent }>();
-	let customHandlers: MathQuill.v3.HandlerOptions;
-	let mfFocus: () => MathQuill.v3.EditableMathQuill;
+	let instance: MathQuill.v3.EditableMathQuill;
 	export let expression = '';
 	export let symbols: string[] = [];
 	export let err = '';
 	export let style = '';
 	export let config: MathQuill.v3.Config = {};
 	export let handlers: MathQuill.v3.HandlerOptions = {};
-	export const focus = () => mfFocus();
+	export const focus = () => {
+		instance.focus();
+	};
 
-	$: customHandlers = {
+	$: handlers = {
 		...handlers,
 		deleteOutOf: (_, mf) => {
 			dispatch('delete', mf);
@@ -42,6 +42,14 @@
 			}
 		}
 	};
+
+	function getInstance(node: HTMLElement) {
+		const MQ = window.MathQuill.getInterface(3) as MathQuill.v3.API;
+		const isInstance = MQ(node);
+		if (isInstance instanceof MQ.MathField) {
+			instance = isInstance as MathQuill.v3.EditableMathQuill;
+		}
+	}
 </script>
 
 <div
@@ -50,7 +58,7 @@
 	on:focusin={(e) => dispatchFocus('focus', e)}
 	on:focusout={(e) => dispatchFocus('blur', e)}
 >
-	<MQ bind:focus={mfFocus} handlers={customHandlers} {config} />
+	<span style="width: 100%;" use:mathquill={{ ...config, handlers }} use:getInstance />
 </div>
 
 <style>

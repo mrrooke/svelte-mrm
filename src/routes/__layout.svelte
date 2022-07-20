@@ -2,12 +2,10 @@
 	import Nav from '../components/Nav.svelte';
 	import NavItem from '../components/NavItem.svelte';
 	import SkipLink from '../components/SkipLink.svelte';
-
-	import { page } from '$app/stores';
 </script>
 
 <SkipLink href="#main" />
-<Nav {page} logo="🧮">
+<Nav logo="🧮">
 	<svelte:fragment slot="nav-center">
 		<NavItem href="/">generator</NavItem>
 	</svelte:fragment>

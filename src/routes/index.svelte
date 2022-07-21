@@ -12,9 +12,10 @@
 </script>
 
 <script lang="ts">
+	import { browser } from '$app/env';
+	import Button from '../components/Button.svelte';
 	import { onMount } from 'svelte';
 	import Problem from '../components/Problem.svelte';
-	import { browser } from '$app/env';
 	import Questions from '../components/Questions.svelte';
 
 	let questions: string[] = [];
@@ -58,12 +59,8 @@
 	</div>
 	{#if mobile}
 		<div class="toggle">
-			<button class:selected={!offset} on:click={() => (offset = false)} disabled={!offset}>
-				constraints</button
-			>
-			<button class:selected={offset} on:click={() => (offset = true)} disabled={offset}>
-				questions</button
-			>
+			<Button on:click={() => (offset = false)} disabled={!offset}>constraints</Button>
+			<Button on:click={() => (offset = true)} disabled={offset}>questions</Button>
 		</div>
 	{/if}
 </div>
@@ -71,19 +68,19 @@
 <style>
 	.outer {
 		position: relative;
-		height: calc(100vh - var(--nav-h));
 		overflow: hidden;
-		padding-block-end: var(--size-8);
+		height: calc(100vh - var(--nav-h));
 		box-sizing: border-box;
+		padding-block-end: var(--size-8);
 	}
 
 	.viewport {
 		display: grid;
 		width: 200%;
 		height: 100%;
+		grid-auto-rows: 100%;
 		grid-template-columns: 1fr 1fr;
 		transition: transform 0.3s;
-		grid-auto-rows: 100%;
 	}
 
 	.offset {
@@ -96,12 +93,13 @@
 		}
 
 		.viewport {
+			display: grid;
 			width: 100%;
 			height: 100%;
-			display: grid;
 			grid: minmax(0, 1fr) / minmax(30%, 35%) 1fr;
 			transition: none;
 		}
+
 		.offset {
 			transform: none;
 		}
@@ -112,22 +110,21 @@
 		flex-direction: column;
 		border-right: 1px solid var(--slate6);
 		box-shadow: 0 -4px 6px var(--shadow-light);
-		padding-block-start: var(--size-3);
 	}
 
 	.questions {
-		padding-block-start: var(--size-3);
 		position: relative;
+		padding-block-start: var(--size-3);
 	}
 
 	.toggle {
 		position: fixed;
 		bottom: 0;
-		width: 100%;
 		display: flex;
+		width: 100%;
 		height: var(--size-8);
-		justify-content: center;
 		align-items: center;
+		justify-content: center;
 		border-top: 1px solid var(--slate6);
 	}
 </style>

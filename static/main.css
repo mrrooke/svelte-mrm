@@ -1,29 +1,26 @@
 @import 'reset.css';
 @import 'colors.css';
 
+:where(input, button, textarea, select),
+:where(input[type='file'])::-webkit-file-upload-button {
+	color: inherit;
+	font: inherit;
+	letter-spacing: inherit;
+}
+
+:where(input, textarea) {
+	padding-block: var(--size-1);
+	padding-inline: var(--size-2);
+}
+
 :root {
 	--hi-contrast: var(--slate12);
 	--lo-contrast: white;
-	--canvas: hsl(0 0% 93%);
+	--canvas: hsl(0deg 0% 93%);
 	--panel: white;
-	--transparent-panel: hsl(0 0% 0% / 97%);
-	--shadow-light: hsl(206 22% 7% / 35%);
-	--shadow-dark: hsl(206 22% 7% / 20%);
-}
-
-@media (prefers-color-scheme: dark) {
-	:root {
-		--hi-contrast: var(--slate12);
-		--lo-contrast: var(--slate1);
-		--canvas: hsl(0 0% 15%);
-		--panel: var(--slate3);
-		--transparent-panel: hsl(0 100% 100% / 97%);
-		--shadow-light: hsl(206 22% 7% / 35%);
-		--shadow-dark: hsl(206 22% 7% / 20%);
-	}
-}
-
-:root {
+	--transparent-panel: hsl(0deg 0% 0% / 97%);
+	--shadow-light: hsl(206deg 22% 7% / 35%);
+	--shadow-dark: hsl(206deg 22% 7% / 20%);
 	--nav-h: var(--size-8);
 	--top-offset: 6rem;
 	--sidebar-w: 30rem;
@@ -35,6 +32,18 @@
 
 	/* easings */
 	--out-back: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--hi-contrast: var(--slate12);
+		--lo-contrast: var(--slate1);
+		--canvas: hsl(0deg 0% 15%);
+		--panel: var(--slate3);
+		--transparent-panel: hsl(0deg 100% 100% / 97%);
+		--shadow-light: hsl(206deg 22% 7% / 35%);
+		--shadow-dark: hsl(206deg 22% 7% / 20%);
+	}
 }
 
 @media screen and (min-width: 480px) {
@@ -53,7 +62,7 @@
 
 /*	theme vars */
 .theme-default {
-	--back: #ffffff;
+	--back: #fff;
 	--back-light: #f6fafd;
 	--back-api: #e5eef5;
 	--prime: #ff3e00;
@@ -63,7 +72,7 @@
 	--heading: #222;
 	--text: #444;
 	--second-text: #7b7766;
-	--sidebar-text: rgba(255, 255, 255, 0.9);
+	--sidebar-text: rgb(255 255 255 / 90%);
 	--border-w: 0.3rem; /* border-width  */
 	--border-r: 0.4rem; /* border-radius */
 }
@@ -82,11 +91,11 @@
 }
 
 body {
+	margin: 0;
+	background-color: var(--lo-contrast);
+	color: var(--hi-contrast);
 	font-family: var(--font-sans);
 	font-size: var(--font-size-2);
-	margin: 0;
-	color: var(--hi-contrast);
-	background-color: var(--lo-contrast);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -106,7 +115,7 @@ code {
 }
 
 ::selection {
-	background-color: var(--violetA5);
+	background-color: var(--violet5);
 	color: var(--violet12);
 }
 
@@ -119,18 +128,6 @@ h6 {
 	font-weight: 500;
 }
 
-:where(input, button, textarea, select),
-:where(input[type='file'])::-webkit-file-upload-button {
-	color: inherit;
-	font: inherit;
-	letter-spacing: inherit;
-}
-
-:where(input, textarea) {
-	padding-block: var(--size-1);
-	padding-inline: var(--size-2);
-}
-
 @media (prefers-color-scheme: dark) {
 	:where(textarea, select, input:not(button, button[type], input[type='button'], input[type='submit'], input[type='reset'])) {
 		background-color: #171a1c;
@@ -138,78 +135,25 @@ h6 {
 }
 
 a {
-	align-items: center;
-	gap: var(--size-1);
 	flex-shrink: 0;
+	align-items: center;
+	color: var(--hi-contrast);
+	gap: var(--size-1);
+	line-height: inherit;
 	outline: none;
+	-webkit-tap-highlight-color: rgb(0 0 0 / 0%);
+	text-decoration-color: var(--slate4);
 	text-decoration-line: none;
 	text-underline-offset: 3px;
-	text-decoration-color: var(--slate4);
-	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-	line-height: inherit;
-	color: var(--hi-contrast);
 }
 
 a:hover {
-	text-decoration-line: underline;
 	text-decoration-color: var(--slate7);
+	text-decoration-line: underline;
 }
 
 a:focus {
+	outline: var(--slate8) solid 2px;
 	outline-offset: 2px;
 	text-decoration-line: none;
-	outline: var(--slate8) solid 2px;
-}
-
-button {
-	--button-color: var(--hi-contrast);
-	--button-background: var(--lo-contrast);
-	--button-padding: var(--size-2);
-	--button-size: var(--font-size-2);
-	--button-shadow: inset 0 0 0 var(--border-size-1) var(--slate7);
-	--button-active-shadow: inset 0 0 0 var(--border-size-1) var(--slate8);
-	--button-focus-shadow: var(--button-active-shadow), var(--button-active-shadow);
-	--button-font-weight: var(--font-weight-4);
-	--button-radius: var(--radius-1);
-	--button-height: var(--font-lineheight-2);
-	all: unset;
-	align-items: center;
-	box-sizing: border-box;
-	user-select: none;
-	display: inline-flex;
-	flex-shrink: 0;
-	justify-content: center;
-	cursor: pointer;
-	line-height: var(--button-height);
-	font-variant-numeric: tabular-nums;
-	padding: var(--button-padding);
-	font-weight: var(--button-font-weight);
-	border-radius: var(--button-radius);
-	background-color: var(--button-background);
-	box-shadow: var(--button-shadow);
-	color: var(--button-color);
-}
-
-button:disabled {
-	--button-background: var(--slate2);
-	--button-color: var(--slate8);
-	pointer-events: none;
-}
-
-button:hover {
-	--button-shadow: var(--button-active-shadow);
-}
-
-button:active {
-	--button-background: var(--slate2);
-	--button-shadow: var(--button-active-shadow);
-}
-
-button:focus {
-	--button-shadow: var(--button-focus-shadow);
-}
-
-button::before,
-button::after {
-	box-sizing: border-box;
 }

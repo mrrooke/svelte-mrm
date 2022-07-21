@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { mathquill } from '../useMq';
+	import { mathquill } from '../actions/useMq';
 	import { createEventDispatcher } from 'svelte';
 
 	let dispatch = createEventDispatcher();
@@ -63,9 +63,9 @@
 
 <style>
 	.container {
+		display: flex;
 		width: 100%;
 		min-height: 3rem;
-		display: flex;
 		align-items: center;
 	}
 </style>

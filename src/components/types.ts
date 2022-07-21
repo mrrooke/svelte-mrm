@@ -21,3 +21,19 @@ export type ProblemResponse = {
 	error: string | undefined;
 	questions: string[] | undefined;
 };
+
+export type BorderRadius =
+	| 'var(--radius-1)'
+	| 'var(--radius-1)'
+	| 'var(--radius-2)'
+	| 'var(--radius-3)'
+	| 'var(--radius-4)'
+	| 'var(--radius-5)'
+	| 'var(--radius-6)'
+	| 'var(--radius-round)'
+	| 'var(--radius-conditional-1)'
+	| 'var(--radius-conditional-2)'
+	| 'var(--radius-conditional-3)'
+	| 'var(--radius-conditional-4)'
+	| 'var(--radius-conditional-5)'
+	| 'var(--radius-conditional-6)';

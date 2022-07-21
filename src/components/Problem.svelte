@@ -19,6 +19,7 @@
 	import { onMount } from 'svelte/internal';
 	import { flip } from 'svelte/animate';
 	import Tooltip from './Tooltip.svelte';
+	import IconButton from './IconButton.svelte';
 
 	export let questions: string[] = [];
 	export let changed = false;
@@ -166,12 +167,16 @@
 	});
 </script>
 
-<div style="display:flex; flex-wrap: nowrap; justify-content: space-between; align-content: center">
-	<Icon name="plus" />
-	<Icon name="arrow-left" />
-	<Icon name="arrow-right" />
-	<Icon name="settings" />
-	<Icon name="chevrons-left" />
+<div class="toolbar">
+	<IconButton name="plus" label="add expression" />
+	<div class="group">
+		<IconButton name="arrow-left" label="undo" />
+		<IconButton name="arrow-right" label="redo" />
+	</div>
+	<div class="group">
+		<IconButton name="settings" label="setting" />
+		<IconButton name="chevrons-left" label="collapse sidebar" />
+	</div>
 </div>
 <form bind:this={problemContainer} on:submit|preventDefault={generateProblem} class="problem">
 	<Stack space="0">
@@ -239,21 +244,22 @@
 <style>
 	.problem {
 		display: flex;
-		flex-direction: column;
 		height: 100%;
+		flex-direction: column;
 	}
 
 	.expression {
 		--expression-border-width: var(--border-size-1);
 		--expression-border-color: var(--violet3);
 		--label-color: var(--violet3);
+
 		display: flex;
-		flex-direction: row;
 		width: 100%;
+		flex-direction: row;
 		align-items: center;
-		gap: 1rem;
 		border: var(--expression-border-width) solid var(--expression-border-color);
 		cursor: pointer;
+		gap: 1rem;
 		transition: 0.1s box-shadow ease, 0.1s border ease;
 	}
 
@@ -268,24 +274,43 @@
 	}
 
 	.label {
-		padding: var(--size-2);
-		background-color: var(--label-color);
-		font-size: var(--font-size-1);
-		height: 100%;
-		width: 60px;
-		flex-shrink: 0;
 		display: inline-flex;
+		width: 60px;
+		height: 100%;
+		flex-shrink: 0;
 		align-items: center;
 		justify-content: center;
+		padding: var(--size-2);
 		border-right: var(--expression-border-width) solid var(--label-color);
+		background-color: var(--label-color);
+		font-size: var(--font-size-1);
 		transition: 0.1s background-color ease;
 		user-select: none;
 	}
 
-	/* Chrome, Safari, Edge, Opera */
+	.toolbar {
+		display: flex;
+		height: var(--size-8);
+		flex-wrap: nowrap;
+		align-content: center;
+		align-items: center;
+		justify-content: space-between;
+		padding: var(--size-1);
+		border-top: solid 1px var(--mauve6);
+		border-right: solid 1px var(--mauve6);
+		border-bottom: solid 1px var(--mauve6);
+		background-color: var(--mauve2);
+	}
+
+	.group {
+		display: flex;
+		flex-direction: row;
+		gap: var(--size-2);
+	}
+
 	input::-webkit-outer-spin-button,
 	input::-webkit-inner-spin-button {
-		-webkit-appearance: none;
 		margin: 0;
+		appearance: none;
 	}
 </style>

@@ -8,6 +8,7 @@
 	import { onMount } from 'svelte';
 	import Tooltip from './Tooltip.svelte';
 	import { quintOut } from 'svelte/easing';
+	import IconButton from './IconButton.svelte';
 
 	export let constraint: Constraint;
 	export let handleMoveDown: () => void;
@@ -109,12 +110,16 @@
 		on:blur={handleBlur}
 	/>
 	{#if constraint.active}
-		<button
-			style="margin-left: auto;align-self: flex-start;"
-			on:click|preventDefault|stopPropagation={() => constraint && handleDelete(constraint)}
-		>
-			<Icon name="x" />
-		</button>
+		<IconButton
+			style="flex-shrink: 0;align-self: flex-start;margin-top: 2px; margin-right:2px;margin-left: auto; "
+			name="x"
+			label="remove domain"
+			on:click={(e) => {
+				e.stopPropagation();
+				e.preventDefault();
+				if (constraint) handleDelete(constraint);
+			}}
+		/>
 	{/if}
 </div>
 
@@ -123,15 +128,16 @@
 		--expression-border-width: var(--border-size-1);
 		--expression-border-color: var(--violet3);
 		--label-color: var(--violet3);
+
 		display: flex;
-		flex-direction: row;
 		width: 100%;
+		height: 100%;
+		flex-direction: row;
 		align-items: center;
-		gap: 1rem;
 		border: var(--expression-border-width) solid var(--expression-border-color);
 		cursor: pointer;
+		gap: 1rem;
 		transition: 0.1s box-shadow ease, 0.1s border ease;
-		height: 100%;
 	}
 
 	.focused {
@@ -144,19 +150,19 @@
 	}
 
 	.label {
+		display: inline-flex;
+		width: 60px;
+		height: 100%;
+		flex-shrink: 0;
+		align-items: center;
+		align-self: flex-start;
+		justify-content: space-between;
 		padding: var(--size-2);
+		border-right: var(--expression-border-width) solid var(--label-color);
 		background-color: var(--label-color);
 		font-size: var(--font-size-0);
-		height: 100%;
-		width: 60px;
-		flex-shrink: 0;
-		display: inline-flex;
-		align-items: center;
-		justify-content: space-between;
-		border-right: var(--expression-border-width) solid var(--label-color);
 		transition: 0.1s background-color ease;
 		user-select: none;
-		align-self: flex-start;
 	}
 
 	.invalid {

@@ -158,7 +158,7 @@
 	}
 
 	button:focus {
-		--buton-shadow: inset 0 0 1px var(--slateA8), 0 0 0 1px var(--slateA8);
+		--buton-shadow: inset 0 0 1px var(--slate8), 0 0 0 1px var(--slate8);
 	}
 
 	button[data-state='open'] {
@@ -169,6 +169,7 @@
 		position: relative;
 		display: inline-block;
 		flex-shrink: 0;
+
 		--tooltip-thingy-height: 0.5em;
 	}
 
@@ -177,19 +178,38 @@
 		position: absolute;
 		top: 100%;
 		left: 50%;
-		transform: translateX(-50%);
 		border: var(--tooltip-thingy-height) solid transparent;
 		border-bottom-color: black;
+		transform: translateX(-50%);
 	}
 
 	/* This allows users to move their cursor from the button to the tooltip */
 	.container::after {
 		position: absolute;
-		right: -20%;
 		top: 100%;
+		right: -20%;
 		left: -20%;
 		display: block;
 		height: calc(var(--tooltip-thingy-height) * 2);
+	}
+
+	[role='tooltip'] {
+		position: absolute;
+		z-index: var(--layer-1);
+		top: calc(100% + var(--tooltip-thingy-height));
+		left: 50%;
+		min-width: max-content;
+		max-width: 10em;
+		padding: 0.5em 1em;
+		margin: 0;
+		background: var(--transparent-panel);
+		border-radius: var(--border-0);
+		box-shadow: var(--shadow-light);
+		color: var(--lo-contrast);
+		font-size: var(--font-size-0);
+		opacity: 100;
+		transform: translateX(-50%);
+		transition: opacity 0.2s var(--ease-3);
 	}
 
 	.container.top [role='tooltip'] {
@@ -197,24 +217,6 @@
 	}
 
 	/* Tooltip styles */
-	[role='tooltip'] {
-		position: absolute;
-		top: calc(100% + var(--tooltip-thingy-height));
-		left: 50%;
-		transform: translateX(-50%);
-		margin: 0;
-		padding: 0.5em 1em;
-		border-radius: var(--border-0);
-		background: var(--transparent-panel);
-		color: var(--lo-contrast);
-		min-width: max-content;
-		max-width: 10em;
-		box-shadow: var(--shadow-light);
-		font-size: var(--font-size-0);
-		z-index: var(--layer-1);
-		opacity: 100;
-		transition: opacity 0.2s var(--ease-3);
-	}
 
 	/* Hides the tooltip */
 	.hidden {

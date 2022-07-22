@@ -9,6 +9,7 @@
 
 		run(instance: WebAssembly.Instance): Promise<void>;
 	}
+	export const prerender = true;
 </script>
 
 <script lang="ts">

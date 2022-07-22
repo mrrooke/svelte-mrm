@@ -4,5 +4,8 @@
 		"stylelint-config-html",
 		"stylelint-config-prettier",
 		"stylelint-config-idiomatic-order"
-	]
+	],
+	"rules": {
+		"selector-pseudo-class-no-unknown": [true, { "ignorePseudoClasses": ["global"] }]
+	}
 }

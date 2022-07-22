@@ -36,6 +36,7 @@ declare namespace MathQuill {
 		}
 
 		interface EditableMathQuill {
+			innerFields: EditableMathQuill[];
 			id: number;
 			data: { [key: string]: any };
 			revert: () => HTMLElement;
@@ -68,6 +69,7 @@ declare namespace MathQuill {
 			setAriaPostLabel: (str: string, timeout?: number) => EditableMathQuill;
 			ignoreNextMousedown: (func: () => boolean) => EditableMathQuill;
 			clickAt: (x: number, y: number, el: HTMLElement) => EditableMathQuill;
+			config(options: Config): void;
 		}
 
 		interface API {

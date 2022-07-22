@@ -13,13 +13,13 @@
 	import Katex from './Katex.svelte';
 	import Stack from './layout/Stack.svelte';
 
+	import { tick } from 'svelte';
+	import { flip } from 'svelte/animate';
+	import { onMount } from 'svelte/internal';
 	import Constraint from './Constraint.svelte';
 	import Domain from './Domain.svelte';
-	import { tick } from 'svelte';
-	import { onMount } from 'svelte/internal';
-	import { flip } from 'svelte/animate';
-	import Tooltip from './Tooltip.svelte';
 	import IconButton from './IconButton.svelte';
+	import Tooltip from './Tooltip.svelte';
 
 	export let questions: string[] = [];
 	export let changed = false;
@@ -117,7 +117,12 @@
 		symbols.map((variable) => {
 			const domain = domains.find((d) => d.variable === variable);
 			if (domain === undefined) {
-				domains.push({ variable, low: -10, high: 10, type: 'integer', active: false });
+				const domainType = variable <= 'd' ? 'integer' : 'discrete';
+				if (domainType === 'integer') {
+					domains.push({ variable, low: -10, high: 10, type: domainType, active: true });
+				} else if (domainType === 'discrete') {
+					domains.push({ variable, symbols: ['x', 'y', 'z'], type: domainType, active: true });
+				}
 				domains.sort((a, b) => a.variable.localeCompare(b.variable));
 			}
 		});
@@ -205,14 +210,6 @@
 				on:up={handleMoveUp}
 				bind:focus={focusMF}
 			/>
-			<div style="display: flex; align-items: center">
-				{#each domains as domain}
-					<label>
-						<Katex math={domain.variable} />
-						<input type="checkbox" bind:checked={domain.active} />
-					</label>
-				{/each}
-			</div>
 		</div>
 		{#each activeDomains as domain (domain.variable)}
 			<Domain
@@ -306,11 +303,5 @@
 		display: flex;
 		flex-direction: row;
 		gap: var(--size-2);
-	}
-
-	input::-webkit-outer-spin-button,
-	input::-webkit-inner-spin-button {
-		margin: 0;
-		appearance: none;
 	}
 </style>

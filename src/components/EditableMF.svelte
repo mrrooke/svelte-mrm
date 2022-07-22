@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { mathquill } from '../actions/useMq';
 	import { createEventDispatcher } from 'svelte';
+	import { mathquill } from '../actions/useMq';
 
 	let dispatch = createEventDispatcher();
 	let dispatchFocus = createEventDispatcher<{ blur: FocusEvent; focus: FocusEvent }>();
@@ -13,6 +13,13 @@
 	export let handlers: MathQuill.v3.HandlerOptions = {};
 	export const focus = () => {
 		instance.focus();
+	};
+	export const setLatex = (latex?: string): MathQuill.v3.EditableMathQuill | string => {
+		if (latex) {
+			return instance.latex(latex);
+		} else {
+			return instance.latex();
+		}
 	};
 
 	$: handlers = {
@@ -58,7 +65,9 @@
 	on:focusin={(e) => dispatchFocus('focus', e)}
 	on:focusout={(e) => dispatchFocus('blur', e)}
 >
-	<span style="width: 100%;" use:mathquill={{ ...config, handlers }} use:getInstance />
+	<span style="width: 100%;" use:mathquill={{ ...config, handlers }} use:getInstance
+		>{expression}</span
+	>
 </div>
 
 <style>

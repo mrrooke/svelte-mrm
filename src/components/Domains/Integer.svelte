@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-	import { loop_guard } from 'svelte/internal';
 	import Katex from '../Katex.svelte';
 	import StaticMf from '../StaticMF.svelte';
 	import type { IntegerDomain } from '../types';

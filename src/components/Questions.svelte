@@ -43,7 +43,7 @@
 <ol class="stack questions">
 	{#each questions as question}
 		<li>
-			<Katex math={question} />
+			<Katex math={question} displayMode />
 		</li>
 	{/each}
 </ol>

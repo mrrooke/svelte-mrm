@@ -1,45 +1,33 @@
 <script lang="ts">
+	import { createEventDispatcher } from 'svelte';
+	import Integer from './Domains/Integer.svelte';
+	import EditableMf from './EditableMF.svelte';
 	import Katex from './Katex.svelte';
 	import type { DomainType } from './types';
-	import { createEventDispatcher } from 'svelte';
-	import IconButton from './IconButton.svelte';
 
 	export let domain: DomainType;
 
 	let dispatch = createEventDispatcher();
-
-	function handleKeyDown(event: KeyboardEvent) {
-		switch (event.key) {
-			case 'ArrowUp':
-				event.preventDefault();
-				dispatch('up');
-				break;
-			case 'ArrowDown':
-				event.preventDefault();
-				dispatch('down');
-				break;
-		}
-	}
 </script>
 
-<div class="expression">
-	<span class="label"><Katex math={domain.variable} /></span>
-	<div class="content">
-		<input type="number" bind:value={domain.low} style="width: 3em" on:keydown={handleKeyDown} />
-		<Katex math={`\\leq ${domain.variable}\\leq`} />
-		<input type="number" style="width: 3em" bind:value={domain.high} on:keydown={handleKeyDown} />
-
-		<IconButton
-			style="align-self: flex-start;margin-left: auto;"
-			name="x"
-			label="remove domain"
-			on:click={(e) => {
-				e.preventDefault();
-				dispatch('delete');
-			}}
-		/>
+{#if domain.type === 'integer'}
+	<Integer {domain} on:down={() => dispatch('down')} on:up={() => dispatch('up')} />
+{:else if domain.type === 'discrete'}
+	<div class="expression discrete">
+		<span class="label">
+			<Katex math={domain.variable} />
+		</span>
+		<div class="content">
+			<EditableMf
+				on:down={() => dispatch('down')}
+				on:up={() => dispatch('up')}
+				expression={`${domain.variable}\\in\\left\\{x,y,z\\right\\}`}
+			/>
+		</div>
 	</div>
-</div>
+{:else}
+	<p>invalid domain type</p>
+{/if}
 
 <style>
 	.expression {
@@ -77,18 +65,6 @@
 		width: 100%;
 		flex-flow: row nowrap;
 		align-items: center;
-		justify-content: center;
-	}
-
-	/* Chrome, Safari, Edge, Opera */
-	input::-webkit-outer-spin-button,
-	input::-webkit-inner-spin-button {
-		margin: 0;
-		appearance: none;
-	}
-
-	/* Firefox */
-	input[type='number'] {
-		appearance: textfield;
+		justify-content: left;
 	}
 </style>

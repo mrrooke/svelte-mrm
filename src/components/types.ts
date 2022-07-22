@@ -1,10 +1,20 @@
-export type DomainType = {
-	type: 'integer' | 'rational' | 'real' | 'discrete';
+export type DomainType = DiscreteDomain | IntegerDomain;
+
+export type IntegerDomain = {
+	type: 'integer';
 	active: boolean;
 	low: number;
 	high: number;
 	variable: string;
 };
+
+export type DiscreteDomain = {
+	type: 'discrete';
+	active: boolean;
+	variable: string;
+	symbols: string[] | number[];
+};
+
 export type Constraint = {
 	active: boolean;
 	expression: string;

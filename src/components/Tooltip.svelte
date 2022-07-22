@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { tick } from 'svelte';
+	import Button from './Button.svelte';
 
 	export let label: string;
 	export let position: 'top' | 'bottom' | 'left' | 'right' = 'left';
@@ -143,26 +144,40 @@
 
 <style>
 	button {
-		--button-background: transparent;
-		--button-color: var(--hi-contrast);
-		--button-shadow: none;
+		--button-color: var(--mauve-12);
+
+		display: flex;
+		flex: 0 0 auto;
+		align-items: center;
+		padding: var(--size-1);
+		border: none;
+		appearance: none;
+		background: none;
+		border-radius: var(--radius-1);
+		color: var(--button-color);
+		cursor: pointer;
+		font-size: inherit;
+		transition: var(--ease-1) color;
 	}
 
-	button:hover {
-		--buton-background: transparent;
-		--button-shadow: none;
+	button:disabled {
+		cursor: not-allowed;
+		opacity: 0.5;
+		pointer-events: none;
 	}
 
-	button:active {
-		--buton-background: transparent;
+	button:is(:hover) {
+		outline: none;
 	}
 
-	button:focus {
-		--buton-shadow: inset 0 0 1px var(--slate8), 0 0 0 1px var(--slate8);
+	button:focus-visible {
+		outline: solid 2px var(--blue7);
+		outline-offset: 1px;
 	}
 
-	button[data-state='open'] {
-		--button-shadow: none;
+	button::before,
+	button::after {
+		box-sizing: border-box;
 	}
 
 	.container {
@@ -210,6 +225,7 @@
 		opacity: 100;
 		transform: translateX(-50%);
 		transition: opacity 0.2s var(--ease-3);
+		transition-delay: 0.2s;
 	}
 
 	.container.top [role='tooltip'] {

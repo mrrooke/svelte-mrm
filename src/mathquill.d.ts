@@ -20,6 +20,7 @@ declare namespace MathQuill {
 		};
 
 		interface BaseMathQuill {
+			innerFields: EditableMathQuill[];
 			id: number;
 			data: { [key: string]: any };
 			revert: () => HTMLElement;

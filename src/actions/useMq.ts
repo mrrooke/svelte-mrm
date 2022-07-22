@@ -17,3 +17,8 @@ export function mathquill(node: HTMLElement, config: MathQuill.v3.Config) {
 	const MQ = window.MathQuill.getInterface(3) as MathQuill.v3.API;
 	MQ.MathField(node, customConfig);
 }
+
+export function staticMathField(node: HTMLElement) {
+	const MQ = window.MathQuill.getInterface(3) as MathQuill.v3.API;
+	MQ.StaticMath(node);
+}

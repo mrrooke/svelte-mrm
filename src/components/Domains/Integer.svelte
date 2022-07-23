@@ -1,14 +1,24 @@
+<svelte:options immutable={true} />
+
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-	import Katex from '../Katex.svelte';
 	import StaticMf from '../StaticMF.svelte';
-	import type { IntegerDomain } from '../types';
+	import type { DomainType, IntegerDomain } from '../types';
 
 	export let domain: IntegerDomain;
+	export let handleFocus: (domain: DomainType) => void;
+	export let updateDomain: (domain: DomainType) => void;
 
 	let dispatch = createEventDispatcher();
 	let instance: MathQuill.v3.BaseMathQuill | undefined;
-	let focused = false;
+
+	$: validate(domain);
+
+	function validate(domain: IntegerDomain) {
+		if (domain.low >= domain.high) {
+			updateDomain({ ...domain, err: 'invalid bounds' });
+		}
+	}
 
 	function parseNumber(n: string): number | string {
 		if (n.match(/^[0-9]+$/) !== null) {
@@ -33,18 +43,20 @@
 				if (typeof low === 'string') {
 					el.classList.add('invalid');
 					el.classList.remove('valid');
+					updateDomain({ ...domain, err: low });
 				} else {
 					el.classList.remove('invalid');
 					el.classList.add('valid');
-					domain.low === low;
+					updateDomain({ ...domain, low });
 				}
 			} else if (index === 1) {
 				const high = parseNumber(mf.latex());
 				if (typeof high === 'string') {
 					el.classList.add('invalid');
 					el.classList.remove('valid');
+					updateDomain({ ...domain, err: high });
 				} else {
-					domain.high === high;
+					updateDomain({ ...domain, high });
 					el.classList.add('valid');
 					el.classList.remove('invalid');
 				}
@@ -55,71 +67,26 @@
 			console.warn('incorrect number of math fields for a domain field');
 		}
 	}
+
+	// TODO tooltip error messages displayed a la constraint
+	// TODO error should raise for invalid domains, e.g. 10 <= 10 or 10 <= 9
 </script>
 
-<div
-	class="expression"
-	class:focused
-	on:focusin={() => (focused = true)}
-	on:focusout={() => (focused = false)}
->
-	<span
-		class="label"
-		on:click={() => {
-			instance?.innerFields[0].focus();
-		}}><Katex math={domain.variable} /></span
-	>
-	<div class="content">
-		<StaticMf
-			config={{
-				handlers: {
-					downOutOf: () => dispatch('down'),
-					upOutOf: () => dispatch('up'),
-					edit: onEditDomain
-				}
-			}}
-			bind:instance
-			expression={`\\MathQuillMathField{${domain.low}}\\leq ${domain.variable}\\leq \\MathQuillMathField{${domain.high}}`}
-		/>
-	</div>
+<div class="content" on:focusin={() => handleFocus(domain)}>
+	<StaticMf
+		config={{
+			handlers: {
+				downOutOf: () => dispatch('down'),
+				upOutOf: () => dispatch('up'),
+				edit: onEditDomain
+			}
+		}}
+		bind:instance
+		expression={`\\MathQuillMathField{${domain.low}}\\leq ${domain.variable}\\leq \\MathQuillMathField{${domain.high}}`}
+	/>
 </div>
 
 <style>
-	.expression {
-		--expression-border-width: var(--border-size-1);
-		--expression-border-color: var(--violet3);
-		--label-color: var(--violet3);
-
-		display: flex;
-		width: 100%;
-		flex-direction: row;
-		align-items: center;
-		border: var(--expression-border-width) solid var(--expression-border-color);
-		gap: 1rem;
-		transition: 0.1s box-shadow ease, 0.1s border ease;
-	}
-
-	.label {
-		display: inline-flex;
-		width: 60px;
-		height: 100%;
-		flex-shrink: 0;
-		align-items: center;
-		justify-content: center;
-		padding: var(--size-2);
-		border-right: var(--expression-border-width) solid var(--label-color);
-		background-color: var(--label-color);
-		cursor: pointer;
-		font-size: var(--font-size-1);
-		transition: 0.1s background-color ease;
-		user-select: none;
-	}
-
-	.focused {
-		--label-color: var(--violet5);
-		--expression-border-color: var(--violet5);
-	}
-
 	.content {
 		display: flex;
 		flex-flow: row nowrap;
@@ -127,30 +94,30 @@
 		justify-content: left;
 	}
 
-	.expression :global(.mq-editable-field) {
+	.content :global(.mq-editable-field) {
 		min-width: 3ch;
 		max-width: 5ch;
 		border-bottom: solid 2px var(--slate6);
 		transition: 0.2s border-color var(--ease-1);
 	}
 
-	.expression :global(.mq-editable-field.invalid) {
+	.content :global(.mq-editable-field.invalid) {
 		border-color: var(--red7);
 	}
 
-	.expression :global(.mq-editable-field):focus-within {
+	.content :global(.mq-editable-field):focus-within {
 		border-bottom: solid 2px var(--blue7);
 	}
 
-	.expression :global(.mq-editable-field):hover {
+	.content :global(.mq-editable-field):hover {
 		border-bottom: solid 2px var(--blue6);
 	}
 
-	.expression :global(.mq-editable-field.invalid):focus-within {
+	.content :global(.mq-editable-field.invalid):focus-within {
 		border-color: var(--red7);
 	}
 
-	.expression :global(.mq-editable-field.invalid):hover {
+	.content :global(.mq-editable-field.invalid):hover {
 		border-color: var(--red6);
 	}
 </style>

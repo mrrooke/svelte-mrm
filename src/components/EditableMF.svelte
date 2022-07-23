@@ -1,4 +1,5 @@
 <script lang="ts">
+	// TODO selection colour overlaps (transluscent?) creating weird effect
 	import { createEventDispatcher } from 'svelte';
 	import { mathquill } from '../actions/useMq';
 
@@ -7,7 +8,7 @@
 	let instance: MathQuill.v3.EditableMathQuill;
 	export let expression = '';
 	export let symbols: string[] = [];
-	export let err = '';
+	export let err: string | undefined = '';
 	export let style = '';
 	export let config: MathQuill.v3.Config = {};
 	export let handlers: MathQuill.v3.HandlerOptions = {};
@@ -34,17 +35,18 @@
 			dispatch('up', mf);
 		},
 		edit: (mf) => {
+			dispatch('edit', mf);
 			expression = mf.latex();
 			if (expression == '') {
 				symbols = [];
-				err = '';
+				err = undefined;
 			} else {
 				const res = JSON.parse(self.mrm_parse(expression));
 				if (res.error) {
 					err = res.error;
 				} else {
 					symbols = res.symbols;
-					err = '';
+					err = undefined;
 				}
 			}
 		}

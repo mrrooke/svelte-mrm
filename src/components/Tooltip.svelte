@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { tick } from 'svelte';
-	import Button from './Button.svelte';
 
 	export let label: string;
 	export let position: 'top' | 'bottom' | 'left' | 'right' = 'left';

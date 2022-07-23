@@ -6,6 +6,7 @@ export type IntegerDomain = {
 	low: number;
 	high: number;
 	variable: string;
+	err: string | undefined;
 };
 
 export type DiscreteDomain = {
@@ -13,12 +14,14 @@ export type DiscreteDomain = {
 	active: boolean;
 	variable: string;
 	symbols: string[] | number[];
+	err: string | undefined;
 };
 
 export type Constraint = {
 	active: boolean;
 	expression: string;
-	err: string;
+	err: string | undefined;
+	edited: boolean;
 	id: number;
 };
 export type ProblemRequest = {

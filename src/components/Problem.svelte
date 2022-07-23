@@ -33,7 +33,7 @@
 	let constraints: ConstraintType[] = [
 		{ expression: '', id: 0, active: false, err: undefined, edited: false }
 	];
-	let err = '';
+	let err: string | undefined = undefined;
 	let focusMF: () => MathQuill.v3.EditableMathQuill;
 	let problemContainer: HTMLFormElement;
 	let lastFocused: HTMLElement;
@@ -221,6 +221,8 @@
 		focusMF();
 	});
 
+	$: console.log(err);
+
 	// TODO: a long expression will break out of the sidebar
 </script>
 
@@ -239,7 +241,7 @@
 	<div
 		class="expression"
 		class:focused={focusedIndex === 0}
-		class:invalid={focusedIndex === 0 && err !== ''}
+		class:invalid={focusedIndex === 0 && err !== undefined}
 		on:focusin={() => {
 			focusedIndex = 0;
 		}}

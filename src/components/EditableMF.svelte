@@ -8,7 +8,7 @@
 	let instance: MathQuill.v3.EditableMathQuill;
 	export let expression = '';
 	export let symbols: string[] = [];
-	export let err: string | undefined = '';
+	export let err: string | undefined = undefined;
 	export let style = '';
 	export let config: MathQuill.v3.Config = {};
 	export let handlers: MathQuill.v3.HandlerOptions = {};

@@ -68,8 +68,7 @@
 		}
 	}
 
-	// TODO tooltip error messages displayed a la constraint
-	// TODO error should raise for invalid domains, e.g. 10 <= 10 or 10 <= 9
+	// TODO deleteoutof takes to previous mf but doesn't delete
 </script>
 
 <div class="content" on:focusin={() => handleFocus(domain)}>

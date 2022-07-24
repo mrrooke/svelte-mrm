@@ -12,6 +12,10 @@
 	function closeDialog() {
 		changed = false;
 	}
+
+	// TODO first load specific dialog
+	// TODO show specific error messages for why it won't load
+	// TODO handle validity for constraints/domains
 </script>
 
 {#if changed}

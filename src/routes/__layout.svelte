@@ -1,7 +1,7 @@
 <script>
-	import Nav from '../components/Nav.svelte';
-	import NavItem from '../components/NavItem.svelte';
-	import SkipLink from '../components/SkipLink.svelte';
+	import Nav from '$lib/components/Nav.svelte';
+	import NavItem from '$lib/components/NavItem.svelte';
+	import SkipLink from '$lib/components/SkipLink.svelte';
 </script>
 
 <SkipLink href="#main" />

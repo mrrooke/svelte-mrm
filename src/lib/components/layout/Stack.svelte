@@ -16,7 +16,7 @@
 		justify-content: flex-start;
 	}
 
-	.recursive ::global(*) + :global(*) {
+	.recursive :global(*) + :global(*) {
 		margin-top: var(--stack-space);
 	}
 

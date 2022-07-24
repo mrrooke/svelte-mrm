@@ -14,10 +14,10 @@
 
 <script lang="ts">
 	import { browser } from '$app/env';
-	import Button from '../components/Button.svelte';
+	import Button from '$lib/components/Button.svelte';
+	import Problem from '$lib/components/Problem.svelte';
+	import Questions from '$lib/components/Questions.svelte';
 	import { onMount } from 'svelte';
-	import Problem from '../components/Problem.svelte';
-	import Questions from '../components/Questions.svelte';
 
 	let questions: string[] = [];
 	let activeQuestions: string[];

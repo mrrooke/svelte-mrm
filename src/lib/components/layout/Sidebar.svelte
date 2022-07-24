@@ -29,19 +29,19 @@
 	}
 
 	.sidebar > :global(*) {
-		flex-grow: 1;
 		flex-basis: var(--sidebar-width);
+		flex-grow: 1;
 	}
 
 	.sidebar > :global(:last-child) {
+		min-width: var(--sidebar-min);
 		flex-basis: 0;
 		flex-grow: 999;
-		min-width: var(--sidebar-min);
 	}
 
 	.right > :global(:first-child) {
+		min-width: var(--sidebar-min);
 		flex-basis: 0;
 		flex-grow: 999;
-		min-width: var(--sidebar-min);
 	}
 </style>

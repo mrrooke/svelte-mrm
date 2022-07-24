@@ -21,17 +21,17 @@
 <style>
 	nav {
 		position: fixed;
+		z-index: 100;
+		display: flex;
 		width: 100vw;
 		height: var(--nav-h);
-		margin: 0 auto;
-		z-index: 100;
-		user-select: none;
-		box-shadow: 0 0 0 1px var(--mauve5);
-		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		padding-inline: var(--size-8);
+		margin: 0 auto;
 		background-color: var(--lo-contrast);
+		box-shadow: 0 0 0 1px var(--mauve5);
+		padding-inline: var(--size-8);
+		user-select: none;
 	}
 
 	@media (max-width: 768px) {
@@ -42,19 +42,16 @@
 
 	ul {
 		position: relative;
+		display: flex;
 		width: 100%;
+		width: auto;
 		padding: 0;
 		margin: 0;
 		list-style: none;
 	}
 
 	.home {
+		display: flex;
 		height: var(--nav-h);
-		display: flex;
-	}
-
-	ul {
-		display: flex;
-		width: auto;
 	}
 </style>

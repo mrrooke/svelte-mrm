@@ -43,6 +43,8 @@
 			focusMF();
 		}
 	});
+
+	// TODO clicking delete blurs the field which triggers error for empty field
 </script>
 
 <EditableMF

@@ -27,9 +27,9 @@
 
 <style>
 	svg {
+		overflow: visible;
 		width: 1em;
 		height: 1em;
-		overflow: visible;
 		transform-origin: 50% 50%;
 	}
 </style>

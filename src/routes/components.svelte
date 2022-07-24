@@ -1,5 +1,5 @@
 <script>
-	import Button from '../components/Button.svelte';
+	import Button from '$lib/components/Button.svelte';
 </script>
 
 <div style="padding-block:var(--size-2)">

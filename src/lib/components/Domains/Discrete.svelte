@@ -21,9 +21,9 @@
 		}
 	}
 
-	// TODO need to create
 	// TODO click on label to select field
-	// TODO staticmf with only the values inside {} being editable
+	// TODO click on MF selects editable region
+	// TODO delete out of takes to previous field
 </script>
 
 <div class="content" on:focusin={() => handleFocus(domain)}>

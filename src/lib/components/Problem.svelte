@@ -224,6 +224,8 @@
 	$: console.log(err);
 
 	// TODO: a long expression will break out of the sidebar
+	// TODO: enter or similar to refresh questions
+	// TODO: label alignment shouldn't change with/without tooltip
 </script>
 
 <div class="toolbar">

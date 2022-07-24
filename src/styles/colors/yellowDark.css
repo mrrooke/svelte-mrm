@@ -1,0 +1,16 @@
+@media (prefers-color-scheme: dark) {
+	:root {
+		--yellow1: hsl(45deg 100% 5.5%);
+		--yellow2: hsl(46deg 100% 6.7%);
+		--yellow3: hsl(45deg 100% 8.7%);
+		--yellow4: hsl(45deg 100% 10.4%);
+		--yellow5: hsl(47deg 100% 12.1%);
+		--yellow6: hsl(49deg 100% 14.3%);
+		--yellow7: hsl(49deg 90.3% 18.4%);
+		--yellow8: hsl(50deg 100% 22%);
+		--yellow9: hsl(53deg 92% 50%);
+		--yellow10: hsl(54deg 100% 68%);
+		--yellow11: hsl(48deg 100% 47%);
+		--yellow12: hsl(53deg 100% 91%);
+	}
+}

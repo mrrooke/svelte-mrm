@@ -1,0 +1,16 @@
+@media (prefers-color-scheme: dark) {
+	:root {
+		--tomatoA1: hsl(0deg 0% 0% / 0%);
+		--tomatoA2: hsl(5deg 100% 49.6% / 5.8%);
+		--tomatoA3: hsl(6deg 99.6% 54.9% / 13.3%);
+		--tomatoA4: hsl(6deg 99.2% 55.4% / 19.1%);
+		--tomatoA5: hsl(6deg 99.5% 55.8% / 24.4%);
+		--tomatoA6: hsl(7deg 99.7% 55.9% / 31.9%);
+		--tomatoA7: hsl(8deg 99.8% 54.8% / 43.4%);
+		--tomatoA8: hsl(10deg 99.8% 53.5% / 59.8%);
+		--tomatoA9: hsl(10deg 100% 59.7% / 88.5%);
+		--tomatoA10: hsl(10deg 100% 63.6% / 91.6%);
+		--tomatoA11: hsl(10deg 99.7% 66.4% / 93.9%);
+		--tomatoA12: hsl(12deg 100% 97.1% / 98%);
+	}
+}

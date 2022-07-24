@@ -1,0 +1,16 @@
+@media (prefers-color-scheme: dark) {
+	:root {
+		--oliveA1: hsl(0deg 0% 0% / 0%);
+		--oliveA2: hsl(91deg 97% 84% / 2.6%);
+		--oliveA3: hsl(101deg 87.4% 87.7% / 5.7%);
+		--oliveA4: hsl(92deg 91.8% 94.1% / 7.8%);
+		--oliveA5: hsl(101deg 92.6% 93.5% / 10.4%);
+		--oliveA6: hsl(102deg 91.1% 94.6% / 13%);
+		--oliveA7: hsl(102deg 92.5% 95.9% / 17.3%);
+		--oliveA8: hsl(107deg 100% 96.5% / 25%);
+		--oliveA9: hsl(110deg 98.3% 94.1% / 39.7%);
+		--oliveA10: hsl(109deg 99.6% 95.3% / 45.7%);
+		--oliveA11: hsl(113deg 95.3% 97.2% / 60%);
+		--oliveA12: hsl(120deg 93.5% 99.6% / 92.7%);
+	}
+}

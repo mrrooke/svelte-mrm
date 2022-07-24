@@ -30,7 +30,7 @@
 	$: activeQuestions = questions.sort(() => 0.5 - Math.random()).slice(0, 40);
 	$: mobile = width < 768;
 
-	onMount(() => {
+	onMount(async () => {
 		const go = new Go();
 		WebAssembly.instantiateStreaming(fetch('./main.wasm'), go.importObject).then((result) => {
 			go.run(result.instance);

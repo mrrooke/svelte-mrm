@@ -1,0 +1,16 @@
+@media (prefers-color-scheme: dark) {
+	:root {
+		--sage1: hsl(155deg 7% 8.4%);
+		--sage2: hsl(150deg 7.4% 10.6%);
+		--sage3: hsl(150deg 6.7% 13.1%);
+		--sage4: hsl(150deg 6.4% 15.3%);
+		--sage5: hsl(150deg 6.1% 17.4%);
+		--sage6: hsl(150deg 5.8% 19.9%);
+		--sage7: hsl(150deg 5.5% 23.6%);
+		--sage8: hsl(150deg 5.1% 30.6%);
+		--sage9: hsl(155deg 6% 42.5%);
+		--sage10: hsl(153deg 4.8% 48.2%);
+		--sage11: hsl(155deg 5% 61.8%);
+		--sage12: hsl(155deg 6% 93%);
+	}
+}

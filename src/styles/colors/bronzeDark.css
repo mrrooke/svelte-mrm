@@ -1,0 +1,16 @@
+@media (prefers-color-scheme: dark) {
+	:root {
+		--bronze1: hsl(17deg 10% 8.8%);
+		--bronze2: hsl(15deg 14.8% 10.6%);
+		--bronze3: hsl(15deg 16.3% 14.3%);
+		--bronze4: hsl(16deg 17.1% 17.2%);
+		--bronze5: hsl(16deg 17.6% 19.6%);
+		--bronze6: hsl(16deg 18.1% 22.9%);
+		--bronze7: hsl(17deg 18.8% 28.8%);
+		--bronze8: hsl(17deg 19.6% 38%);
+		--bronze9: hsl(17deg 20% 54%);
+		--bronze10: hsl(18deg 24% 59%);
+		--bronze11: hsl(18deg 35% 68.5%);
+		--bronze12: hsl(18deg 57% 94.1%);
+	}
+}

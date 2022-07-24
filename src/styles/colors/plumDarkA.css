@@ -1,0 +1,16 @@
+@media (prefers-color-scheme: dark) {
+	:root {
+		--plumA1: hsl(0deg 0% 0% / 0%);
+		--plumA2: hsl(300deg 96.4% 58.4% / 3.6%);
+		--plumA3: hsl(300deg 99.4% 67.1% / 10.2%);
+		--plumA4: hsl(295deg 99.8% 66.3% / 15.5%);
+		--plumA5: hsl(295deg 99.4% 67.1% / 20.4%);
+		--plumA6: hsl(294deg 99% 67.8% / 26.2%);
+		--plumA7: hsl(294deg 99.9% 67.7% / 36.3%);
+		--plumA8: hsl(292deg 99.8% 67.5% / 52.7%);
+		--plumA9: hsl(292deg 99.9% 69.2% / 69.5%);
+		--plumA10: hsl(295deg 99.9% 70.8% / 74.8%);
+		--plumA11: hsl(300deg 99.8% 72.9% / 82.8%);
+		--plumA12: hsl(300deg 100% 97.1% / 98%);
+	}
+}

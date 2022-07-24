@@ -1,0 +1,16 @@
+@media (prefers-color-scheme: dark) {
+	:root {
+		--slate1: hsl(200deg 7% 8.8%);
+		--slate2: hsl(195deg 7.1% 11%);
+		--slate3: hsl(197deg 6.8% 13.6%);
+		--slate4: hsl(198deg 6.6% 15.8%);
+		--slate5: hsl(199deg 6.4% 17.9%);
+		--slate6: hsl(201deg 6.2% 20.5%);
+		--slate7: hsl(203deg 6% 24.3%);
+		--slate8: hsl(207deg 5.6% 31.6%);
+		--slate9: hsl(206deg 6% 43.9%);
+		--slate10: hsl(206deg 5.2% 49.5%);
+		--slate11: hsl(206deg 6% 63%);
+		--slate12: hsl(210deg 6% 93%);
+	}
+}

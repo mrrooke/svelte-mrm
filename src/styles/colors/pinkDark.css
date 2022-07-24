@@ -1,0 +1,16 @@
+@media (prefers-color-scheme: dark) {
+	:root {
+		--pink1: hsl(318deg 25% 9.6%);
+		--pink2: hsl(319deg 32.2% 11.6%);
+		--pink3: hsl(319deg 41% 16%);
+		--pink4: hsl(320deg 45.4% 18.7%);
+		--pink5: hsl(320deg 49% 21.1%);
+		--pink6: hsl(321deg 53.6% 24.4%);
+		--pink7: hsl(321deg 61.1% 29.7%);
+		--pink8: hsl(322deg 74.9% 37.5%);
+		--pink9: hsl(322deg 65% 54.5%);
+		--pink10: hsl(323deg 72.8% 59.2%);
+		--pink11: hsl(325deg 90% 66.4%);
+		--pink12: hsl(322deg 90% 95.8%);
+	}
+}

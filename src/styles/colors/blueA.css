@@ -1,0 +1,14 @@
+:root {
+	--blueA1: hsl(210deg 100% 51% / 1.6%);
+	--blueA2: hsl(210deg 100% 51% / 4%);
+	--blueA3: hsl(210deg 100% 50.3% / 7.1%);
+	--blueA4: hsl(210deg 100% 50.1% / 11.8%);
+	--blueA5: hsl(208deg 99.1% 47.1% / 18.9%);
+	--blueA6: hsl(209deg 99.5% 45.3% / 28.3%);
+	--blueA7: hsl(208deg 99.9% 43.8% / 41.2%);
+	--blueA8: hsl(206deg 99.8% 45.1% / 63.2%);
+	--blueA9: hsl(206deg 100% 50% / 98%);
+	--blueA10: hsl(208deg 100% 47.2% / 98%);
+	--blueA11: hsl(212deg 100% 43% / 98%);
+	--blueA12: hsl(213deg 100% 14.4% / 98%);
+}

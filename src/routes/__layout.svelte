@@ -2,6 +2,8 @@
 	import Nav from '$lib/components/Nav.svelte';
 	import NavItem from '$lib/components/NavItem.svelte';
 	import SkipLink from '$lib/components/SkipLink.svelte';
+
+	import '../styles/main.css';
 </script>
 
 <SkipLink href="#main" />
@@ -20,14 +22,6 @@
 </main>
 
 <style global>
-	@import 'open-props/sizes';
-	@import 'open-props/fonts';
-	@import 'open-props/borders';
-	@import 'open-props/shadows';
-	@import 'open-props/zindex';
-	@import 'open-props/animations';
-	@import 'open-props/easings';
-
 	main {
 		position: relative;
 		top: var(--nav-h);

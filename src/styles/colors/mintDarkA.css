@@ -1,0 +1,16 @@
+@media (prefers-color-scheme: dark) {
+	:root {
+		--mintA1: hsl(0deg 0% 0% / 0%);
+		--mintA2: hsl(180deg 100% 49.2% / 3.1%);
+		--mintA3: hsl(176deg 100% 49.7% / 7%);
+		--mintA4: hsl(173deg 100% 49.7% / 10.5%);
+		--mintA5: hsl(173deg 100% 49.8% / 14.4%);
+		--mintA6: hsl(172deg 100% 49.8% / 19.2%);
+		--mintA7: hsl(171deg 100% 49.9% / 26.6%);
+		--mintA8: hsl(169deg 100% 49.9% / 36.6%);
+		--mintA9: hsl(167deg 99.8% 75% / 87%);
+		--mintA10: hsl(163deg 99.9% 80.7% / 94.8%);
+		--mintA11: hsl(167deg 99.9% 58.7% / 79.6%);
+		--mintA12: hsl(169deg 100% 96.2% / 98%);
+	}
+}

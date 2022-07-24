@@ -1,0 +1,14 @@
+:root {
+	--yellow1: hsl(60deg 54% 98.5%);
+	--yellow2: hsl(52deg 100% 95.5%);
+	--yellow3: hsl(55deg 100% 90.9%);
+	--yellow4: hsl(54deg 100% 86.6%);
+	--yellow5: hsl(52deg 97.9% 82%);
+	--yellow6: hsl(50deg 89.4% 76.1%);
+	--yellow7: hsl(47deg 80.4% 68%);
+	--yellow8: hsl(48deg 100% 46.1%);
+	--yellow9: hsl(53deg 92% 50%);
+	--yellow10: hsl(50deg 100% 48.5%);
+	--yellow11: hsl(42deg 100% 29%);
+	--yellow12: hsl(40deg 55% 13.5%);
+}

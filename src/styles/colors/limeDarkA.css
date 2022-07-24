@@ -1,0 +1,16 @@
+@media (prefers-color-scheme: dark) {
+	:root {
+		--limeA1: hsl(0deg 0% 0% / 0%);
+		--limeA2: hsl(75deg 96.4% 59.6% / 2.2%);
+		--limeA3: hsl(88deg 98% 70.4% / 6.1%);
+		--limeA4: hsl(81deg 97.8% 67.4% / 9.6%);
+		--limeA5: hsl(82deg 98.4% 65.6% / 13.5%);
+		--limeA6: hsl(79deg 99.7% 64.3% / 18.2%);
+		--limeA7: hsl(77deg 99.1% 62.1% / 25.2%);
+		--limeA8: hsl(75deg 100% 60% / 34.2%);
+		--limeA9: hsl(81deg 99.8% 59.7% / 81.9%);
+		--limeA10: hsl(75deg 99.8% 63.7% / 93.6%);
+		--limeA11: hsl(81deg 99.9% 58.7% / 71.9%);
+		--limeA12: hsl(83deg 100% 94.2% / 98%);
+	}
+}

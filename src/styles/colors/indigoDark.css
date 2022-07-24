@@ -1,0 +1,16 @@
+@media (prefers-color-scheme: dark) {
+	:root {
+		--indigo1: hsl(229deg 24% 10%);
+		--indigo2: hsl(230deg 36.4% 12.9%);
+		--indigo3: hsl(228deg 43.3% 17.5%);
+		--indigo4: hsl(227deg 47.2% 21%);
+		--indigo5: hsl(227deg 50% 24.1%);
+		--indigo6: hsl(226deg 52.9% 28.2%);
+		--indigo7: hsl(226deg 56% 34.5%);
+		--indigo8: hsl(226deg 58.2% 44.1%);
+		--indigo9: hsl(226deg 70% 55.5%);
+		--indigo10: hsl(227deg 75.2% 61.6%);
+		--indigo11: hsl(228deg 100% 75.9%);
+		--indigo12: hsl(226deg 83% 96.3%);
+	}
+}

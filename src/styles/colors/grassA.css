@@ -1,0 +1,14 @@
+:root {
+	--grassA1: hsl(120deg 94.9% 38.7% / 1.6%);
+	--grassA2: hsl(120deg 94.9% 38.7% / 4.8%);
+	--grassA3: hsl(120deg 98% 35.5% / 7.9%);
+	--grassA4: hsl(120deg 98.7% 31.5% / 12.6%);
+	--grassA5: hsl(122deg 98.5% 29.9% / 19.3%);
+	--grassA6: hsl(125deg 99.2% 27.9% / 28.3%);
+	--grassA7: hsl(125deg 99.9% 27% / 40.8%);
+	--grassA8: hsl(131deg 100% 27.6% / 60.4%);
+	--grassA9: hsl(131deg 99.7% 26.3% / 72.6%);
+	--grassA10: hsl(132deg 99.9% 24% / 76.1%);
+	--grassA11: hsl(133deg 99.5% 19.5% / 84%);
+	--grassA12: hsl(128deg 98% 4.9% / 89.5%);
+}

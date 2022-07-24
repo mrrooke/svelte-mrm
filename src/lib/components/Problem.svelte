@@ -40,7 +40,11 @@
 
 	$: newConstraintId = constraints.length ? Math.max(...constraints.map((t) => t.id)) + 1 : 1;
 	$: domains = updateDomains(domains, symbols);
-	$: valid = err === '' && constraints.reduce((prev, curr) => prev && curr.err === '', true);
+	$: valid =
+		err === undefined &&
+		expression !== '' &&
+		constraints.reduce((prev, curr) => prev && curr.err === undefined, true) &&
+		domains.reduce((prev, curr) => prev && curr.err === undefined, true);
 	$: if (constraints.slice(-1)[0].active) {
 		addConstraint('');
 	}
@@ -221,8 +225,6 @@
 		focusMF();
 	});
 
-	$: console.log(err);
-
 	// TODO: a long expression will break out of the sidebar
 	// TODO: enter or similar to refresh questions
 	// TODO: label alignment shouldn't change with/without tooltip
@@ -267,6 +269,11 @@
 			bind:err
 			on:down={handleMoveDown}
 			on:up={handleMoveUp}
+			on:blur={() => {
+				if (expression === '') {
+					err = 'expression cannot be empty';
+				}
+			}}
 			bind:focus={focusMF}
 		/>
 	</div>

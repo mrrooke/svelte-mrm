@@ -22,11 +22,16 @@
 	}
 
 	// TODO click on label to select field
-	// TODO click on MF selects editable region
 	// TODO delete out of takes to previous field
 </script>
 
-<div class="content" on:focusin={() => handleFocus(domain)}>
+<div
+	class="content"
+	on:focusin={() => handleFocus(domain)}
+	on:click={() => {
+		instance?.innerFields[0].focus();
+	}}
+>
 	<StaticMf
 		config={{
 			handlers: {
@@ -39,3 +44,10 @@
 		expression={`${domain.variable}\\in\\left\\{\\MathQuillMathField{x,y,z}\\right\\}`}
 	/>
 </div>
+
+<style>
+	.content {
+		width: 100%;
+		cursor: pointer;
+	}
+</style>

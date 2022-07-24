@@ -1,7 +1,10 @@
 <script lang="ts">
+	import { quintOut } from 'svelte/easing';
+
 	import { fade } from 'svelte/transition';
 	import Button from './Button.svelte';
 	import Icon from './Icon.svelte';
+	import IconButton from './IconButton.svelte';
 	import Katex from './Katex.svelte';
 
 	export let generate: () => void;
@@ -16,16 +19,20 @@
 	// TODO first load specific dialog
 	// TODO show specific error messages for why it won't load
 	// TODO handle validity for constraints/domains
+	// TODO Katex display mode questions
 </script>
 
 {#if changed}
-	<div class="overlay" transition:fade={{ duration: 200 }} on:click={closeDialog}>
-		<div class="dialog">
+	<div class="base">
+		<div
+			class="overlay"
+			transition:fade={{ duration: 200, easing: quintOut }}
+			on:click={closeDialog}
+		/>
+		<div class="dialog" transition:fade={{ duration: 200, easing: quintOut }}>
 			<header>
 				<h3>Update questions</h3>
-				<Button on:click={closeDialog} variant="text">
-					<Icon name="x" />
-				</Button>
+				<IconButton on:click={closeDialog} name="x" label="close dialog" />
 			</header>
 			<section>
 				<p>Your constraints have changed.</p>
@@ -70,9 +77,8 @@
 		overflow-y: auto;
 	}
 
-	.overlay {
+	.base {
 		position: absolute;
-		z-index: var(--layer-important);
 		top: 0;
 		right: 0;
 		bottom: 0;
@@ -80,13 +86,22 @@
 		display: flex;
 		align-items: flex-start;
 		justify-content: center;
-		backdrop-filter: blur(3px);
-		cursor: pointer;
 		padding-block-start: var(--size-3);
 	}
 
+	.overlay {
+		position: absolute;
+		z-index: 2;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		backdrop-filter: blur(3px);
+		cursor: pointer;
+	}
+
 	.dialog {
-		z-index: var(--layer-important);
+		z-index: var(--layer-4);
 		display: grid;
 		align-items: start;
 		background-color: var(--panel);

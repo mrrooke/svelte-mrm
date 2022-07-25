@@ -49,6 +49,7 @@
 		addConstraint('');
 	}
 	$: expression, domains, constraints, (changed = true);
+	$: symbols, constraints.forEach((c) => updateConstraint({ ...c }));
 
 	function handleBlur(e: CustomEvent<FocusEvent> | FocusEvent) {
 		if (e instanceof CustomEvent<FocusEvent>) {

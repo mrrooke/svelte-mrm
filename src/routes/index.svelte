@@ -50,12 +50,7 @@
 			<Problem bind:questions bind:valid bind:generateProblem bind:changed />
 		</div>
 		<div class="questions">
-			<Questions
-				bind:changed
-				bind:valid
-				generate={generateProblem}
-				bind:questions={activeQuestions}
-			/>
+			<Questions bind:changed {valid} generate={generateProblem} bind:questions={activeQuestions} />
 		</div>
 	</div>
 	{#if mobile}

@@ -1,7 +1,7 @@
 <svelte:options immutable={true} />
 
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import EditableMF from './EditableMF.svelte';
 	import IconButton from './IconButton.svelte';
 	import type { Constraint } from './types';
@@ -13,30 +13,14 @@
 		handleDelete: (constraint: Constraint) => void,
 		handleBackspace: (constraint: Constraint) => void,
 		handleFocus: (constraint: Constraint) => void,
-		handleBlur: (e: FocusEvent | CustomEvent<FocusEvent>) => void,
-		variables: string[];
+		handleBlur: (e: FocusEvent | CustomEvent<FocusEvent>) => void;
 
 	let expression = '',
 		err: string | undefined = undefined,
-		constraintSymbols: string[] = [],
-		undefinedSymbols: string[] = [],
+		symbols: string[] = [],
 		focusMF: () => MathQuill.v3.EditableMathQuill;
 
-	function checkVariables(symbols: string[], vars: string[]) {
-		undefinedSymbols = [];
-		symbols.forEach((s) => {
-			if (!vars.includes(s)) {
-				undefinedSymbols.push(s);
-			}
-		});
-		if (undefinedSymbols.length > 0) {
-			err = `Variables ${undefinedSymbols.toString()} need to be defined in a domain`;
-			updateConstraint({ ...constraint, err });
-		}
-	}
-
-	$: updateConstraint({ ...constraint, expression, err });
-	$: checkVariables(constraintSymbols, variables);
+	$: updateConstraint({ ...constraint, expression, err, symbols });
 
 	onMount(() => {
 		if (constraint.active) {
@@ -50,7 +34,7 @@
 <EditableMF
 	bind:expression
 	bind:err
-	bind:symbols={constraintSymbols}
+	bind:symbols
 	bind:focus={focusMF}
 	on:delete={() => handleBackspace(constraint)}
 	on:down={handleMoveDown}

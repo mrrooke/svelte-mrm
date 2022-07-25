@@ -24,14 +24,14 @@
 
 	export let questions: string[] = [];
 	export let changed = false;
-	export let valid;
+	export let valid: boolean;
 
 	let expression: string;
 	let symbols: string[] = [];
 	let domains: DomainType[] = [];
 	let focusedIndex: number | undefined = undefined;
 	let constraints: ConstraintType[] = [
-		{ expression: '', id: 0, active: false, err: undefined, edited: false }
+		{ expression: '', id: 0, active: false, err: undefined, edited: false, symbols: [] }
 	];
 	let err: string | undefined = undefined;
 	let focusMF: () => MathQuill.v3.EditableMathQuill;
@@ -48,7 +48,6 @@
 	$: if (constraints.slice(-1)[0].active) {
 		addConstraint('');
 	}
-	$: activeVariables = domains.map((d) => d.variable);
 	$: expression, domains, constraints, (changed = true);
 
 	function handleBlur(e: CustomEvent<FocusEvent> | FocusEvent) {
@@ -169,7 +168,7 @@
 	function addConstraint(expression: string) {
 		constraints = [
 			...constraints,
-			{ expression, id: newConstraintId, active: false, err: undefined, edited: false }
+			{ expression, id: newConstraintId, active: false, err: undefined, edited: false, symbols: [] }
 		];
 	}
 
@@ -178,16 +177,33 @@
 	}
 
 	function updateConstraint(constraint: ConstraintType) {
-		const { active, expression } = constraint;
+		const { active, expression, symbols: constraintSymbols, err } = constraint;
 		if (!active) {
 			return;
 		}
-		if (constraint.err === undefined && expression === '') {
+		if (err === undefined && expression === '') {
 			constraint.err = 'cannot have an empty expression';
+		}
+		if (constraint.err === undefined) {
+			constraint.err = checkVariables(constraintSymbols, symbols);
 		}
 		const index = constraints.findIndex((c) => c.id === constraint.id);
 		constraints[index] = constraint;
 		constraints = [...constraints];
+	}
+
+	function checkVariables(constraintSymbols: string[], symbols: string[]): string | undefined {
+		const undefinedSymbols: string[] = [];
+		constraintSymbols.forEach((s) => {
+			if (!symbols.includes(s)) {
+				undefinedSymbols.push(s);
+			}
+		});
+		if (undefinedSymbols.length > 0) {
+			return `Variables ${undefinedSymbols.toString()} need to be defined in a domain`;
+		} else {
+			return undefined;
+		}
 	}
 
 	function updateDomain(domain: DomainType) {
@@ -205,8 +221,17 @@
 	export function generateProblem() {
 		const problem: ProblemRequest = {
 			constraints: constraints.filter((c) => c.active === true),
-			domains,
-			expression
+			// TODO when discrete domains are implemented remove this filter
+			domains: domains.filter((d) => d.type === 'integer'),
+			expression,
+			options: {
+				collapseNegatives: true,
+				lexicalOrder: false,
+				multSymbol: '\\times',
+				negativeParenthesis: true,
+				printOneMult: true,
+				printZeroAdd: true
+			}
 		};
 		const result: ProblemResponse = JSON.parse(self.mrm_generate(JSON.stringify(problem)));
 		const { error: err, questions: qs } = result;
@@ -332,7 +357,6 @@
 			</span>
 			<Constraint
 				bind:constraint
-				variables={activeVariables}
 				{updateConstraint}
 				{handleBackspace}
 				{handleDelete}

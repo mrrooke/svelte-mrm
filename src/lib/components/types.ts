@@ -20,6 +20,7 @@ export type DiscreteDomain = {
 export type Constraint = {
 	active: boolean;
 	expression: string;
+	symbols: string[];
 	err: string | undefined;
 	edited: boolean;
 	id: number;

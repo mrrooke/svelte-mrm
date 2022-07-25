@@ -24,10 +24,21 @@ export type Constraint = {
 	edited: boolean;
 	id: number;
 };
+
+export type ProblemOptions = {
+	multSymbol: '\\cdot' | '\\times';
+	negativeParenthesis: boolean;
+	printOneMult: boolean;
+	printZeroAdd: boolean;
+	collapseNegatives: boolean;
+	lexicalOrder: boolean;
+};
+
 export type ProblemRequest = {
 	expression: string;
 	domains: DomainType[];
 	constraints: Constraint[];
+	options: ProblemOptions;
 };
 
 export type ProblemResponse = {

@@ -21,8 +21,7 @@
 		}
 	}
 
-	// TODO click on label to select field
-	// TODO delete out of takes to previous field
+	// TODO implement delete out of takes to previous field
 </script>
 
 <div

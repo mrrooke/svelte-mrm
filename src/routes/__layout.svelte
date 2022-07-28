@@ -9,7 +9,6 @@
 <SkipLink href="#main" />
 <Nav logo="🧮">
 	<svelte:fragment slot="nav-center">
-		<NavItem href="/components">components</NavItem>
 		<NavItem href="/">generator</NavItem>
 	</svelte:fragment>
 

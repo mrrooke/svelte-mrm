@@ -37,6 +37,7 @@
 		edit: (mf) => {
 			dispatch('edit', mf);
 			expression = mf.latex();
+			console.log(mf.latex());
 			if (expression == '') {
 				symbols = [];
 				err = undefined;

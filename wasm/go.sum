@@ -18,6 +18,8 @@ github.com/mrrooke/calc v0.0.0-20220728124112-e43111e6133b h1:fHsYMfuUuhHkDqM1RF
 github.com/mrrooke/calc v0.0.0-20220728124112-e43111e6133b/go.mod h1:KT8MCohBUcaPafNuN6gBveHXsWhcz3ZCnT1FVXMwt9o=
 github.com/mrrooke/calc v0.0.0-20220728133907-0b915a93345c h1:FvAZ3AIoNBAHjoZi4scsozd/lkf/YPb90QlUVVKeIXU=
 github.com/mrrooke/calc v0.0.0-20220728133907-0b915a93345c/go.mod h1:KT8MCohBUcaPafNuN6gBveHXsWhcz3ZCnT1FVXMwt9o=
+github.com/mrrooke/calc v0.0.0-20220728153331-127af63b65de h1:wIGxOG3U+QoKTTSgdZRD5tnLcSkqoiFnpp8L8L9ETS8=
+github.com/mrrooke/calc v0.0.0-20220728153331-127af63b65de/go.mod h1:KT8MCohBUcaPafNuN6gBveHXsWhcz3ZCnT1FVXMwt9o=
 golang.org/x/exp v0.0.0-20220518171630-0b5c67f07fdf h1:oXVg4h2qJDd9htKxb5SCpFBHLipW6hXmL3qpUixS2jw=
 golang.org/x/exp v0.0.0-20220518171630-0b5c67f07fdf/go.mod h1:yh0Ynu2b5ZUe3MQfp2nM0ecK7wsgouWTDN0FNeJuIys=
 golang.org/x/exp v0.0.0-20220722155223-a9213eeb770e h1:+WEEuIdZHnUeJJmEUjyYC2gfUMj69yZXw17EnHg/otA=

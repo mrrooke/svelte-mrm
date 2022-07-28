@@ -43,6 +43,9 @@ func generate(_ js.Value, args []js.Value) any {
 	// 1. Generate the problem set
 	exprs, err := calc.Generate(p.Expression, p.Domains, p.Constraints)
 
+	fmt.Println(p.Constraints)
+	fmt.Println(p.Expression)
+	fmt.Println(p.Domains)
 	if err != nil {
 		return newError(err.Error())
 	}

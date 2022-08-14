@@ -183,7 +183,7 @@
 			return;
 		}
 		if (err === undefined && expression === '') {
-			constraint.err = 'cannot have an empty expression';
+			constraint.err = 'constraints cannot be empty';
 		}
 		if (constraint.err === undefined) {
 			constraint.err = checkVariables(constraintSymbols, symbols);

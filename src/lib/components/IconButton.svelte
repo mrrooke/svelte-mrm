@@ -51,7 +51,7 @@
 		aria-label={label}
 		{style}
 	>
-		<Icon {name} aria-hidden="true" />
+		<Icon {name} />
 	</button>
 {/if}
 

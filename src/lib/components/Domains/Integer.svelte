@@ -12,59 +12,53 @@
 	let dispatch = createEventDispatcher();
 	let instance: MathQuill.v3.BaseMathQuill | undefined;
 
-	$: validate(domain);
-
-	function validate(domain: IntegerDomain) {
-		if (domain.low >= domain.high) {
-			updateDomain({ ...domain, err: 'invalid bounds' });
-		}
-	}
-
 	function parseNumber(n: string): number | string {
-		if (n.match(/^[0-9]+$/) !== null) {
+		if (n === '') {
+			return 'cannot have an empty value for domain';
+		}
+		if (n.match(/^-*[0-9]+$/) !== null) {
 			const res = parseInt(n, 10);
 			if (isNaN(res)) {
-				return 'could not parse integer';
+				return `could not parse "${n}" as an integer`;
 			} else {
 				return res;
 			}
 		} else {
-			return 'could not parse integer';
+			return `could not parse "${n}" as an integer`;
 		}
 	}
 
 	function onEditDomain(mf: MathQuill.v3.BaseMathQuill) {
 		const el = mf.el();
+		const parsedInt = parseNumber(mf.latex());
+		if (typeof parsedInt === 'string') {
+			el.classList.add('invalid');
+			el.classList.remove('valid');
+			updateDomain({ ...domain, err: parsedInt });
+			return;
+		}
 		const fields = instance?.innerFields;
 		if (fields && fields.length === 2) {
 			const index = fields.findIndex((e) => e.el() === el);
+			el.classList.remove('invalid');
+			el.classList.add('valid');
 			if (index === 0) {
-				const low = parseNumber(mf.latex());
-				if (typeof low === 'string') {
-					el.classList.add('invalid');
-					el.classList.remove('valid');
-					updateDomain({ ...domain, err: low });
-				} else {
-					el.classList.remove('invalid');
-					el.classList.add('valid');
-					updateDomain({ ...domain, low });
+				let err: undefined | string = undefined;
+				if (parsedInt > domain.high) {
+					err = `lower limit must be less than ${domain.high}`;
 				}
+				updateDomain({ ...domain, low: parsedInt, err });
 			} else if (index === 1) {
-				const high = parseNumber(mf.latex());
-				if (typeof high === 'string') {
-					el.classList.add('invalid');
-					el.classList.remove('valid');
-					updateDomain({ ...domain, err: high });
-				} else {
-					updateDomain({ ...domain, high });
-					el.classList.add('valid');
-					el.classList.remove('invalid');
+				let err: undefined | string = undefined;
+				if (parsedInt < domain.high) {
+					err = `upper limit must be greater than ${domain.low}`;
 				}
+				updateDomain({ ...domain, high: parsedInt, err });
 			} else {
-				console.warn('incorrect index for mathfield');
+				console.error('incorrect index for mathfield');
 			}
 		} else {
-			console.warn('incorrect number of math fields for a domain field');
+			console.error('incorrect number of math fields for a domain field');
 		}
 	}
 

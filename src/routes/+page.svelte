@@ -1,15 +1,15 @@
 <script context="module" lang="ts">
-	declare class Go {
-		argv: string[];
-		env: { [envKey: string]: string };
-		exit: (code: number) => void;
-		importObject: WebAssembly.Imports;
-		exited: boolean;
-		mem: DataView;
+	// declare class Go {
+	// 	argv: string[];
+	// 	env: { [envKey: string]: string };
+	// 	exit: (code: number) => void;
+	// 	importObject: WebAssembly.Imports;
+	// 	exited: boolean;
+	// 	mem: DataView;
 
-		run(instance: WebAssembly.Instance): Promise<void>;
-	}
-	export const prerender = true;
+	// 	run(instance: WebAssembly.Instance): Promise<void>;
+	// }
+	// export const prerender = true;
 </script>
 
 <script lang="ts">

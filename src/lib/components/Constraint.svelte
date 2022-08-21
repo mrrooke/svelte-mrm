@@ -1,7 +1,7 @@
 <svelte:options immutable={true} />
 
 <script lang="ts">
-	import { onMount, tick } from 'svelte';
+	import { onMount } from 'svelte';
 	import EditableMF from './EditableMF.svelte';
 	import IconButton from './IconButton.svelte';
 	import type { Constraint } from './types';

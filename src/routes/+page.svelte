@@ -13,7 +13,7 @@
 </script>
 
 <script lang="ts">
-	import { browser } from '$app/env';
+	import { browser } from '$app/environment';
 	import Button from '$lib/components/Button.svelte';
 	import Problem from '$lib/components/Problem.svelte';
 	import Questions from '$lib/components/Questions.svelte';

@@ -50,7 +50,7 @@
 				updateDomain({ ...domain, low: parsedInt, err });
 			} else if (index === 1) {
 				let err: undefined | string = undefined;
-				if (parsedInt < domain.high) {
+				if (parsedInt < domain.low) {
 					err = `upper limit must be greater than ${domain.low}`;
 				}
 				updateDomain({ ...domain, high: parsedInt, err });

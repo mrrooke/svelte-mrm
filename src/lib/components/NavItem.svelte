@@ -12,7 +12,7 @@
 	<li>
 		<a
 			aria-current={$page.url.pathname.startsWith(href) ? true : undefined}
-			sveltekit:prefetch
+			data-sveltekit-prefetch
 			{href}
 			{title}><slot /></a
 		>

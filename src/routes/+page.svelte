@@ -27,7 +27,7 @@
 	let changed = true;
 	let valid = false;
 
-	$: activeQuestions = questions.sort(() => 0.5 - Math.random()).slice(0, 40);
+	$: activeQuestions = questions.sort(() => 0.5 - Math.random()).slice(0, 10);
 	$: mobile = width < 768;
 
 	onMount(async () => {

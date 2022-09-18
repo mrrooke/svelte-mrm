@@ -4,7 +4,7 @@
 </script>
 
 <nav>
-	<a sveltekit:prefetch href="/" class="home" title={home_title}>
+	<a data-sveltekit-prefetch href="/" class="home" title={home_title}>
 		{logo}
 		mrm
 	</a>

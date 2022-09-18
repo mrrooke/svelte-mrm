@@ -56,7 +56,7 @@
 <ol class="stack questions">
 	{#each questions as question}
 		<li>
-			<Katex math={question} displayMode />
+			<Katex math={question} fleqn={true} displayMode />
 		</li>
 	{/each}
 </ol>
@@ -76,6 +76,7 @@
 
 	.questions {
 		height: 100%;
+		font-size: 1rem;
 		overflow-y: auto;
 	}
 
@@ -143,5 +144,9 @@
 		gap: var(--size-3);
 		padding-block: var(--size-3);
 		padding-inline: var(--size-5);
+	}
+
+	li :global(.katex-display) {
+		margin: 0;
 	}
 </style>

@@ -2,6 +2,7 @@
 	import type {
 		Constraint as ConstraintType,
 		DomainType,
+		ProblemOptions,
 		ProblemRequest,
 		ProblemResponse
 	} from './types';
@@ -21,10 +22,12 @@
 	import Domain from './Domain.svelte';
 	import IconButton from './IconButton.svelte';
 	import Tooltip from './Tooltip.svelte';
+	import type { MenuSelectEventDetail } from '@shoelace-style/shoelace/dist/components/menu/menu';
 
 	export let questions: string[] = [];
 	export let changed = false;
 	export let valid: boolean;
+	export let options: ProblemOptions;
 
 	let expression: string;
 	let symbols: string[] = [];
@@ -219,20 +222,13 @@
 		domains = domains;
 	}
 
-	export function generateProblem() {
+	export function generateProblem(options: ProblemOptions) {
 		const problem: ProblemRequest = {
 			constraints: constraints.filter((c) => c.active === true),
 			// TODO when discrete domains are implemented remove this filter
 			domains: domains.filter((d) => d.type === 'integer'),
 			expression,
-			options: {
-				collapseNegatives: true,
-				lexicalOrder: false,
-				multSymbol: '\\times',
-				negativeParenthesis: true,
-				printOneMult: true,
-				printZeroAdd: true
-			}
+			options
 		};
 		const result: ProblemResponse = JSON.parse(self.mrm_generate(JSON.stringify(problem)));
 		const { error: err, questions: qs } = result;
@@ -251,6 +247,34 @@
 		focusMF();
 	});
 
+	function handleSettings(e: CustomEvent<MenuSelectEventDetail>) {
+		const item = e.detail.item;
+		switch (item.value) {
+			case 'collapseNegatives':
+				options.collapseNegatives = !item.checked;
+				item.checked = !item.checked;
+				break;
+			case 'negativeParenthesis':
+				options.negativeParenthesis = !item.checked;
+				item.checked = !item.checked;
+				break;
+			case 'printOneMult':
+				options.printOneMult = !item.checked;
+				item.checked = !item.checked;
+				break;
+			case 'printZeroAdd':
+				options.printZeroAdd = !item.checked;
+				item.checked = !item.checked;
+				break;
+			case 'lexicalOrder':
+				options.lexicalOrder = !item.checked;
+				item.checked = !item.checked;
+				break;
+			default:
+				break;
+		}
+	}
+
 	// TODO: a long expression will break out of the sidebar
 	// TODO: enter or similar to refresh questions
 	// TODO: label alignment shouldn't change with/without tooltip
@@ -263,11 +287,50 @@
 		<IconButton name="arrow-right" label="redo" />
 	</div>
 	<div class="group">
-		<IconButton name="settings" label="setting" />
+		<sl-dropdown>
+			<sl-button ariant="default" size="small" circle slot="trigger">
+				<sl-icon name="gear" label="Settings" />
+			</sl-button>
+			<sl-menu on:sl-select={handleSettings}>
+				<sl-menu-item value="collapseNegatives" checked={options.collapseNegatives}
+					>Collapse negatives</sl-menu-item
+				>
+				<sl-menu-item value="collapseNegatives" checked={options.collapseNegatives}
+					>Order expressions lexically</sl-menu-item
+				>
+				<sl-menu-item value="lexicalOrder" checked={options.lexicalOrder}
+					>Order Lexically</sl-menu-item
+				>
+				<sl-menu-item value="printZeroAdd" checked={options.printZeroAdd}
+					>Print multiplicative identity</sl-menu-item
+				>
+				<sl-menu-item value="printOneMult" checked={options.printOneMult}
+					>Print additive identity</sl-menu-item
+				>
+				<sl-menu-item value="negativeParenthesis" checked={options.negativeParenthesis}
+					>Wrap negatives</sl-menu-item
+				>
+				<sl-menu-item>Multiplication symbol</sl-menu-item>
+			</sl-menu>
+		</sl-dropdown>
 		<IconButton name="chevrons-left" label="collapse sidebar" />
 	</div>
 </div>
-<form bind:this={problemContainer} on:submit|preventDefault={generateProblem} class="problem">
+<div />
+
+<form
+	bind:this={problemContainer}
+	on:submit|preventDefault={() =>
+		generateProblem({
+			collapseNegatives: true,
+			lexicalOrder: false,
+			multSymbol: '\\cdot',
+			negativeParenthesis: true,
+			printOneMult: false,
+			printZeroAdd: false
+		})}
+	class="problem"
+>
 	<div
 		class="expression"
 		class:focused={focusedIndex === 0}

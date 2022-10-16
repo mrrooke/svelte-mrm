@@ -17,15 +17,24 @@
 	import Button from '$lib/components/Button.svelte';
 	import Problem from '$lib/components/Problem.svelte';
 	import Questions from '$lib/components/Questions.svelte';
+	import type { ProblemOptions } from '$lib/components/types';
 	import { onMount } from 'svelte';
 
 	let questions: string[] = [];
 	let activeQuestions: string[];
 	let width = browser ? window.innerWidth : 1000;
 	let offset = false;
-	let generateProblem: () => void;
+	let generateProblem: (options: ProblemOptions) => void;
 	let changed = true;
 	let valid = false;
+	let options: ProblemOptions = {
+		collapseNegatives: true,
+		lexicalOrder: false,
+		multSymbol: '\\cdot',
+		negativeParenthesis: true,
+		printOneMult: false,
+		printZeroAdd: false
+	};
 
 	$: activeQuestions = questions.sort(() => 0.5 - Math.random()).slice(0, 10);
 	$: mobile = width < 768;
@@ -47,10 +56,15 @@
 <div class="outer">
 	<div class="viewport" class:offset>
 		<div class="constraints">
-			<Problem bind:questions bind:valid bind:generateProblem bind:changed />
+			<Problem bind:questions bind:valid bind:generateProblem bind:changed bind:options />
 		</div>
 		<div class="questions">
-			<Questions bind:changed {valid} generate={generateProblem} bind:questions={activeQuestions} />
+			<Questions
+				bind:changed
+				{valid}
+				generate={() => generateProblem(options)}
+				bind:questions={activeQuestions}
+			/>
 		</div>
 	</div>
 	{#if mobile}

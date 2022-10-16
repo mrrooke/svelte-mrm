@@ -26,6 +26,7 @@ func generate(_ js.Value, args []js.Value) any {
 	}
 
 	latex := args[0]
+
 	if latex.IsNull() || latex.IsUndefined() {
 		return newError("argument is null or undefined")
 	}
@@ -94,6 +95,7 @@ func input(_ js.Value, args []js.Value) any {
 	if len(args) != 1 {
 		return newError("error: input(source) takes a single argument")
 	}
+
 	latex := args[0]
 	if latex.IsNull() || latex.IsUndefined() {
 		return newError("latex input is null or undefined")

@@ -4,6 +4,19 @@
 	import SkipLink from '$lib/components/SkipLink.svelte';
 
 	import '../styles/main.css';
+	import { onMount } from 'svelte';
+
+	import '@shoelace-style/shoelace/dist/themes/light.css';
+	import '@shoelace-style/shoelace/dist/themes/dark.css';
+
+	onMount(async () => {
+		await import('@shoelace-style/shoelace/dist/components/button/button');
+		await import('@shoelace-style/shoelace/dist/components/dropdown/dropdown');
+		await import('@shoelace-style/shoelace/dist/components/menu/menu');
+		await import('@shoelace-style/shoelace/dist/components/menu-item/menu-item');
+		await import('@shoelace-style/shoelace/dist/components/divider/divider');
+		await import('@shoelace-style/shoelace/dist/components/icon/icon');
+	});
 </script>
 
 <SkipLink href="#main" />

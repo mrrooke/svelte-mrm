@@ -17,6 +17,7 @@
 		await import('@shoelace-style/shoelace/dist/components/divider/divider');
 		await import('@shoelace-style/shoelace/dist/components/icon/icon');
 	});
+	export const ssr = false;
 </script>
 
 <SkipLink href="#main" />

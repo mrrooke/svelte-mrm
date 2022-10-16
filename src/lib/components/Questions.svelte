@@ -30,6 +30,7 @@
 			class="overlay"
 			transition:fade={{ duration: 200, easing: quintOut }}
 			on:click={closeDialog}
+			on:keydown={closeDialog}
 		/>
 		<div class="dialog" transition:fade={{ duration: 200, easing: quintOut }}>
 			<header>
@@ -107,8 +108,8 @@
 		z-index: var(--layer-4);
 		display: grid;
 		align-items: start;
-		background-color: var(--panel);
 		border-radius: var(--border-size-3);
+		background-color: var(--panel);
 		box-shadow: var(--shadow-3);
 		grid-template-rows: auto 1fr auto;
 		max-block-size: min(80vw, 100%);

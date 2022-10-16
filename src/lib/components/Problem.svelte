@@ -22,7 +22,6 @@
 	import Domain from './Domain.svelte';
 	import IconButton from './IconButton.svelte';
 	import Tooltip from './Tooltip.svelte';
-	import type { MenuSelectEventDetail } from '@shoelace-style/shoelace/dist/components/menu/menu';
 
 	export let questions: string[] = [];
 	export let changed = false;
@@ -247,34 +246,6 @@
 		focusMF();
 	});
 
-	function handleSettings(e: CustomEvent<MenuSelectEventDetail>) {
-		const item = e.detail.item;
-		switch (item.value) {
-			case 'collapseNegatives':
-				options.collapseNegatives = !item.checked;
-				item.checked = !item.checked;
-				break;
-			case 'negativeParenthesis':
-				options.negativeParenthesis = !item.checked;
-				item.checked = !item.checked;
-				break;
-			case 'printOneMult':
-				options.printOneMult = !item.checked;
-				item.checked = !item.checked;
-				break;
-			case 'printZeroAdd':
-				options.printZeroAdd = !item.checked;
-				item.checked = !item.checked;
-				break;
-			case 'lexicalOrder':
-				options.lexicalOrder = !item.checked;
-				item.checked = !item.checked;
-				break;
-			default:
-				break;
-		}
-	}
-
 	// TODO: a long expression will break out of the sidebar
 	// TODO: enter or similar to refresh questions
 	// TODO: label alignment shouldn't change with/without tooltip
@@ -287,32 +258,6 @@
 		<IconButton name="arrow-right" label="redo" />
 	</div>
 	<div class="group">
-		<sl-dropdown>
-			<sl-button ariant="default" size="small" circle slot="trigger">
-				<sl-icon name="gear" label="Settings" />
-			</sl-button>
-			<sl-menu on:sl-select={handleSettings}>
-				<sl-menu-item value="collapseNegatives" checked={options.collapseNegatives}
-					>Collapse negatives</sl-menu-item
-				>
-				<sl-menu-item value="collapseNegatives" checked={options.collapseNegatives}
-					>Order expressions lexically</sl-menu-item
-				>
-				<sl-menu-item value="lexicalOrder" checked={options.lexicalOrder}
-					>Order Lexically</sl-menu-item
-				>
-				<sl-menu-item value="printZeroAdd" checked={options.printZeroAdd}
-					>Print multiplicative identity</sl-menu-item
-				>
-				<sl-menu-item value="printOneMult" checked={options.printOneMult}
-					>Print additive identity</sl-menu-item
-				>
-				<sl-menu-item value="negativeParenthesis" checked={options.negativeParenthesis}
-					>Wrap negatives</sl-menu-item
-				>
-				<sl-menu-item>Multiplication symbol</sl-menu-item>
-			</sl-menu>
-		</sl-dropdown>
 		<IconButton name="chevrons-left" label="collapse sidebar" />
 	</div>
 </div>
@@ -403,7 +348,12 @@
 			animate:flip={{ duration: 200 }}
 			out:scale={{ duration: 600, easing: quintOut }}
 		>
-			<span class="label" on:click|stopPropagation={focusMF} class:active={constraint.active}>
+			<span
+				class="label"
+				on:click|stopPropagation={focusMF}
+				on:keydown|stopPropagation={focusMF}
+				class:active={constraint.active}
+			>
 				{#if constraint.active}
 					{index + domains.length + 1}
 				{/if}

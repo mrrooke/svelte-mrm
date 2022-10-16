@@ -30,6 +30,9 @@
 	on:click={() => {
 		instance?.innerFields[0].focus();
 	}}
+	on:keydown={() => {
+		instance?.innerFields[0].focus();
+	}}
 >
 	<StaticMf
 		config={{

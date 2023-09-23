@@ -9,6 +9,7 @@ node_modules
 /static/main.wasm
 /static/mathquill.min.js
 /static/wasm_exec.js
+/src/mathquill.d.ts
 
 # Ignore files for PNPM, NPM and YARN
 pnpm-lock.yaml

@@ -38,7 +38,7 @@
 	$: activeQuestions = questions.sort(() => 0.5 - Math.random()).slice(0, 10);
 	$: mobile = width < 768;
 
-	onMount(async () => {
+	onMount(() => {
 		const go = new Go();
 		WebAssembly.instantiateStreaming(fetch('./main.wasm'), go.importObject).then((result) => {
 			go.run(result.instance);
@@ -55,7 +55,7 @@
 <div class="outer">
 	<div class="viewport" class:offset>
 		<div class="constraints">
-			<Problem bind:questions bind:valid bind:generateProblem bind:changed bind:options />
+			<Problem bind:questions bind:valid bind:generateProblem bind:changed />
 		</div>
 		<div class="questions">
 			<Questions

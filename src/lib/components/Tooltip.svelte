@@ -120,8 +120,6 @@
 	class:visible
 	class:top={position === 'top'}
 	class:bottom={position === 'bottom'}
-	on:mouseenter={open}
-	on:mouseleave={hide}
 	data-tooltip-position={position}
 >
 	<button
@@ -131,6 +129,8 @@
 		aria-describedby="description"
 		data-tooltip-trigger
 		data-state={visible ? 'open' : 'closed'}
+		on:mouseenter={open}
+		on:mouseleave={hide}
 		on:focus={open}
 		on:blur={hide}
 	>
@@ -150,9 +150,9 @@
 		align-items: center;
 		padding: var(--size-1);
 		border: none;
+		border-radius: var(--radius-1);
 		appearance: none;
 		background: none;
-		border-radius: var(--radius-1);
 		color: var(--button-color);
 		cursor: pointer;
 		font-size: inherit;
@@ -215,9 +215,9 @@
 		min-width: max-content;
 		max-width: 10em;
 		padding: 0.5em 1em;
+		border-radius: var(--border-0);
 		margin: 0;
 		background: var(--transparent-panel);
-		border-radius: var(--border-0);
 		box-shadow: var(--shadow-light);
 		color: var(--lo-contrast);
 		font-size: var(--font-size-0);

@@ -3,10 +3,9 @@
 <script lang="ts">
 	import { quintOut } from 'svelte/easing';
 
+	import { Cross, CrossIcon, RefreshCcw } from 'lucide-svelte';
 	import { fade } from 'svelte/transition';
 	import Button from './Button.svelte';
-	import Icon from './Icon.svelte';
-	import IconButton from './IconButton.svelte';
 	import Katex from './Katex.svelte';
 
 	export let generate: () => void;
@@ -28,14 +27,22 @@
 	<div class="base">
 		<div
 			class="overlay"
+			tabindex="-1"
+			aria-hidden="true"
 			transition:fade={{ duration: 200, easing: quintOut }}
 			on:click={closeDialog}
-			on:keydown={closeDialog}
+			on:keydown={(event) => {
+				if (event.key === 'Enter' || event.key === ' ') {
+					closeDialog();
+				}
+			}}
 		/>
 		<div class="dialog" transition:fade={{ duration: 200, easing: quintOut }}>
 			<header>
 				<h3>Update questions</h3>
-				<IconButton on:click={closeDialog} name="x" label="close dialog" />
+				<Button on:click={closeDialog}>
+					<Cross />
+				</Button>
 			</header>
 			<section>
 				<p>Your constraints have changed.</p>
@@ -44,11 +51,11 @@
 			<footer>
 				<Button on:click={closeDialog}>
 					cancel
-					<Icon name="x-circle" slot="suffix" />
+					<CrossIcon slot="suffix" />
 				</Button>
 				<Button type="submit" on:click={generate} disabled={!valid}>
 					update
-					<Icon name="refresh-cw" slot="suffix" />
+					<RefreshCcw slot="suffix" />
 				</Button>
 			</footer>
 		</div>

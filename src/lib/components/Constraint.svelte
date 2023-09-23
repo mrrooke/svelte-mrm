@@ -1,9 +1,10 @@
 <svelte:options immutable={true} />
 
 <script lang="ts">
+	import { Cross } from 'lucide-svelte';
 	import { onMount } from 'svelte';
+	import Button from './Button.svelte';
 	import EditableMF from './EditableMF.svelte';
-	import IconButton from './IconButton.svelte';
 	import type { Constraint } from './types';
 
 	export let constraint: Constraint,
@@ -17,8 +18,9 @@
 
 	let expression = '',
 		err: string | undefined = undefined,
-		symbols: string[] = [],
-		focusMF: () => MathQuill.v3.EditableMathQuill;
+		symbols: string[] = [];
+
+	let focusMF: () => MathQuill.v3.EditableMathQuill;
 
 	$: updateConstraint({ ...constraint, expression, err, symbols });
 
@@ -47,14 +49,14 @@
 	on:edit={() => updateConstraint({ ...constraint, edited: true })}
 />
 {#if constraint.active}
-	<IconButton
+	<Button
 		style="flex-shrink: 0;align-self: flex-start;margin-top: 2px; margin-right:2px;margin-left: auto; "
-		name="x"
-		label="remove domain"
 		on:click={(e) => {
 			e.stopPropagation();
 			e.preventDefault();
 			handleDelete(constraint);
 		}}
-	/>
+	>
+		<Cross />
+	</Button>
 {/if}

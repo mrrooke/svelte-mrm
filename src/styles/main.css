@@ -143,7 +143,17 @@ h6 {
 }
 
 @media (prefers-color-scheme: dark) {
-	:where(textarea, select, input:not(button, button[type], input[type='button'], input[type='submit'], input[type='reset'])) {
+	:where(
+			textarea,
+			select,
+			input:not(
+					button,
+					button[type],
+					input[type='button'],
+					input[type='submit'],
+					input[type='reset']
+				)
+		) {
 		background-color: #171a1c;
 	}
 }

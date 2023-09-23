@@ -1,4 +1,17 @@
-<script context="module" lang="ts">
+<script lang="ts">
+	import EditableMF from './EditableMF.svelte';
+	import Katex from './Katex.svelte';
+
+	import { onMount, tick } from 'svelte';
+	import { flip } from 'svelte/animate';
+	import { quintOut } from 'svelte/easing';
+	import { fade, scale } from 'svelte/transition';
+	import Constraint from './Constraint.svelte';
+	import Domain from './Domain.svelte';
+	import Tooltip from './Tooltip.svelte';
+
+	import { AlertCircle, ArrowLeft, ArrowRight, ChevronLeft, Plus } from 'lucide-svelte';
+	import Button from './Button.svelte';
 	import type {
 		Constraint as ConstraintType,
 		DomainType,
@@ -6,30 +19,13 @@
 		ProblemRequest,
 		ProblemResponse
 	} from './types';
-</script>
-
-<script lang="ts">
-	import EditableMF from './EditableMF.svelte';
-	import Icon from './Icon.svelte';
-	import Katex from './Katex.svelte';
-
-	import { tick } from 'svelte';
-	import { flip } from 'svelte/animate';
-	import { quintOut } from 'svelte/easing';
-	import { onMount } from 'svelte/internal';
-	import { fade, scale } from 'svelte/transition';
-	import Constraint from './Constraint.svelte';
-	import Domain from './Domain.svelte';
-	import IconButton from './IconButton.svelte';
-	import Tooltip from './Tooltip.svelte';
 
 	export let questions: string[] = [];
 	export let changed = false;
 	export let valid: boolean;
-	export let options: ProblemOptions;
 
 	let expression: string;
-	let symbols: string[] = [];
+	let symbols: Array<string> = [];
 	let domains: DomainType[] = [];
 	let focusedIndex: number | undefined = undefined;
 	let constraints: ConstraintType[] = [
@@ -54,10 +50,8 @@
 	$: symbols, constraints.forEach((c) => updateConstraint({ ...c }));
 
 	function handleBlur(e: CustomEvent<FocusEvent> | FocusEvent) {
-		if (e instanceof CustomEvent<FocusEvent>) {
-			if (e.detail && e.detail.target instanceof HTMLElement) {
-				lastFocused = e.detail.target;
-			}
+		if (e instanceof CustomEvent && e.detail && e.detail.target instanceof HTMLElement) {
+			lastFocused = e.detail.target;
 		} else if (e instanceof FocusEvent && e.target instanceof HTMLElement) {
 			lastFocused = e.target;
 		}
@@ -252,13 +246,15 @@
 </script>
 
 <div class="toolbar">
-	<IconButton name="plus" label="add expression" />
+	<Button>
+		<Plus />
+	</Button>
 	<div class="group">
-		<IconButton name="arrow-left" label="undo" />
-		<IconButton name="arrow-right" label="redo" />
+		<ArrowLeft />
+		<ArrowRight />
 	</div>
 	<div class="group">
-		<IconButton name="chevrons-left" label="collapse sidebar" />
+		<ChevronLeft />
 	</div>
 </div>
 <div />
@@ -289,8 +285,7 @@
 			<Katex math="f(x)" />
 			{#if err !== undefined}
 				<Tooltip label={err}>
-					<Icon
-						name="alert-circle"
+					<AlertCircle
 						stroke={focusedIndex === 0 ? 'currentColor' : 'var(--red11)'}
 						strokeWidth="3px"
 					/>
@@ -319,11 +314,7 @@
 				{index + 1}
 				{#if invalid}
 					<Tooltip label={domain.err ? domain.err : ''}>
-						<Icon
-							name="alert-circle"
-							stroke={focused ? 'currentColor' : 'var(--red11)'}
-							strokeWidth="3px"
-						/>
+						<AlertCircle stroke={focused ? 'currentColor' : 'var(--red11)'} strokeWidth="3px" />
 					</Tooltip>
 				{/if}
 			</span>
@@ -340,7 +331,6 @@
 	{#each constraints as constraint, index (constraint.id)}
 		{@const invalid = constraint.edited && constraint.err !== undefined}
 		{@const focused = focusedIndex === index + domains.length + 1}
-
 		<div
 			class="expression"
 			class:focused
@@ -348,7 +338,7 @@
 			animate:flip={{ duration: 200 }}
 			out:scale={{ duration: 600, easing: quintOut }}
 		>
-			<span
+			<button
 				class="label"
 				on:click|stopPropagation={focusMF}
 				on:keydown|stopPropagation={focusMF}
@@ -360,15 +350,11 @@
 				{#if invalid}
 					<div in:fade={{ delay: 100, duration: 200 }}>
 						<Tooltip label={constraint.err ? constraint.err : ''}>
-							<Icon
-								name="alert-circle"
-								strokeWidth="3px"
-								stroke={focused ? 'currentColor' : 'var(--red11)'}
-							/>
+							<AlertCircle strokeWidth="3px" stroke={focused ? 'currentColor' : 'var(--red11)'} />
 						</Tooltip>
 					</div>
 				{/if}
-			</span>
+			</button>
 			<Constraint
 				bind:constraint
 				{updateConstraint}
@@ -403,7 +389,9 @@
 		border: var(--expression-border-width) solid var(--expression-border-color);
 		cursor: pointer;
 		gap: 1rem;
-		transition: 0.1s box-shadow ease, 0.1s border ease;
+		transition:
+			0.1s box-shadow ease,
+			0.1s border ease;
 	}
 
 	.focused {
@@ -423,6 +411,7 @@
 		flex-shrink: 0;
 		align-items: center;
 		justify-content: center;
+		border: none;
 		border-right: var(--expression-border-width) solid var(--label-color);
 		background-color: var(--label-color);
 		font-size: var(--font-size-1);

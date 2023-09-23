@@ -11,8 +11,7 @@
 </script>
 
 <script lang="ts">
-	import Icon from './Icon.svelte';
-
+	import { Loader2 } from 'lucide-svelte';
 	export let element: HTMLButtonElement | HTMLAnchorElement | undefined = undefined,
 		style: string | undefined = undefined,
 		variant: ButtonVariant = 'default',
@@ -32,7 +31,7 @@
 		type: 'button' | 'submit' | 'reset' = 'button';
 
 	// focus and blur functions
-	export function focus(options?: FocusOptions) {
+	export function focus(options?: { preventScroll?: boolean }) {
 		element && element.focus(options);
 	}
 
@@ -116,7 +115,7 @@
 		{/if}
 		{#if loading}
 			<span class="loading">
-				<Icon name="loading" />
+				<Loader2 />
 			</span>
 		{/if}
 	</button>
@@ -145,8 +144,8 @@
 		align-items: center;
 		justify-content: center;
 		border: none;
-		background: var(--button-background);
 		border-radius: var(--button-radius);
+		background: var(--button-background);
 		color: var(--button-color);
 		cursor: pointer;
 		font: inherit;

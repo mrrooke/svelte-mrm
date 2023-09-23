@@ -11,7 +11,7 @@
 	let dispatch = createEventDispatcher();
 	let instance: MathQuill.v3.BaseMathQuill | undefined;
 
-	function onEditDomain(_: MathQuill.v3.BaseMathQuill) {
+	function onEditDomain() {
 		const fields = instance?.innerFields;
 		if (fields && fields.length === 1) {
 			const symbols = fields[0].latex().split(',');
@@ -25,6 +25,7 @@
 </script>
 
 <div
+	aria-hidden="true"
 	class="content"
 	on:focusin={() => handleFocus(domain)}
 	on:click={() => {

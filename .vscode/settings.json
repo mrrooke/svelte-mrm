@@ -2,5 +2,12 @@
 	"go.toolsEnvVars": {
 		"GOOS": "js",
 		"GOARCH": "wasm"
-	}
+	},
+	"eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact", "svelte"],
+	"[svelte]": {
+		"editor.defaultFormatter": "svelte.svelte-vscode"
+	},
+	"editor.formatOnSave": true,
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"gopls": {}
 }

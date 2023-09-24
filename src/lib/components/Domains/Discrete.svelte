@@ -13,7 +13,7 @@
 
 	function onEditDomain() {
 		const fields = instance?.innerFields;
-		if (fields && fields.length === 1) {
+		if (fields && fields.length === 1 && fields[0]) {
 			const symbols = fields[0].latex().split(',');
 			updateDomain({ ...domain, symbols });
 		} else {
@@ -29,16 +29,17 @@
 	class="content"
 	on:focusin={() => handleFocus(domain)}
 	on:click={() => {
-		instance?.innerFields[0].focus();
-	}}
-	on:keydown={() => {
-		instance?.innerFields[0].focus();
+		if (instance?.innerFields[0]) {
+			instance?.innerFields[0].focus();
+		}
 	}}
 >
 	<StaticMf
 		config={{
 			handlers: {
-				downOutOf: () => dispatch('down'),
+				downOutOf: () => {
+					dispatch('down');
+				},
 				upOutOf: () => dispatch('up'),
 				edit: onEditDomain
 			}

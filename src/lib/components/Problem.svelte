@@ -43,7 +43,7 @@
 		expression !== '' &&
 		constraints.reduce((prev, curr) => prev && curr.err === undefined, true) &&
 		domains.reduce((prev, curr) => prev && curr.err === undefined, true);
-	$: if (constraints.slice(-1)[0].active) {
+	$: if (constraints.slice(-1)[0]?.active) {
 		addConstraint('');
 	}
 	$: expression, domains, constraints, (changed = true);
@@ -66,10 +66,11 @@
 	}
 
 	function handleMoveDown() {
+		console.log('handled');
 		const fields = getFields();
 		const idx = fields.findIndex((mf) => mf === document.activeElement);
 		if (idx < fields.length - 1) {
-			fields[idx + 1].focus();
+			fields[idx + 1]?.focus();
 		}
 		if (idx === fields.length - 2) {
 			addConstraint('');
@@ -80,7 +81,7 @@
 		const fields = getFields();
 		const idx = fields.findIndex((mf) => mf === document.activeElement);
 		if (idx > 0) {
-			fields[idx - 1].focus();
+			fields[idx - 1]?.focus();
 		}
 	}
 
@@ -89,10 +90,10 @@
 			const fields = getFields();
 			const idx = fields.findIndex((mf) => mf === document.activeElement);
 			// ensure that a deleted field is not navigable
-			fields[idx].setAttribute('data-delete', 'true');
+			fields[idx]?.setAttribute('data-delete', 'true');
 			removeConstraint(constraint);
 			await tick();
-			fields[idx - 1].focus();
+			fields[idx - 1]?.focus();
 		}
 	}
 
@@ -111,7 +112,7 @@
 		removeConstraint(constraint);
 		await tick();
 		if (focused) {
-			fields[fieldIndex - 1].focus();
+			fields[fieldIndex - 1]?.focus();
 		} else {
 			lastFocused.focus();
 		}
@@ -211,8 +212,11 @@
 
 	function removeDomain(domain: DomainType) {
 		const idx = domains.findIndex((d) => d.variable === domain.variable);
-		domains[idx].active = false;
-		domains = domains;
+		const d = domains[idx];
+		if (d) {
+			d.active = false;
+		}
+		domains = domains; // trigger reactivity
 	}
 
 	export function generateProblem(options: ProblemOptions) {
@@ -324,7 +328,10 @@
 				{updateDomain}
 				on:delete={() => removeDomain(domain)}
 				on:up={handleMoveUp}
-				on:down={handleMoveDown}
+				on:down={(e) => {
+					console.log(e);
+					handleMoveDown();
+				}}
 			/>
 		</div>
 	{/each}

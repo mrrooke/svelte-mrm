@@ -2,6 +2,5 @@ module github.com/mrrooke/wasm
 
 go 1.21
 
-require github.com/mrrooke/calc v0.0.0-20220917134936-d530c0433c9b
+require github.com/mrrooke/calc v0.0.0-20230928173909-c646d3015f09
 
-require golang.org/x/exp v0.0.0-20220916125017-b168a2c6b86b // indirect

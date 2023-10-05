@@ -3,7 +3,7 @@
 <script lang="ts">
 	import { quintOut } from 'svelte/easing';
 
-	import { Cross, CrossIcon, RefreshCcw } from 'lucide-svelte';
+	import { RefreshCcw, X } from 'lucide-svelte';
 	import { fade } from 'svelte/transition';
 	import Button from './Button.svelte';
 	import Katex from './Katex.svelte';
@@ -41,7 +41,7 @@
 			<header>
 				<h3>Update questions</h3>
 				<Button on:click={closeDialog}>
-					<Cross />
+					<X />
 				</Button>
 			</header>
 			<section>
@@ -51,7 +51,7 @@
 			<footer>
 				<Button on:click={closeDialog}>
 					cancel
-					<CrossIcon slot="suffix" />
+					<X slot="suffix" />
 				</Button>
 				<Button type="submit" on:click={generate} disabled={!valid}>
 					update
@@ -90,10 +90,7 @@
 
 	.base {
 		position: absolute;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
+		inset: 0;
 		display: flex;
 		align-items: flex-start;
 		justify-content: center;
@@ -103,10 +100,7 @@
 	.overlay {
 		position: absolute;
 		z-index: 2;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
+		inset: 0;
 		backdrop-filter: blur(3px);
 		cursor: pointer;
 	}
@@ -124,7 +118,7 @@
 		min-inline-size: var(--size-content-2);
 	}
 
-	@media (max-width: 768px) {
+	@media (width <= 768px) {
 		.dialog {
 			min-inline-size: 100%;
 		}

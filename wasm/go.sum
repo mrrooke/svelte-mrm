@@ -2,5 +2,9 @@ github.com/mrrooke/calc v0.0.0-20221021083043-005503def4f0 h1:wYGxLa+irsLlIj5hFj
 github.com/mrrooke/calc v0.0.0-20221021083043-005503def4f0/go.mod h1:zhx4ZmnjkhZ8kvfGEcZMRRwwcjSE67sQZArSESDB8YA=
 github.com/mrrooke/calc v0.0.0-20230928173909-c646d3015f09 h1:lfib2EvcG3k3pH71dy+J2OcMz6rLJyMMXiOoCgNbR0I=
 github.com/mrrooke/calc v0.0.0-20230928173909-c646d3015f09/go.mod h1:xZ9rzrLh4C05vmyhXvJ8Nv/GFn99uOcmvXOG7x9v/Ss=
+github.com/mrrooke/calc v0.0.0-20231005184117-c599d3e2d4e3 h1:3lRTEF32SS41dk4EYP+ho3FaVHC+3YS6DyVAvoBmiPc=
+github.com/mrrooke/calc v0.0.0-20231005184117-c599d3e2d4e3/go.mod h1:xZ9rzrLh4C05vmyhXvJ8Nv/GFn99uOcmvXOG7x9v/Ss=
+github.com/mrrooke/calc v0.0.0-20231005190811-e4171e786757 h1:XLOTxg7KNT6JjzLoL7+yl6zLeg5rP9ujQDvpyocEnIg=
+github.com/mrrooke/calc v0.0.0-20231005190811-e4171e786757/go.mod h1:xZ9rzrLh4C05vmyhXvJ8Nv/GFn99uOcmvXOG7x9v/Ss=
 golang.org/x/exp v0.0.0-20230905200255-921286631fa9 h1:GoHiUyI/Tp2nVkLI2mCxVkOjsbSXD66ic0XW0js0R9g=
 golang.org/x/exp v0.0.0-20230905200255-921286631fa9/go.mod h1:S2oDrQGGwySpoQPVqRShND87VCbxmc6bL1Yd2oYrm6k=

@@ -1,7 +1,7 @@
 <svelte:options immutable={true} />
 
 <script lang="ts">
-	import { Cross } from 'lucide-svelte';
+	import { X } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import Button from './Button.svelte';
 	import EditableMF from './EditableMF.svelte';
@@ -57,6 +57,6 @@
 			handleDelete(constraint);
 		}}
 	>
-		<Cross />
+		<X />
 	</Button>
 {/if}

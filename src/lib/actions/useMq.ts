@@ -7,7 +7,7 @@ const defaultConfig: MathQuill.v3.Config = {
 	charsThatBreakOutOfSupSub: '+-=<>',
 	autoSubscriptNumerals: true,
 	autoCommands: 'pi theta sqrt sum in notin neq',
-	autoOperatorNames: 'sin cos tan NotEqual Prime Coprime Composite Even Odd CommonFactors',
+	autoOperatorNames: 'sin cos tan NotEqual Prime Coprime Composite Even Odd CommonFactors Square',
 	maxDepth: 10
 };
 

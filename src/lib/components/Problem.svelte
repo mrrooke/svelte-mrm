@@ -191,6 +191,9 @@
 	}
 
 	function checkVariables(constraintSymbols: string[], symbols: string[]): string | undefined {
+		if (constraintSymbols.length === 0) {
+			return 'constraints must contain at least one variable';
+		}
 		const undefinedSymbols: string[] = [];
 		constraintSymbols.forEach((s) => {
 			if (!symbols.includes(s)) {
@@ -430,9 +433,8 @@
 		display: flex;
 		height: var(--size-8);
 		flex-wrap: nowrap;
-		align-content: center;
+		place-content: center space-between;
 		align-items: center;
-		justify-content: space-between;
 		padding: var(--size-1);
 		border-top: solid 1px var(--mauve6);
 		border-right: solid 1px var(--mauve6);

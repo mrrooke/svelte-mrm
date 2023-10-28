@@ -38,11 +38,17 @@
 	$: activeQuestions = questions.sort(() => 0.5 - Math.random()).slice(0, 10);
 	$: mobile = width < 768;
 
+	let isLoaded = false;
+
 	onMount(() => {
 		const go = new Go();
-		WebAssembly.instantiateStreaming(fetch('./main.wasm'), go.importObject).then((result) => {
-			go.run(result.instance);
-		});
+		WebAssembly.instantiateStreaming(fetch('./main.wasm'), go.importObject)
+			.then((result) => {
+				go.run(result.instance);
+			})
+			.then(() => {
+				isLoaded = true;
+			});
 	});
 </script>
 
@@ -55,15 +61,19 @@
 <div class="outer">
 	<div class="viewport" class:offset>
 		<div class="constraints">
-			<Problem bind:questions bind:valid bind:generateProblem bind:changed />
+			{#if isLoaded}
+				<Problem bind:questions bind:valid bind:generateProblem bind:changed />
+			{/if}
 		</div>
 		<div class="questions">
-			<Questions
-				bind:changed
-				{valid}
-				generate={() => generateProblem(options)}
-				bind:questions={activeQuestions}
-			/>
+			{#if isLoaded}
+				<Questions
+					bind:changed
+					{valid}
+					generate={() => generateProblem(options)}
+					bind:questions={activeQuestions}
+				/>
+			{/if}
 		</div>
 	</div>
 	{#if mobile}
@@ -96,7 +106,7 @@
 		transform: translate(-50%, 0);
 	}
 
-	@media (min-width: 768px) {
+	@media (width >= 768px) {
 		.outer {
 			padding: 0;
 		}

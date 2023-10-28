@@ -16,11 +16,14 @@
 		handleFocus: (constraint: Constraint) => void,
 		handleBlur: (e: FocusEvent | CustomEvent<FocusEvent>) => void;
 
+	export const setLatex = (latex?: string) => mf.setLatex(latex);
+
 	let expression = '',
 		err: string | undefined = undefined,
 		symbols: string[] = [];
 
 	let focusMF: () => MathQuill.v3.EditableMathQuill;
+	let mf: EditableMF;
 
 	$: updateConstraint({ ...constraint, expression, err, symbols });
 
@@ -34,6 +37,7 @@
 </script>
 
 <EditableMF
+	bind:this={mf}
 	bind:expression
 	bind:err
 	bind:symbols

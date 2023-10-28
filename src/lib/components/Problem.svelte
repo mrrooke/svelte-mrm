@@ -10,7 +10,9 @@
 	import Domain from './Domain.svelte';
 	import Tooltip from './Tooltip.svelte';
 
-	import { AlertCircle, ArrowLeft, ArrowRight, ChevronLeft, Plus } from 'lucide-svelte';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
+	import { AlertCircle, ArrowLeft, ArrowRight, ChevronLeft, Save } from 'lucide-svelte';
 	import Button from './Button.svelte';
 	import type {
 		Constraint as ConstraintType,
@@ -24,19 +26,53 @@
 	export let changed = false;
 	export let valid: boolean;
 
+	let nextConstraintId = 0;
 	let expression: string;
 	let symbols: Array<string> = [];
 	let domains: DomainType[] = [];
 	let focusedIndex: number | undefined = undefined;
 	let constraints: ConstraintType[] = [
-		{ expression: '', id: 0, active: false, err: undefined, edited: false, symbols: [] }
+		{
+			expression: '',
+			id: nextConstraintId++,
+			active: false,
+			err: undefined,
+			edited: false,
+			symbols: []
+		}
 	];
 	let err: string | undefined = undefined;
 	let focusMF: () => MathQuill.v3.EditableMathQuill;
 	let problemContainer: HTMLFormElement;
 	let lastFocused: HTMLElement;
+	let problemMf: EditableMF;
+	let constraintFields: Record<number, Constraint> = {};
 
-	$: newConstraintId = constraints.length ? Math.max(...constraints.map((t) => t.id)) + 1 : 1;
+	onMount(async () => {
+		$page.url.searchParams.has('expression') &&
+			problemMf?.setLatex($page.url.searchParams.get('expression')!);
+		$page.url.searchParams.has('constraints') &&
+			$page.url.searchParams
+				.get('constraints')!
+				.split(',')
+				.forEach(async (s, i) => {
+					const id = nextConstraintId++;
+					constraints[i] = {
+						active: true,
+						edited: false,
+						expression: s,
+						id,
+						symbols: [],
+						err: undefined
+					};
+					constraints = constraints;
+					await tick();
+					constraintFields[id]?.setLatex(s);
+				});
+
+		await tick();
+	});
+
 	$: domains = updateDomains(domains, symbols);
 	$: valid =
 		err === undefined &&
@@ -66,7 +102,6 @@
 	}
 
 	function handleMoveDown() {
-		console.log('handled');
 		const fields = getFields();
 		const idx = fields.findIndex((mf) => mf === document.activeElement);
 		if (idx < fields.length - 1) {
@@ -137,7 +172,7 @@
 				if (domainType === 'integer') {
 					domains.push({
 						variable,
-						low: -10,
+						low: 0,
 						high: 10,
 						type: domainType,
 						active: true,
@@ -166,7 +201,14 @@
 	function addConstraint(expression: string) {
 		constraints = [
 			...constraints,
-			{ expression, id: newConstraintId, active: false, err: undefined, edited: false, symbols: [] }
+			{
+				expression,
+				id: nextConstraintId++,
+				active: false,
+				err: undefined,
+				edited: false,
+				symbols: []
+			}
 		];
 	}
 
@@ -191,9 +233,11 @@
 	}
 
 	function checkVariables(constraintSymbols: string[], symbols: string[]): string | undefined {
+		// If there are no symbols in the constraint, it is invalid
 		if (constraintSymbols.length === 0) {
 			return 'constraints must contain at least one variable';
 		}
+		// If there are symbols in the constraint that are not in the expression, it is invalid
 		const undefinedSymbols: string[] = [];
 		constraintSymbols.forEach((s) => {
 			if (!symbols.includes(s)) {
@@ -253,8 +297,22 @@
 </script>
 
 <div class="toolbar">
-	<Button>
-		<Plus />
+	<Button
+		on:click={() => {
+			goto(
+				'?expression=' +
+					encodeURIComponent(expression) +
+					'&constraints=' +
+					encodeURIComponent(
+						constraints
+							.filter((c) => c.expression !== '')
+							.map((c) => c.expression)
+							.join(',')
+					)
+			);
+		}}
+	>
+		<Save />
 	</Button>
 	<div class="group">
 		<ArrowLeft />
@@ -310,6 +368,7 @@
 					err = 'expression cannot be empty';
 				}
 			}}
+			bind:this={problemMf}
 			bind:focus={focusMF}
 		/>
 	</div>
@@ -331,10 +390,7 @@
 				{updateDomain}
 				on:delete={() => removeDomain(domain)}
 				on:up={handleMoveUp}
-				on:down={(e) => {
-					console.log(e);
-					handleMoveDown();
-				}}
+				on:down={handleMoveDown}
 			/>
 		</div>
 	{/each}
@@ -366,6 +422,7 @@
 				{/if}
 			</button>
 			<Constraint
+				bind:this={constraintFields[constraint.id]}
 				bind:constraint
 				{updateConstraint}
 				{handleBackspace}

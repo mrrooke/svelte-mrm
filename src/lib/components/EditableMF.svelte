@@ -12,9 +12,11 @@
 	export let style = '';
 	export let config: MathQuill.v3.Config = {};
 	export let handlers: MathQuill.v3.HandlerOptions = {};
+
 	export const focus = () => {
 		instance.focus();
 	};
+
 	export const setLatex = (latex?: string): MathQuill.v3.EditableMathQuill | string => {
 		if (latex) {
 			return instance.latex(latex);

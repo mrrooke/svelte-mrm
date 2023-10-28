@@ -306,7 +306,7 @@
 					encodeURIComponent(
 						constraints
 							.filter((c) => c.expression !== '')
-							.map((c) => c.expression)
+							.map((c) => encodeURIComponent(c.expression))
 							.join(',')
 					)
 			);

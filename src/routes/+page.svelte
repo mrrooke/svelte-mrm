@@ -41,6 +41,9 @@
 	let isLoaded = false;
 
 	onMount(() => {
+		if (typeof Go == 'undefined') {
+			return;
+		}
 		const go = new Go();
 		WebAssembly.instantiateStreaming(fetch('./main.wasm'), go.importObject)
 			.then((result) => {

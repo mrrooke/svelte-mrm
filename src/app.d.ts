@@ -12,4 +12,5 @@ declare namespace App {
 declare interface Window {
 	mrm_parse(s: string): string;
 	mrm_generate(s: string): string;
+	MathQuill: MathQuill.MathQuill;
 }

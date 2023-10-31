@@ -10,6 +10,7 @@
 <Nav logo="🧮">
 	<svelte:fragment slot="nav-center">
 		<NavItem href="/">generator</NavItem>
+		<NavItem href="/calculator">calculator</NavItem>
 	</svelte:fragment>
 
 	<svelte:fragment slot="nav-right">

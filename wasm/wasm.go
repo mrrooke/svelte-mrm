@@ -35,6 +35,8 @@ func generate(_ js.Value, args []js.Value) any {
 	}
 	// 0. Unmarshal JSON to problem struct
 	var p calc.Problem
+
+	fmt.Println(args[0].String())
 	err := json.Unmarshal([]byte(args[0].String()), &p)
 	fmt.Println(p)
 	if err != nil {
@@ -44,9 +46,6 @@ func generate(_ js.Value, args []js.Value) any {
 	// 1. Generate the problem set
 	exprs, err := calc.Generate(p.Expression, p.Domains, p.Constraints)
 
-	fmt.Println(p.Constraints)
-	fmt.Println(p.Expression)
-	fmt.Println(p.Domains)
 	if err != nil {
 		return newError(err.Error())
 	}
@@ -61,6 +60,8 @@ func generate(_ js.Value, args []js.Value) any {
 	type res struct {
 		Questions []string `json:"questions"`
 	}
+
+	fmt.Println(ltx)
 
 	j, err := json.Marshal(res{Questions: ltx})
 	if err != nil {

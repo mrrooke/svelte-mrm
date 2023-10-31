@@ -21,8 +21,5 @@ export function mathquill(node: HTMLElement, config: MathQuill.v3.Config) {
 export function staticMathField(node: HTMLElement, config?: MathQuill.v3.Config) {
 	const customConfig: MathQuill.v3.Config = { ...defaultConfig, ...config };
 	const MQ = window.MathQuill.getInterface(3) as MathQuill.v3.API;
-	const instance = MQ.StaticMath(node);
-	if (instance.innerFields.length > 0) {
-		instance.innerFields.map((e) => e.config(customConfig));
-	}
+	MQ.StaticMath(node, customConfig);
 }

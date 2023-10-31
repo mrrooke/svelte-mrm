@@ -42,6 +42,7 @@
 		}
 	];
 	let err: string | undefined = undefined;
+	let edited = false;
 	let focusMF: () => MathQuill.v3.EditableMathQuill;
 	let problemContainer: HTMLFormElement;
 	let lastFocused: HTMLElement;
@@ -85,7 +86,10 @@
 	$: expression, domains, constraints, (changed = true);
 	$: symbols, constraints.forEach((c) => updateConstraint({ ...c }));
 
+	$: console.log({ domains });
+
 	function handleBlur(e: CustomEvent<FocusEvent> | FocusEvent) {
+		// TODO there is no way this isn't wrong
 		if (e instanceof CustomEvent && e.detail && e.detail.target instanceof HTMLElement) {
 			lastFocused = e.detail.target;
 		} else if (e instanceof FocusEvent && e.target instanceof HTMLElement) {
@@ -93,19 +97,35 @@
 		}
 	}
 
+	/**
+	 * Returns all MathQuill fields in the problem container
+	 */
 	function getFields() {
-		return [
+		const MQ = window.MathQuill.getInterface(3) as MathQuill.v3.API;
+
+		const mathFields = [
 			...problemContainer.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>(
-				'[aria-label^="Math Input:"]:not([data-delete])'
+				'.mq-editable-field'
 			)
 		];
+
+		return mathFields
+			.map((mf) => {
+				const isInstance = MQ(mf);
+				if (isInstance) {
+					return isInstance;
+				}
+			})
+			.filter((t): t is MathQuill.v3.EditableMathQuill => t != null);
 	}
 
 	function handleMoveDown() {
 		const fields = getFields();
-		const idx = fields.findIndex((mf) => mf === document.activeElement);
+		const idx = fields.findIndex((mf) => mf.el().contains(document.activeElement));
 		if (idx < fields.length - 1) {
-			fields[idx + 1]?.focus();
+			const mf = fields[idx + 1];
+			mf?.focus();
+			mf?.moveToLeftEnd();
 		}
 		if (idx === fields.length - 2) {
 			addConstraint('');
@@ -114,18 +134,21 @@
 
 	function handleMoveUp() {
 		const fields = getFields();
-		const idx = fields.findIndex((mf) => mf === document.activeElement);
+		const idx = fields.findIndex((mf) => mf.el().contains(document.activeElement));
 		if (idx > 0) {
-			fields[idx - 1]?.focus();
+			const mf = fields[idx - 1];
+			console.log(mf);
+			mf?.focus();
+			mf?.moveToRightEnd();
 		}
 	}
 
 	async function handleBackspace(constraint: ConstraintType) {
 		if (constraint.expression === '') {
 			const fields = getFields();
-			const idx = fields.findIndex((mf) => mf === document.activeElement);
+			const idx = fields.findIndex((mf) => mf.el().contains(document.activeElement));
 			// ensure that a deleted field is not navigable
-			fields[idx]?.setAttribute('data-delete', 'true');
+			fields[idx]?.el().setAttribute('data-delete', 'true');
 			removeConstraint(constraint);
 			await tick();
 			fields[idx - 1]?.focus();
@@ -147,6 +170,7 @@
 		removeConstraint(constraint);
 		await tick();
 		if (focused) {
+			fields[fieldIndex - 1]?.focus();
 			fields[fieldIndex - 1]?.focus();
 		} else {
 			lastFocused.focus();
@@ -181,7 +205,7 @@
 				} else if (domainType === 'discrete') {
 					domains.push({
 						variable,
-						symbols: ['x', 'y', 'z'],
+						values: ['x', 'y', 'z'],
 						type: domainType,
 						active: true,
 						err: undefined
@@ -252,6 +276,7 @@
 	}
 
 	function updateDomain(domain: DomainType) {
+		console.log('here');
 		const index = domains.findIndex((d) => d.variable === domain.variable);
 		domains[index] = domain;
 		domains = [...domains];
@@ -269,11 +294,12 @@
 	export function generateProblem(options: ProblemOptions) {
 		const problem: ProblemRequest = {
 			constraints: constraints.filter((c) => c.active === true),
-			// TODO when discrete domains are implemented remove this filter
-			domains: domains.filter((d) => d.type === 'integer'),
+			domains: domains,
 			expression,
 			options
 		};
+		console.log(problem);
+		// TODO ZOD Parse here
 		const result: ProblemResponse = JSON.parse(self.mrm_generate(JSON.stringify(problem)));
 		const { error: err, questions: qs } = result;
 		if (err !== undefined) {
@@ -298,18 +324,18 @@
 
 <div class="toolbar">
 	<Button
+		size="small"
 		on:click={() => {
-			goto(
-				'?expression=' +
-					encodeURIComponent(expression) +
-					'&constraints=' +
-					encodeURIComponent(
-						constraints
-							.filter((c) => c.expression !== '')
-							.map((c) => encodeURIComponent(c.expression))
-							.join(',')
-					)
+			const params = new URLSearchParams();
+			params.set('expression', expression);
+			params.set(
+				'constraints',
+				constraints
+					.filter((c) => c.expression !== '')
+					.map((c) => encodeURIComponent(c.expression))
+					.join(',')
 			);
+			goto(`?${params.toString()}`);
 		}}
 	>
 		<Save />
@@ -346,17 +372,14 @@
 		}}
 		on:focusout={handleBlur}
 	>
-		<span class="label">
+		<div class="label">
 			<Katex math="f(x)" />
 			{#if err !== undefined}
 				<Tooltip label={err}>
-					<AlertCircle
-						stroke={focusedIndex === 0 ? 'currentColor' : 'var(--red11)'}
-						strokeWidth="3px"
-					/>
+					<AlertCircle stroke={focusedIndex === 0 ? 'currentColor' : 'var(--red11)'} />
 				</Tooltip>
 			{/if}
-		</span>
+		</div>
 		<EditableMF
 			bind:expression
 			bind:symbols
@@ -364,8 +387,13 @@
 			on:down={handleMoveDown}
 			on:up={handleMoveUp}
 			on:blur={() => {
-				if (expression === '') {
+				if (edited && expression === '') {
 					err = 'expression cannot be empty';
+				}
+			}}
+			on:edit={() => {
+				if (expression !== '') {
+					edited = true;
 				}
 			}}
 			bind:this={problemMf}
@@ -472,7 +500,8 @@
 	}
 
 	.label {
-		display: inline-flex;
+		display: flex;
+		flex-direction: column;
 		width: 60px;
 		height: 100%;
 		flex-shrink: 0;

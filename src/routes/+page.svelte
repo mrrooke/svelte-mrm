@@ -53,6 +53,8 @@
 				isLoaded = true;
 			});
 	});
+
+	$: console.log(questions.length);
 </script>
 
 <svelte:head>

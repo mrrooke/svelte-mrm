@@ -4,24 +4,20 @@
 	export let instance: MathQuill.v3.BaseMathQuill | undefined = undefined;
 	export let el: HTMLSpanElement | undefined = undefined;
 	export let expression = '';
-	export let innerFields: MathQuill.v3.EditableMathQuill[] = [];
 	export let config: MathQuill.v3.Config | undefined = undefined;
 
 	function getInstance(node: HTMLElement) {
-		const MQ = window.MathQuill.getInterface(3) as MathQuill.v3.API;
+		const MQ = window.MathQuill.getInterface(3);
 		const isInstance = MQ(node);
-		if (isInstance instanceof MQ.StaticMath) {
-			instance = isInstance as MathQuill.v3.BaseMathQuill;
-			innerFields = instance.innerFields;
+		if (isInstance == null) {
+			instance = MQ.StaticMath(node);
+		} else if (instance == null) {
+			instance = isInstance;
 		}
 	}
 
-	export function latex(): string[] {
-		if (instance) {
-			return instance.innerFields.map((e) => e.latex());
-		} else {
-			return [];
-		}
+	export function latex(): string | undefined {
+		return instance?.latex();
 	}
 </script>
 

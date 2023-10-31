@@ -13,7 +13,7 @@ export type DiscreteDomain = {
 	type: 'discrete';
 	active: boolean;
 	variable: string;
-	symbols: string[] | number[];
+	values: string[] | number[];
 	err: string | undefined;
 };
 

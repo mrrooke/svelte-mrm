@@ -47,8 +47,9 @@
 	on:up={handleMoveUp}
 	on:focus={() => handleFocus(constraint)}
 	on:blur={(e) => {
+		const edited = constraint.expression !== '';
 		handleBlur(e);
-		updateConstraint({ ...constraint, edited: true });
+		updateConstraint({ ...constraint, edited });
 	}}
 	on:edit={() => updateConstraint({ ...constraint, edited: true })}
 />

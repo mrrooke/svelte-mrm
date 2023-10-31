@@ -1,15 +1,14 @@
-@import 'open-props/sizes';
-@import 'open-props/fonts';
-@import 'open-props/borders';
-@import 'open-props/shadows';
-@import 'open-props/zindex';
-@import 'open-props/animations';
-@import 'open-props/easings';
-
-@import 'reset.css';
-@import 'colors.css';
-
-@import 'mathquill.css';
+@import url('open-props/sizes');
+@import url('open-props/fonts');
+@import url('open-props/borders');
+@import url('open-props/shadows');
+@import url('open-props/zindex');
+@import url('open-props/animations');
+@import url('open-props/easings');
+@import url('reset.css');
+@import url('colors.css');
+@import url('mathquill.css');
+@import url('mathquill-changes.css');
 
 :not(:defined) {
 	visibility: hidden;
@@ -60,13 +59,13 @@
 	}
 }
 
-@media screen and (min-width: 480px) {
+@media screen and (width >= 480px) {
 	:root {
 		--side-nav: 3.2rem;
 	}
 }
 
-@media screen and (min-width: 768px) {
+@media screen and (width >= 768px) {
 	:root {
 		--side-page: 14vw;
 		--top-offset: 10rem;

@@ -10,7 +10,7 @@ node_modules
 /static/mathquill.min.js
 /static/wasm_exec.js
 /src/mathquill.d.ts
-
+/static/mathquill.js
 # Ignore files for PNPM, NPM and YARN
 pnpm-lock.yaml
 package-lock.json

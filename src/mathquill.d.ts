@@ -23,6 +23,7 @@ declare namespace MathQuill {
 			innerFields: EditableMathQuill[];
 			id: number;
 			data: { [key: string]: any };
+			config(opts: Config): BaseMathQuill;
 			revert: () => HTMLElement;
 			latex(latex: string): BaseMathQuill;
 			latex(): string;
@@ -40,6 +41,7 @@ declare namespace MathQuill {
 			id: number;
 			data: { [key: string]: any };
 			revert: () => HTMLElement;
+			config(opts: Config): EditableMathQuill;
 			latex(latex: string): EditableMathQuill;
 			latex(): string;
 			reflow: () => void;
@@ -69,7 +71,6 @@ declare namespace MathQuill {
 			setAriaPostLabel: (str: string, timeout?: number) => EditableMathQuill;
 			ignoreNextMousedown: (func: () => boolean) => EditableMathQuill;
 			clickAt: (x: number, y: number, el: HTMLElement) => EditableMathQuill;
-			config(options: Config): void;
 		}
 
 		interface API {
@@ -130,6 +131,7 @@ declare namespace MathQuill {
 			overrideKeystroke?: (key: string, event: KeyboardEvent) => void;
 			autoOperatorNames?: string;
 			autoCommands?: string;
+			logAriaAlerts?: boolean;
 			autoParenthesizedFunctions?: string;
 			quietEmptyDelimiters?: string;
 			disableAutoSubstitutionInSubscripts?: boolean;
@@ -226,8 +228,4 @@ declare namespace MathQuill {
 		length: number;
 		[index: number]: HTMLElement | undefined;
 	}
-}
-
-declare interface Window {
-	MathQuill: MathQuill;
 }

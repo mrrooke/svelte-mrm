@@ -12,10 +12,11 @@
 	let instance: MathQuill.v3.BaseMathQuill | undefined;
 
 	function onEditDomain() {
-		const fields = instance?.innerFields;
-		if (fields && fields.length === 1 && fields[0]) {
-			const symbols = fields[0].latex().split(',');
-			updateDomain({ ...domain, symbols });
+		if (!instance) return;
+		const fields = instance.innerFields;
+		if (fields.length === 1 && fields[0]) {
+			const values = fields[0].latex().split(',');
+			updateDomain({ ...domain, values });
 		} else {
 			console.warn('incorrect number of math fields for a domain field');
 		}
@@ -29,6 +30,7 @@
 	class="content"
 	on:focusin={() => handleFocus(domain)}
 	on:click={() => {
+		console.log('click');
 		if (instance?.innerFields[0]) {
 			instance?.innerFields[0].focus();
 		}

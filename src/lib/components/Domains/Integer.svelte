@@ -32,14 +32,19 @@
 		const el = mf.el();
 		const parsedInt = parseNumber(mf.latex());
 		if (typeof parsedInt === 'string') {
+			// TODO this is fucked
 			el.classList.add('invalid');
 			el.classList.remove('valid');
 			updateDomain({ ...domain, err: parsedInt });
 			return;
 		}
-		const fields = instance?.innerFields;
-		if (fields && fields.length === 2) {
+
+		if (!instance) return;
+		const fields = instance.innerFields;
+
+		if (fields.length === 2) {
 			const index = fields.findIndex((e) => e.el() === el);
+			// TODO THis is fucked
 			el.classList.remove('invalid');
 			el.classList.add('valid');
 			if (index === 0) {
@@ -61,8 +66,6 @@
 			console.error('incorrect number of math fields for a domain field');
 		}
 	}
-
-	// TODO deleteoutof takes to previous mf but doesn't delete
 </script>
 
 <div class="content" on:focusin={() => handleFocus(domain)}>

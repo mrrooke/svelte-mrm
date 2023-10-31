@@ -34,7 +34,7 @@
 		user-select: none;
 	}
 
-	@media (max-width: 768px) {
+	@media (width <= 768px) {
 		nav {
 			padding-inline: var(--size-3);
 		}
@@ -43,6 +43,7 @@
 	ul {
 		position: relative;
 		display: flex;
+		gap: var(--size-4);
 		width: 100%;
 		width: auto;
 		padding: 0;

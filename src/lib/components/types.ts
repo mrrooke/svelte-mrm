@@ -1,54 +1,53 @@
 export type DomainType = DiscreteDomain | IntegerDomain;
 
-export type IntegerDomain = {
+export interface IntegerDomain {
 	type: 'integer';
 	active: boolean;
 	low: number;
 	high: number;
 	variable: string;
 	err: string | undefined;
-};
+}
 
-export type DiscreteDomain = {
+export interface DiscreteDomain {
 	type: 'discrete';
 	active: boolean;
 	variable: string;
 	values: string[] | number[];
 	err: string | undefined;
-};
+}
 
-export type Constraint = {
+export interface Constraint {
 	active: boolean;
 	expression: string;
 	symbols: string[];
 	err: string | undefined;
 	edited: boolean;
 	id: number;
-};
+}
 
-export type ProblemOptions = {
+export interface ProblemOptions {
 	multSymbol: '\\cdot' | '\\times';
 	negativeParenthesis: boolean;
 	printOneMult: boolean;
 	printZeroAdd: boolean;
 	collapseNegatives: boolean;
 	lexicalOrder: boolean;
-};
+}
 
-export type ProblemRequest = {
+export interface ProblemRequest {
 	expression: string;
 	domains: DomainType[];
 	constraints: Constraint[];
 	options: ProblemOptions;
-};
+}
 
-export type ProblemResponse = {
+export interface ProblemResponse {
 	error: string | undefined;
 	questions: string[] | undefined;
-};
+}
 
 export type BorderRadius =
-	| 'var(--radius-1)'
 	| 'var(--radius-1)'
 	| 'var(--radius-2)'
 	| 'var(--radius-3)'

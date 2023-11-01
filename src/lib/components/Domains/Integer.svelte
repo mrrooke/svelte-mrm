@@ -12,6 +12,8 @@
 	let dispatch = createEventDispatcher();
 	let instance: MathQuill.v3.BaseMathQuill | undefined;
 
+	// TODO on focus select text
+
 	function parseNumber(n: string): number | string {
 		if (n === '') {
 			return 'cannot have an empty value for domain';

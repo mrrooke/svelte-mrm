@@ -1,6 +1,9 @@
+<svelte:options accessors />
+
 <script lang="ts">
 	// TODO selection colour overlaps (transluscent?) creating weird effect
 	import { createEventDispatcher } from 'svelte';
+	import { array, object, optional, safeParse, string } from 'valibot';
 	import { mathquill } from '../actions/useMq';
 
 	let instance: MathQuill.v3.EditableMathQuill;
@@ -14,6 +17,11 @@
 	export let style = '';
 	export let config: MathQuill.v3.Config = {};
 	export let handlers: MathQuill.v3.HandlerOptions = {};
+
+	const ParseSchema = object({
+		error: optional(string()),
+		symbols: optional(array(string()))
+	});
 
 	/**
 	 * Puts the focus on the editable field.
@@ -91,12 +99,16 @@
 				err = undefined;
 			} else {
 				// TODO use zod parse here or something
-				const res = JSON.parse(self.mrm_parse(expression));
-				if (res.error) {
-					err = res.error;
+				const res = safeParse(ParseSchema, JSON.parse(self.mrm_parse(expression)));
+				if (!res.success) {
+					console.error(res.issues);
 				} else {
-					symbols = res.symbols;
-					err = undefined;
+					if (res.output.error) {
+						err = res.output.error;
+					} else if (res.output.symbols) {
+						symbols = res.output.symbols;
+						err = undefined;
+					}
 				}
 			}
 		}
@@ -111,22 +123,21 @@
 	}
 </script>
 
-<div
+<span
 	class="container"
 	{style}
 	on:focusin={(e) => dispatchFocus('focus', e)}
 	on:focusout={(e) => dispatchFocus('blur', e)}
+	use:mathquill={{ ...config, handlers }}
+	use:getInstance>{expression}</span
 >
-	<span style="width: 100%;" use:mathquill={{ ...config, handlers }} use:getInstance
-		>{expression}</span
-	>
-</div>
 
 <style>
 	.container {
-		display: flex;
-		width: 100%;
-		min-height: 3rem;
+		display: inline-flex;
+		overflow: auto;
+		min-height: var(--size-8);
+		max-width: 100%;
 		align-items: center;
 	}
 </style>

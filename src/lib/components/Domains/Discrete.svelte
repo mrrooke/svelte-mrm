@@ -16,13 +16,12 @@
 		const fields = instance.innerFields;
 		if (fields.length === 1 && fields[0]) {
 			const values = fields[0].latex().split(',');
+			// TODO no checking here for valid values - mad
 			updateDomain({ ...domain, values });
 		} else {
 			console.warn('incorrect number of math fields for a domain field');
 		}
 	}
-
-	// TODO implement delete out of takes to previous field
 </script>
 
 <div

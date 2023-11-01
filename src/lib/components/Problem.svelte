@@ -12,14 +12,14 @@
 
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import { addToast } from '$lib/stores/toasts';
 	import { AlertCircle, ArrowLeft, ArrowRight, ChevronLeft, Save } from 'lucide-svelte';
-	import Button from './Button.svelte';
+	import { array, object, optional, safeParse, string } from 'valibot';
 	import type {
 		Constraint as ConstraintType,
 		DomainType,
 		ProblemOptions,
-		ProblemRequest,
-		ProblemResponse
+		ProblemRequest
 	} from './types';
 
 	export let questions: string[] = [];
@@ -28,7 +28,7 @@
 
 	let nextConstraintId = 0;
 	let expression: string;
-	let symbols: Array<string> = [];
+	let symbols: string[] = [];
 	let domains: DomainType[] = [];
 	let focusedIndex: number | undefined = undefined;
 	let constraints: ConstraintType[] = [
@@ -49,14 +49,19 @@
 	let problemMf: EditableMF;
 	let constraintFields: Record<number, Constraint> = {};
 
+	const ProblemSchema = object({
+		error: optional(string()),
+		questions: optional(array(string()))
+	});
+
 	onMount(async () => {
 		$page.url.searchParams.has('expression') &&
-			problemMf?.setLatex($page.url.searchParams.get('expression')!);
+			problemMf.latex($page.url.searchParams.get('expression')!);
 		$page.url.searchParams.has('constraints') &&
 			$page.url.searchParams
 				.get('constraints')!
 				.split(',')
-				.forEach(async (s, i) => {
+				.forEach((s, i) => {
 					const id = nextConstraintId++;
 					constraints[i] = {
 						active: true,
@@ -67,7 +72,7 @@
 						err: undefined
 					};
 					constraints = constraints;
-					await tick();
+					void tick();
 					constraintFields[id]?.setLatex(s);
 				});
 
@@ -86,8 +91,6 @@
 	$: expression, domains, constraints, (changed = true);
 	$: symbols, constraints.forEach((c) => updateConstraint({ ...c }));
 
-	$: console.log({ domains });
-
 	function handleBlur(e: CustomEvent<FocusEvent> | FocusEvent) {
 		// TODO there is no way this isn't wrong
 		if (e instanceof CustomEvent && e.detail && e.detail.target instanceof HTMLElement) {
@@ -101,7 +104,7 @@
 	 * Returns all MathQuill fields in the problem container
 	 */
 	function getFields() {
-		const MQ = window.MathQuill.getInterface(3) as MathQuill.v3.API;
+		const MQ = window.MathQuill.getInterface(3);
 
 		const mathFields = [
 			...problemContainer.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>(
@@ -298,18 +301,25 @@
 			expression,
 			options
 		};
-		console.log(problem);
-		// TODO ZOD Parse here
-		const result: ProblemResponse = JSON.parse(self.mrm_generate(JSON.stringify(problem)));
-		const { error: err, questions: qs } = result;
-		if (err !== undefined) {
-			console.warn(err);
+
+		const result = safeParse(ProblemSchema, JSON.parse(self.mrm_generate(JSON.stringify(problem))));
+		if (!result.success) {
+			console.error(result.issues);
 			return;
-		} else if (qs !== undefined) {
-			questions = qs;
-			changed = false;
 		} else {
-			console.warn('no questions generated');
+			const { error: err, questions: qs } = result.output;
+			if (err != null) {
+				addToast(err);
+				console.error(err);
+				return;
+			} else if (qs != null) {
+				addToast(`Found ${qs.length} unique questions`);
+				questions = qs;
+				changed = false;
+			} else {
+				addToast('no questions generated');
+				return;
+			}
 		}
 	}
 
@@ -323,9 +333,9 @@
 </script>
 
 <div class="toolbar">
-	<Button
-		size="small"
-		on:click={() => {
+	<button
+		class="icon-button"
+		on:click={async () => {
 			const params = new URLSearchParams();
 			params.set('expression', expression);
 			params.set(
@@ -335,17 +345,29 @@
 					.map((c) => encodeURIComponent(c.expression))
 					.join(',')
 			);
-			goto(`?${params.toString()}`);
+			if ('clipboard' in navigator) {
+				await navigator.clipboard.writeText($page.url.pathname + '?' + params.toString());
+				addToast('copied url to clipboard');
+			} else {
+				addToast('could not copy url to clipboard');
+			}
+			await goto(`?${params.toString()}`);
 		}}
 	>
 		<Save />
-	</Button>
+	</button>
 	<div class="group">
-		<ArrowLeft />
-		<ArrowRight />
+		<button class="icon-button" on:click={() => addToast('undo not implemented yet')}>
+			<ArrowLeft />
+		</button>
+		<button class="icon-button" on:click={() => addToast('redo not implemented yet')}>
+			<ArrowRight />
+		</button>
 	</div>
 	<div class="group">
-		<ChevronLeft />
+		<button class="icon-button" on:click={() => addToast('collapse not implemented yet')}>
+			<ChevronLeft />
+		</button>
 	</div>
 </div>
 <div />
@@ -477,13 +499,13 @@
 		--expression-border-color: var(--violet3);
 		--label-color: var(--violet3);
 
-		display: flex;
-		width: 100%;
-		flex-direction: row;
+		display: grid;
+		grid-template-columns: 60px 1fr 40px;
 		align-items: center;
+		width: 100%;
 		border: var(--expression-border-width) solid var(--expression-border-color);
 		cursor: pointer;
-		gap: 1rem;
+		gap: var(--size-2);
 		transition:
 			0.1s box-shadow ease,
 			0.1s border ease;
@@ -517,11 +539,11 @@
 
 	.toolbar {
 		display: flex;
-		height: var(--size-8);
+		height: var(--size-9);
 		flex-wrap: nowrap;
 		place-content: center space-between;
 		align-items: center;
-		padding: var(--size-1);
+		padding: var(--size-2);
 		border-top: solid 1px var(--mauve6);
 		border-right: solid 1px var(--mauve6);
 		border-bottom: solid 1px var(--mauve6);

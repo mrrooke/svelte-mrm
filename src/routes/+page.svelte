@@ -1,7 +1,7 @@
 <script context="module" lang="ts">
 	declare class Go {
 		argv: string[];
-		env: { [envKey: string]: string };
+		env: Record<string, string>;
 		exit: (code: number) => void;
 		importObject: WebAssembly.Imports;
 		exited: boolean;
@@ -16,6 +16,7 @@
 	import Button from '$lib/components/Button.svelte';
 	import Problem from '$lib/components/Problem.svelte';
 	import Questions from '$lib/components/Questions.svelte';
+	import Toasts from '$lib/components/toasts.svelte';
 	import type { ProblemOptions } from '$lib/components/types';
 	import { onMount } from 'svelte';
 
@@ -47,11 +48,12 @@
 		const go = new Go();
 		WebAssembly.instantiateStreaming(fetch('./main.wasm'), go.importObject)
 			.then((result) => {
-				go.run(result.instance);
+				void go.run(result.instance);
 			})
 			.then(() => {
 				isLoaded = true;
-			});
+			})
+			.catch((e) => console.error(e));
 	});
 
 	$: console.log(questions.length);
@@ -88,6 +90,8 @@
 		</div>
 	{/if}
 </div>
+
+<Toasts />
 
 <style>
 	.outer {

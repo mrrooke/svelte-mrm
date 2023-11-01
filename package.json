@@ -45,6 +45,7 @@
 	"dependencies": {
 		"katex": "^0.16.2",
 		"lucide-svelte": "^0.279.0",
-		"open-props": "^1.4.16"
+		"open-props": "^1.4.16",
+		"valibot": "^0.20.0"
 	}
 }

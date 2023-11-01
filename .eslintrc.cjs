@@ -2,8 +2,9 @@ module.exports = {
 	root: true,
 	extends: [
 		'eslint:recommended',
-		'plugin:@typescript-eslint/recommended',
-		'plugin:svelte/recommended',
+		'plugin:@typescript-eslint/recommended-type-checked',
+		'plugin:@typescript-eslint/stylistic-type-checked',
+		'plugin:svelte/prettier',
 		'prettier'
 	],
 	parser: '@typescript-eslint/parser',
@@ -11,7 +12,8 @@ module.exports = {
 	parserOptions: {
 		sourceType: 'module',
 		ecmaVersion: 2020,
-		extraFileExtensions: ['.svelte']
+		extraFileExtensions: ['.svelte'],
+		project: './tsconfig.json'
 	},
 	env: {
 		browser: true,
@@ -27,5 +29,9 @@ module.exports = {
 				parser: '@typescript-eslint/parser'
 			}
 		}
-	]
+	],
+	rules: {
+		'@typescript-eslint/no-unsafe-return': 'off',
+		'@typescript-eslint/no-unsafe-call': 'off'
+	}
 };

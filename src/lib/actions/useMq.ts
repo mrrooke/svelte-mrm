@@ -14,12 +14,12 @@ const defaultConfig: MathQuill.v3.Config = {
 export function mathquill(node: HTMLElement, config: MathQuill.v3.Config) {
 	const customConfig: MathQuill.v3.Config = { ...defaultConfig, ...config };
 
-	const MQ = window.MathQuill.getInterface(3) as MathQuill.v3.API;
+	const MQ = window.MathQuill.getInterface(3);
 	MQ.MathField(node, customConfig);
 }
 
 export function staticMathField(node: HTMLElement, config?: MathQuill.v3.Config) {
 	const customConfig: MathQuill.v3.Config = { ...defaultConfig, ...config };
-	const MQ = window.MathQuill.getInterface(3) as MathQuill.v3.API;
+	const MQ = window.MathQuill.getInterface(3);
 	MQ.StaticMath(node, customConfig);
 }

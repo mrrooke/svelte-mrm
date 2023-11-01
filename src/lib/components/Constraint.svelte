@@ -3,7 +3,6 @@
 <script lang="ts">
 	import { X } from 'lucide-svelte';
 	import { onMount } from 'svelte';
-	import Button from './Button.svelte';
 	import EditableMF from './EditableMF.svelte';
 	import type { Constraint } from './types';
 
@@ -16,7 +15,7 @@
 		handleFocus: (constraint: Constraint) => void,
 		handleBlur: (e: FocusEvent | CustomEvent<FocusEvent>) => void;
 
-	export const setLatex = (latex?: string) => mf.setLatex(latex);
+	export const setLatex = (latex: string) => mf.latex(latex);
 
 	let expression = '',
 		err: string | undefined = undefined,
@@ -32,8 +31,6 @@
 			focusMF();
 		}
 	});
-
-	// TODO clicking delete blurs the field which triggers error for empty field
 </script>
 
 <EditableMF
@@ -54,8 +51,8 @@
 	on:edit={() => updateConstraint({ ...constraint, edited: true })}
 />
 {#if constraint.active}
-	<Button
-		style="flex-shrink: 0;align-self: flex-start;margin-top: 2px; margin-right:2px;margin-left: auto; "
+	<button
+		class="icon-button close"
 		on:click={(e) => {
 			e.stopPropagation();
 			e.preventDefault();
@@ -63,5 +60,5 @@
 		}}
 	>
 		<X />
-	</Button>
+	</button>
 {/if}

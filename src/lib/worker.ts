@@ -1,8 +1,8 @@
 import * as Comlink from 'comlink';
 import { array, literal, object, safeParse, string, union, type Output } from 'valibot';
-import { type ProblemRequest, type ProblemResponseType } from './components/types';
 import init from './main.wasm?init';
 import './wasm_exec.js';
+import type { ProblemRequest, ProblemRequestType, ProblemResponseType } from './components/types';
 
 declare class Go {
 	argv: string[];
@@ -17,8 +17,8 @@ declare class Go {
 
 export interface WasmWorker {
 	parse(latex: string): Promise<Output<typeof ParseResponse>>;
-	generate(problem: Output<typeof ProblemRequest>): Promise<ProblemResponseType>;
-	stream(problem: Output<typeof ProblemRequest>): Promise<ReadableStream<string>>;
+	generate(problem: ProblemRequestType): Promise<ProblemResponseType>;
+	stream(problem: ProblemRequestType): Promise<ReadableStream<string>>;
 }
 
 const go = new Go();

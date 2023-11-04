@@ -4,17 +4,14 @@
 	import Problem from '$lib/components/Problem.svelte';
 	import Questions from '$lib/components/Questions.svelte';
 	import Toasts from '$lib/components/toasts.svelte';
-	import { ProblemResponse, type ProblemOptionsType } from '$lib/components/types';
-	import { addToast } from '$lib/stores/toasts';
+	import type { ProblemOptionsType } from '$lib/components/types';
+	import { questions } from '$lib/stores/questions';
 	import { wasm } from '$lib/stores/wasm';
 	import type { WasmWorker } from '$lib/worker';
 	import MyWorker from '$lib/worker?worker';
 	import * as Comlink from 'comlink';
 	import { onDestroy, onMount } from 'svelte';
-	import { safeParse } from 'valibot';
-	import { questions } from '$lib/stores/questions';
 
-	let activeQuestions: string[];
 	let width = browser ? window.innerWidth : 1000;
 	let offset = false;
 	let generateProblem: (options: ProblemOptionsType) => void;
@@ -29,9 +26,6 @@
 		printZeroAdd: false
 	};
 
-	$: activeQuestions = isLoaded
-		? $questions.questions.sort(() => 0.5 - Math.random()).slice(0, 10)
-		: [];
 	$: mobile = width < 768;
 
 	let isLoaded = false;
@@ -45,54 +39,11 @@
 		obj = Comlink.wrap<WasmWorker>(myWorker);
 		$wasm = obj;
 
-		$questions.stream = new ReadableStream<string[]>({
-			start(c) {
-				$questions.controller = c;
-			},
-			cancel() {
-				if ($questions.controller) {
-					$questions.controller.close();
-				}
-			},
-			pull() {
-				// if (valid) {
-				// 	controller.close();
-				// }
-			}
-		});
-
 		// Load page when WASM is loaded
 		myWorker.onmessage = (e) => {
 			if (e.data === 'WASM initialized') {
 				isLoaded = true;
 				return;
-			}
-			if (typeof e.data === 'string') {
-				console.log(e.data, $questions.controller);
-				if (e.data === 'done' && $questions.controller) {
-					$questions.controller.close();
-				}
-				// messages from golang always strings
-				const response = safeParse(ProblemResponse, JSON.parse(e.data));
-
-				if (!response.success) {
-					console.error(response.issues);
-					addToast('Unable to parse problem response');
-					return;
-				}
-				if (response.output.success) {
-					if ($questions.controller) {
-						$questions.controller.enqueue(response.output.questions);
-						$questions.new = true;
-					} else {
-						addToast('Unable to enqueue questions');
-					}
-					return;
-				} else {
-					addToast(response.output.error);
-					valid = false;
-					changed = false;
-				}
 			}
 		};
 	});
@@ -115,17 +66,12 @@
 	<div class="viewport" class:offset>
 		<div class="constraints">
 			{#if isLoaded}
-				<Problem bind:valid bind:generateProblem bind:changed />
+				<Problem bind:valid bind:changed />
 			{/if}
 		</div>
 		<div class="questions">
 			{#if isLoaded}
-				<Questions
-					bind:changed
-					{valid}
-					generate={() => generateProblem(options)}
-					bind:questions={activeQuestions}
-				/>
+				<Questions bind:changed {valid} generate={() => generateProblem(options)} />
 			{/if}
 		</div>
 	</div>

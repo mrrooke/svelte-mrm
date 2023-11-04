@@ -1,33 +1,26 @@
-<script context="module" lang="ts">
-	declare class Go {
-		argv: string[];
-		env: Record<string, string>;
-		exit: (code: number) => void;
-		importObject: WebAssembly.Imports;
-		exited: boolean;
-		mem: DataView;
-
-		run(instance: WebAssembly.Instance): Promise<void>;
-	}
-</script>
-
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import Button from '$lib/components/Button.svelte';
 	import Problem from '$lib/components/Problem.svelte';
 	import Questions from '$lib/components/Questions.svelte';
 	import Toasts from '$lib/components/toasts.svelte';
-	import type { ProblemOptions } from '$lib/components/types';
-	import { onMount } from 'svelte';
+	import { ProblemResponse, type ProblemOptionsType } from '$lib/components/types';
+	import { addToast } from '$lib/stores/toasts';
+	import { wasm } from '$lib/stores/wasm';
+	import type { WasmWorker } from '$lib/worker';
+	import MyWorker from '$lib/worker?worker';
+	import * as Comlink from 'comlink';
+	import { onDestroy, onMount } from 'svelte';
+	import { safeParse } from 'valibot';
+	import { questions } from '$lib/stores/questions';
 
-	let questions: string[] = [];
 	let activeQuestions: string[];
 	let width = browser ? window.innerWidth : 1000;
 	let offset = false;
-	let generateProblem: (options: ProblemOptions) => void;
+	let generateProblem: (options: ProblemOptionsType) => void;
 	let changed = true;
 	let valid = false;
-	let options: ProblemOptions = {
+	let options: ProblemOptionsType = {
 		collapseNegatives: true,
 		lexicalOrder: false,
 		multSymbol: '\\cdot',
@@ -36,27 +29,80 @@
 		printZeroAdd: false
 	};
 
-	$: activeQuestions = questions.sort(() => 0.5 - Math.random()).slice(0, 10);
+	$: activeQuestions = isLoaded
+		? $questions.questions.sort(() => 0.5 - Math.random()).slice(0, 10)
+		: [];
 	$: mobile = width < 768;
 
 	let isLoaded = false;
 
+	let myWorker: Worker;
+
+	let obj: Comlink.Remote<WasmWorker>;
+
 	onMount(() => {
-		if (typeof Go == 'undefined') {
-			return;
-		}
-		const go = new Go();
-		WebAssembly.instantiateStreaming(fetch('./main.wasm'), go.importObject)
-			.then((result) => {
-				void go.run(result.instance);
-			})
-			.then(() => {
+		myWorker = new MyWorker();
+		obj = Comlink.wrap<WasmWorker>(myWorker);
+		$wasm = obj;
+
+		$questions.stream = new ReadableStream<string[]>({
+			start(c) {
+				$questions.controller = c;
+			},
+			cancel() {
+				if ($questions.controller) {
+					$questions.controller.close();
+				}
+			},
+			pull() {
+				// if (valid) {
+				// 	controller.close();
+				// }
+			}
+		});
+
+		// Load page when WASM is loaded
+		myWorker.onmessage = (e) => {
+			if (e.data === 'WASM initialized') {
 				isLoaded = true;
-			})
-			.catch((e) => console.error(e));
+				return;
+			}
+			if (typeof e.data === 'string') {
+				console.log(e.data, $questions.controller);
+				if (e.data === 'done' && $questions.controller) {
+					$questions.controller.close();
+				}
+				// messages from golang always strings
+				const response = safeParse(ProblemResponse, JSON.parse(e.data));
+
+				if (!response.success) {
+					console.error(response.issues);
+					addToast('Unable to parse problem response');
+					return;
+				}
+				if (response.output.success) {
+					if ($questions.controller) {
+						$questions.controller.enqueue(response.output.questions);
+						$questions.new = true;
+					} else {
+						addToast('Unable to enqueue questions');
+					}
+					return;
+				} else {
+					addToast(response.output.error);
+					valid = false;
+					changed = false;
+				}
+			}
+		};
 	});
 
-	$: console.log(questions.length);
+	onDestroy(() => {
+		if ($questions.stream) {
+			void $questions.stream.cancel();
+		}
+		if (myWorker) myWorker.terminate();
+	});
 </script>
 
 <svelte:head>
@@ -69,7 +115,7 @@
 	<div class="viewport" class:offset>
 		<div class="constraints">
 			{#if isLoaded}
-				<Problem bind:questions bind:valid bind:generateProblem bind:changed />
+				<Problem bind:valid bind:generateProblem bind:changed />
 			{/if}
 		</div>
 		<div class="questions">

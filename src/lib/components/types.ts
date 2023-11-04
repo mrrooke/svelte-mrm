@@ -1,63 +1,74 @@
-export type DomainType = DiscreteDomain | IntegerDomain;
+import {
+	union,
+	object,
+	literal,
+	boolean,
+	number,
+	string,
+	optional,
+	array,
+	type Output
+} from 'valibot';
 
-export interface IntegerDomain {
-	type: 'integer';
-	active: boolean;
-	low: number;
-	high: number;
-	variable: string;
-	err: string | undefined;
-}
+export const IntegerDomain = object({
+	type: literal('integer'),
+	active: boolean(),
+	low: number(),
+	high: number(),
+	variable: string(),
+	err: optional(string())
+});
 
-export interface DiscreteDomain {
-	type: 'discrete';
-	active: boolean;
-	variable: string;
-	values: string[] | number[];
-	err: string | undefined;
-}
+export const DiscreteDomain = object({
+	type: literal('discrete'),
+	active: boolean(),
+	variable: string(),
+	values: array(union([string(), number()])),
+	err: optional(string())
+});
 
-export interface Constraint {
-	active: boolean;
-	expression: string;
-	symbols: string[];
-	err: string | undefined;
-	edited: boolean;
-	id: number;
-}
+export const Domain = union([DiscreteDomain, IntegerDomain]);
 
-export interface ProblemOptions {
-	multSymbol: '\\cdot' | '\\times';
-	negativeParenthesis: boolean;
-	printOneMult: boolean;
-	printZeroAdd: boolean;
-	collapseNegatives: boolean;
-	lexicalOrder: boolean;
-}
+export const Constraint = object({
+	active: boolean(),
+	expression: string(),
+	symbols: array(string()),
+	err: optional(string()),
+	edited: boolean(),
+	id: number()
+});
 
-export interface ProblemRequest {
-	expression: string;
-	domains: DomainType[];
-	constraints: Constraint[];
-	options: ProblemOptions;
-}
+export const ProblemOptions = object({
+	multSymbol: union([literal('\\cdot'), literal('\\times')]),
+	negativeParenthesis: boolean(),
+	printOneMult: boolean(),
+	printZeroAdd: boolean(),
+	collapseNegatives: boolean(),
+	lexicalOrder: boolean()
+});
 
-export interface ProblemResponse {
-	error: string | undefined;
-	questions: string[] | undefined;
-}
+export const ProblemRequest = object({
+	expression: string(),
+	domains: array(Domain),
+	constraints: array(Constraint),
+	options: ProblemOptions
+});
 
-export type BorderRadius =
-	| 'var(--radius-1)'
-	| 'var(--radius-2)'
-	| 'var(--radius-3)'
-	| 'var(--radius-4)'
-	| 'var(--radius-5)'
-	| 'var(--radius-6)'
-	| 'var(--radius-round)'
-	| 'var(--radius-conditional-1)'
-	| 'var(--radius-conditional-2)'
-	| 'var(--radius-conditional-3)'
-	| 'var(--radius-conditional-4)'
-	| 'var(--radius-conditional-5)'
-	| 'var(--radius-conditional-6)';
+export const ProblemResponse = union([
+	object({
+		success: literal(false),
+		error: string()
+	}),
+	object({
+		success: literal(true),
+		questions: array(string())
+	})
+]);
+
+export type DiscreteDomainType = Output<typeof DiscreteDomain>;
+export type IntegerDomainType = Output<typeof IntegerDomain>;
+export type DomainType = Output<typeof Domain>;
+export type ConstraintType = Output<typeof Constraint>;
+export type ProblemOptionsType = Output<typeof ProblemOptions>;
+export type ProblemRequestType = Output<typeof ProblemRequest>;
+export type ProblemResponseType = Output<typeof ProblemResponse>;

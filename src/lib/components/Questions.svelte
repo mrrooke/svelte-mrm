@@ -1,5 +1,3 @@
-<svelte:options immutable={true} />
-
 <script lang="ts">
 	import { quintOut } from 'svelte/easing';
 
@@ -8,8 +6,9 @@
 	import Button from './Button.svelte';
 	import Katex from './Katex.svelte';
 
+	import { questions } from '$lib/stores/questions';
+
 	export let generate: () => void;
-	export let questions: string[];
 	export let changed: boolean;
 	export let valid: boolean;
 
@@ -48,10 +47,6 @@
 				<p>Do you want to update?</p>
 			</section>
 			<footer>
-				<Button on:click={closeDialog}>
-					cancel
-					<X slot="suffix" />
-				</Button>
 				<Button type="submit" on:click={generate} disabled={!valid}>
 					update
 					<RefreshCcw slot="suffix" />
@@ -61,7 +56,7 @@
 	</div>
 {/if}
 <ol class="stack questions">
-	{#each questions as question}
+	{#each $questions.questions.sort(() => 0.5 - Math.random()).slice(0, 10) as question}
 		<li>
 			<Katex math={question} fleqn={true} displayMode />
 		</li>

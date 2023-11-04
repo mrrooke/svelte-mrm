@@ -2,9 +2,9 @@
 	import { createEventDispatcher } from 'svelte';
 
 	import StaticMf from '../StaticMF.svelte';
-	import type { DiscreteDomain, DomainType } from '../types';
+	import type { DiscreteDomainType, DomainType } from '../types';
 
-	export let domain: DiscreteDomain;
+	export let domain: DiscreteDomainType;
 	export let handleFocus: (domain: DomainType) => void;
 	export let updateDomain: (domain: DomainType) => void;
 
@@ -29,7 +29,6 @@
 	class="content"
 	on:focusin={() => handleFocus(domain)}
 	on:click={() => {
-		console.log('click');
 		if (instance?.innerFields[0]) {
 			instance?.innerFields[0].focus();
 		}

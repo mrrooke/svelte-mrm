@@ -9,5 +9,8 @@
 	},
 	"editor.formatOnSave": true,
 	"editor.defaultFormatter": "esbenp.prettier-vscode",
-	"gopls": {}
+	"gopls": {},
+	"[go]": {
+		"editor.defaultFormatter": "golang.go"
+	}
 }

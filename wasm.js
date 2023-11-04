@@ -11,7 +11,7 @@ const opts = {
 	}
 };
 
-const outFile = `../static/main.wasm`;
+const outFile = `../src/lib/main.wasm`;
 const args = ['go build', '-o', outFile, 'wasm.go'];
 
 exec(args.join(' '), opts, function (error, stdout, stderr) {

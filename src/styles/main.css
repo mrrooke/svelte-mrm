@@ -312,30 +312,66 @@ a:focus {
 		block-size: var(--size);
 	}
 
+	.icon-ghost-button {
+		--size: 40px;
+		--_shadow-size: 0;
+		--_shadow-color: var(--link);
+
+		background: none;
+		aspect-ratio: var(--ratio-square);
+		border: none;
+		border-radius: var(--radius-round);
+		padding: calc(var(--size-2) + 2px);
+		cursor: pointer;
+		touch-action: manipulation;
+		transition:
+			outline-offset 145ms var(--ease-2),
+			box-shadow 0.5s var(--ease-out-4);
+		inline-size: var(--size);
+		block-size: var(--size);
+	}
+
+	.icon-ghost-button > svg {
+		stroke-linecap: round;
+		inline-size: 100%;
+		block-size: 100%;
+		filter: drop-shadow(0 0 var(--_shadow-size) var(--_shadow-color));
+		transition: filter 0.5s var(--ease-out-4);
+	}
+
 	.icon-button > svg {
 		stroke-linecap: round;
 		inline-size: 100%;
 		block-size: 100%;
 	}
 
-	.icon-button:active {
+	.icon-button:active,
+	.icon-ghost-button:active {
 		--_shadow-size: 0.4em;
 	}
 
-	.icon-button:nth-of-type(2n) {
+	.icon-button:nth-of-type(2n),
+	.icon-ghost-button:nth-of-type(2n) {
 		--_shadow-color: var(--pink-5);
 	}
 
-	.icon-button:nth-of-type(3n) {
+	.icon-button:nth-of-type(3n),
+	.icon-ghost-button:nth-of-type(3n) {
 		--_shadow-color: var(--lime-5);
 	}
 
-	.icon-button:nth-of-type(4n) {
+	.icon-button:nth-of-type(4n),
+	.icon-ghost-button:nth-of-type(4n) {
 		--_shadow-color: var(--cyan-5);
 	}
 
-	.icon-button:hover:not(:active) {
+	.icon-button:hover:not(:active),
+	.icon-ghost-button:hover.icon-ghost-button:hover:not(:active) {
 		--_shadow-size: 1em;
+	}
+
+	.icon-ghost-button:hover.icon-ghost-button:hover:not(:active) {
+		--_shadow-size: 0.5em;
 	}
 }
 

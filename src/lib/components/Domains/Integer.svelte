@@ -3,9 +3,9 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	import StaticMf from '../StaticMF.svelte';
-	import type { DomainType, IntegerDomain } from '../types';
+	import type { DomainType, IntegerDomainType } from '../types';
 
-	export let domain: IntegerDomain;
+	export let domain: IntegerDomainType;
 	export let handleFocus: (domain: DomainType) => void;
 	export let updateDomain: (domain: DomainType) => void;
 

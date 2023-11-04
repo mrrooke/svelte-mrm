@@ -2,8 +2,8 @@
 
 <script lang="ts">
 	// TODO selection colour overlaps (transluscent?) creating weird effect
+	import { wasm } from '$lib/stores/wasm';
 	import { createEventDispatcher } from 'svelte';
-	import { array, object, optional, safeParse, string } from 'valibot';
 	import { mathquill } from '../actions/useMq';
 
 	let instance: MathQuill.v3.EditableMathQuill;
@@ -17,11 +17,6 @@
 	export let style = '';
 	export let config: MathQuill.v3.Config = {};
 	export let handlers: MathQuill.v3.HandlerOptions = {};
-
-	const ParseSchema = object({
-		error: optional(string()),
-		symbols: optional(array(string()))
-	});
 
 	/**
 	 * Puts the focus on the editable field.
@@ -99,17 +94,20 @@
 				err = undefined;
 			} else {
 				// TODO use zod parse here or something
-				const res = safeParse(ParseSchema, JSON.parse(self.mrm_parse(expression)));
-				if (!res.success) {
-					console.error(res.issues);
-				} else {
-					if (res.output.error) {
-						err = res.output.error;
-					} else if (res.output.symbols) {
-						symbols = res.output.symbols;
-						err = undefined;
-					}
-				}
+				$wasm
+					.parse(expression)
+					.then((res) => {
+						if (res.success) {
+							symbols = res.symbols;
+							err = undefined;
+						} else {
+							console.error(res.error);
+							err = res.error;
+						}
+					})
+					.catch((e) => {
+						console.error(e);
+					});
 			}
 		}
 	};

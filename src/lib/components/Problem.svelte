@@ -10,19 +10,22 @@
 	import Domain from './Domain.svelte';
 	import Tooltip from './Tooltip.svelte';
 
+	import {
+		ProblemRequest,
+		ProblemResponse,
+		type ConstraintType,
+		type DomainType,
+		type ProblemOptionsType
+	} from './types';
+
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { addToast } from '$lib/stores/toasts';
+	import { wasm } from '$lib/stores/wasm';
 	import { AlertCircle, ArrowLeft, ArrowRight, ChevronLeft, Save } from 'lucide-svelte';
-	import { array, object, optional, safeParse, string } from 'valibot';
-	import type {
-		Constraint as ConstraintType,
-		DomainType,
-		ProblemOptions,
-		ProblemRequest
-	} from './types';
+	import { safeParse } from 'valibot';
+	import { questions } from '$lib/stores/questions';
 
-	export let questions: string[] = [];
 	export let changed = false;
 	export let valid: boolean;
 
@@ -48,11 +51,6 @@
 	let lastFocused: HTMLElement;
 	let problemMf: EditableMF;
 	let constraintFields: Record<number, Constraint> = {};
-
-	const ProblemSchema = object({
-		error: optional(string()),
-		questions: optional(array(string()))
-	});
 
 	onMount(async () => {
 		$page.url.searchParams.has('expression') &&
@@ -294,33 +292,51 @@
 		domains = domains; // trigger reactivity
 	}
 
-	export function generateProblem(options: ProblemOptions) {
-		const problem: ProblemRequest = {
+	export async function generateProblem(options: ProblemOptionsType) {
+		const problem = safeParse(ProblemRequest, {
 			constraints: constraints.filter((c) => c.active === true),
 			domains: domains,
 			expression,
 			options
-		};
+		});
 
-		const result = safeParse(ProblemSchema, JSON.parse(self.mrm_generate(JSON.stringify(problem))));
-		if (!result.success) {
-			console.error(result.issues);
+		if (!problem.success) {
+			console.error(problem.issues);
 			return;
-		} else {
-			const { error: err, questions: qs } = result.output;
-			if (err != null) {
-				addToast(err);
-				console.error(err);
-				return;
-			} else if (qs != null) {
-				addToast(`Found ${qs.length} unique questions`);
-				questions = qs;
-				changed = false;
-			} else {
-				addToast('no questions generated');
-				return;
+		}
+
+		$questions.stream = await $wasm.stream(problem.output);
+
+		const reader = $questions.stream.getReader();
+
+		let isDelayed = false;
+		let processedQuestions: string[] = [];
+
+		setTimeout(() => {
+			isDelayed = true;
+		}, 300);
+
+		for (;;) {
+			const { done, value } = await reader.read();
+			if (done) {
+				console.log('stream finished');
+				reader.releaseLock();
+				break;
+			}
+			if (value) {
+				const result = safeParse(ProblemResponse, JSON.parse(value));
+				if (result.success && result.output.success) {
+					processedQuestions.push(...result.output.questions);
+				}
+				if (isDelayed) {
+					$questions.questions = processedQuestions;
+					isDelayed = false;
+					changed = false;
+				}
 			}
 		}
+		$questions.questions = processedQuestions;
+		changed = false;
 	}
 
 	onMount(() => {
@@ -330,6 +346,8 @@
 	// TODO: a long expression will break out of the sidebar
 	// TODO: enter or similar to refresh questions
 	// TODO: label alignment shouldn't change with/without tooltip
+
+	const animationDuration = { delay: 500, duration: 500 };
 </script>
 
 <div class="toolbar">
@@ -395,12 +413,18 @@
 		on:focusout={handleBlur}
 	>
 		<div class="label">
-			<Katex math="f(x)" />
-			{#if err !== undefined}
-				<Tooltip label={err}>
-					<AlertCircle stroke={focusedIndex === 0 ? 'currentColor' : 'var(--red11)'} />
-				</Tooltip>
-			{/if}
+			<div class="number">
+				<Katex math="f" />
+			</div>
+			<div class="error-container">
+				{#if err !== undefined}
+					<div class="error" in:fade={animationDuration} out:fade={animationDuration}>
+						<Tooltip label={err}>
+							<AlertCircle stroke={focusedIndex === 0 ? 'currentColor' : 'var(--red11)'} />
+						</Tooltip>
+					</div>
+				{/if}
+			</div>
 		</div>
 		<EditableMF
 			bind:expression
@@ -426,14 +450,20 @@
 		{@const invalid = domain.err !== undefined}
 		{@const focused = focusedIndex === index + 1}
 		<div class="expression" class:focused class:invalid={focused && invalid}>
-			<span class="label">
-				{index + 1}
-				{#if invalid}
-					<Tooltip label={domain.err ? domain.err : ''}>
-						<AlertCircle stroke={focused ? 'currentColor' : 'var(--red11)'} strokeWidth="3px" />
-					</Tooltip>
-				{/if}
-			</span>
+			<div class="label">
+				<div class="number">
+					{index + 1}
+				</div>
+				<div class="error-container">
+					{#if invalid}
+						<div class="error" in:fade={animationDuration} out:fade={animationDuration}>
+							<Tooltip label={domain.err ? domain.err : ''}>
+								<AlertCircle stroke={focused ? 'currentColor' : 'var(--red11)'} strokeWidth="3px" />
+							</Tooltip>
+						</div>
+					{/if}
+				</div>
+			</div>
 			<Domain
 				bind:domain
 				handleFocus={handleDomainFocus}
@@ -454,23 +484,22 @@
 			animate:flip={{ duration: 200 }}
 			out:scale={{ duration: 600, easing: quintOut }}
 		>
-			<button
-				class="label"
-				on:click|stopPropagation={focusMF}
-				on:keydown|stopPropagation={focusMF}
-				class:active={constraint.active}
-			>
-				{#if constraint.active}
-					{index + domains.length + 1}
-				{/if}
-				{#if invalid}
-					<div in:fade={{ delay: 100, duration: 200 }}>
-						<Tooltip label={constraint.err ? constraint.err : ''}>
-							<AlertCircle strokeWidth="3px" stroke={focused ? 'currentColor' : 'var(--red11)'} />
-						</Tooltip>
-					</div>
-				{/if}
-			</button>
+			<div class="label" class:active={constraint.active}>
+				<div class="number">
+					{#if constraint.active}
+						{index + domains.length + 1}
+					{/if}
+				</div>
+				<div class="error-container">
+					{#if invalid}
+						<div in:fade={animationDuration} out:fade={animationDuration} class="error">
+							<Tooltip label={constraint.err ? constraint.err : ''}>
+								<AlertCircle strokeWidth="3px" stroke={focused ? 'currentColor' : 'var(--red11)'} />
+							</Tooltip>
+						</div>
+					{/if}
+				</div>
+			</div>
 			<Constraint
 				bind:this={constraintFields[constraint.id]}
 				bind:constraint
@@ -507,8 +536,9 @@
 		cursor: pointer;
 		gap: var(--size-2);
 		transition:
-			0.1s box-shadow ease,
-			0.1s border ease;
+			0.5s box-shadow ease,
+			0.5s border ease;
+		transition-delay: 0.5s;
 	}
 
 	.focused {
@@ -522,19 +552,33 @@
 	}
 
 	.label {
-		display: flex;
-		flex-direction: column;
+		position: relative;
 		width: 60px;
 		height: 100%;
-		flex-shrink: 0;
-		align-items: center;
-		justify-content: center;
 		border: none;
 		border-right: var(--expression-border-width) solid var(--label-color);
 		background-color: var(--label-color);
-		font-size: var(--font-size-1);
-		transition: 0.1s background-color ease;
+		font-size: var(--font-size-0);
+		padding-left: var(--border-size-1);
+		transition:
+			0.5s background-color ease,
+			0.5s border-color ease;
+		transition-delay: 0.5s;
 		user-select: none;
+		padding-block: var(--size-1);
+		padding-inline: var(--size-1);
+	}
+
+	.error-container {
+		position: absolute;
+		inset: 0;
+	}
+
+	.error {
+		display: grid;
+		place-content: center;
+		place-items: center;
+		height: 100%;
 	}
 
 	.toolbar {

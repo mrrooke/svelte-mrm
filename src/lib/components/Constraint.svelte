@@ -4,15 +4,15 @@
 	import { X } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import EditableMF from './EditableMF.svelte';
-	import type { Constraint } from './types';
+	import type { ConstraintType } from './types';
 
-	export let constraint: Constraint,
-		updateConstraint: (constraint: Constraint) => void,
+	export let constraint: ConstraintType,
+		updateConstraint: (constraint: ConstraintType) => void,
 		handleMoveDown: () => void,
 		handleMoveUp: () => void,
-		handleDelete: (constraint: Constraint) => void,
-		handleBackspace: (constraint: Constraint) => void,
-		handleFocus: (constraint: Constraint) => void,
+		handleDelete: (constraint: ConstraintType) => void,
+		handleBackspace: (constraint: ConstraintType) => void,
+		handleFocus: (constraint: ConstraintType) => void,
 		handleBlur: (e: FocusEvent | CustomEvent<FocusEvent>) => void;
 
 	export const setLatex = (latex: string) => mf.latex(latex);
@@ -52,7 +52,7 @@
 />
 {#if constraint.active}
 	<button
-		class="icon-button close"
+		class="icon-ghost-button"
 		on:click={(e) => {
 			e.stopPropagation();
 			e.preventDefault();

@@ -14,7 +14,7 @@
 
 	let width = browser ? window.innerWidth : 1000;
 	let offset = false;
-	let generateProblem: (options: ProblemOptionsType) => void;
+	let generateProblem: (options: ProblemOptionsType) => Promise<void>;
 	let changed = true;
 	let valid = false;
 	let options: ProblemOptionsType = {
@@ -66,7 +66,7 @@
 	<div class="viewport" class:offset>
 		<div class="constraints">
 			{#if isLoaded}
-				<Problem bind:valid bind:changed />
+				<Problem bind:valid bind:generateProblem bind:changed />
 			{/if}
 		</div>
 		<div class="questions">

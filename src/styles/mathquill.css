@@ -35,10 +35,10 @@
 	src:
 		local('Symbola Regular'),
 		local('Symbola'),
-		url('fonts/Symbola.woff2') format('woff2'),
-		url('fonts/Symbola.woff') format('woff'),
-		url('fonts/Symbola.ttf') format('truetype'),
-		url('fonts/Symbola.svg#Symbola') format('svg');
+		url('/fonts/Symbola.woff2') format('woff2'),
+		url('/fonts/Symbola.woff') format('woff'),
+		url('/fonts/Symbola.ttf') format('truetype'),
+		url('/fonts/Symbola.svg#Symbola') format('svg');
 }
 
 .mq-editable-field {

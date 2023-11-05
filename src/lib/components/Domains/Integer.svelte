@@ -72,6 +72,7 @@
 
 <div class="content" on:focusin={() => handleFocus(domain)}>
 	<StaticMf
+		on:keydown
 		config={{
 			handlers: {
 				downOutOf: () => dispatch('down'),

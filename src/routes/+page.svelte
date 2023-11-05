@@ -17,14 +17,6 @@
 	let generateProblem: (options: ProblemOptionsType) => Promise<void>;
 	let changed = true;
 	let valid = false;
-	let options: ProblemOptionsType = {
-		collapseNegatives: true,
-		lexicalOrder: false,
-		multSymbol: '\\cdot',
-		negativeParenthesis: true,
-		printOneMult: false,
-		printZeroAdd: false
-	};
 
 	$: mobile = width < 768;
 
@@ -71,7 +63,7 @@
 		</div>
 		<div class="questions">
 			{#if isLoaded}
-				<Questions bind:changed {valid} generate={() => generateProblem(options)} />
+				<Questions />
 			{/if}
 		</div>
 	</div>

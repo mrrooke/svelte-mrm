@@ -1,61 +1,14 @@
 <script lang="ts">
-	import { quintOut } from 'svelte/easing';
-
-	import { RefreshCcw, X } from 'lucide-svelte';
-	import { fade } from 'svelte/transition';
-	import Button from './Button.svelte';
 	import Katex from './Katex.svelte';
 
 	import { questions } from '$lib/stores/questions';
-
-	export let generate: () => void;
-	export let changed: boolean;
-	export let valid: boolean;
-
-	function closeDialog() {
-		changed = false;
-	}
 
 	// TODO first load specific dialog
 	// TODO show specific error messages for why it won't load
 	// TODO Katex display mode questions
 </script>
 
-{#if changed}
-	<div class="base">
-		<div
-			class="overlay"
-			tabindex="-1"
-			aria-hidden="true"
-			transition:fade={{ duration: 200, easing: quintOut }}
-			on:click={closeDialog}
-			on:keydown={(event) => {
-				if (event.key === 'Enter' || event.key === ' ') {
-					closeDialog();
-				}
-			}}
-		/>
-		<div class="dialog" transition:fade={{ duration: 200, easing: quintOut }}>
-			<header>
-				<h3>Update questions</h3>
-				<Button on:click={closeDialog}>
-					<X />
-				</Button>
-			</header>
-			<section>
-				<p>Your constraints have changed.</p>
-				<p>Do you want to update?</p>
-			</section>
-			<footer>
-				<Button type="submit" on:click={generate} disabled={!valid}>
-					update
-					<RefreshCcw slot="suffix" />
-				</Button>
-			</footer>
-		</div>
-	</div>
-{/if}
-<ol class="stack questions">
+<ol class="questions">
 	{#each $questions.questions.sort(() => 0.5 - Math.random()).slice(0, 10) as question}
 		<li>
 			<Katex math={question} fleqn={true} displayMode />
@@ -64,82 +17,10 @@
 </ol>
 
 <style>
-	.stack {
-		--stack-space: var(--size-1);
-
-		display: flex;
-		flex-direction: column;
-		justify-content: flex-start;
-	}
-
-	.stack > * + * {
-		margin-top: var(--stack-space);
-	}
-
 	.questions {
 		height: 100%;
 		font-size: 1rem;
 		overflow-y: auto;
-	}
-
-	.base {
-		position: absolute;
-		inset: 0;
-		display: flex;
-		align-items: flex-start;
-		justify-content: center;
-		padding-block-start: var(--size-3);
-	}
-
-	.overlay {
-		position: absolute;
-		z-index: 2;
-		inset: 0;
-		backdrop-filter: blur(3px);
-		cursor: pointer;
-	}
-
-	.dialog {
-		z-index: var(--layer-4);
-		display: grid;
-		align-items: start;
-		border-radius: var(--border-size-3);
-		background-color: var(--panel);
-		box-shadow: var(--shadow-3);
-		grid-template-rows: auto 1fr auto;
-		max-block-size: min(80vw, 100%);
-		max-inline-size: min(90vw, var(--size-content-3));
-		min-inline-size: var(--size-content-2);
-	}
-
-	@media (width <= 768px) {
-		.dialog {
-			min-inline-size: 100%;
-		}
-	}
-
-	.dialog > header {
-		display: flex;
-		align-items: flex-start;
-		justify-content: space-between;
-		gap: var(--size-3);
-		padding-block: var(--size-3);
-		padding-inline: var(--size-5);
-	}
-
-	.dialog > section {
-		padding-inline: var(--size-5);
-	}
-
-	.dialog > footer {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: flex-start;
-		justify-content: space-between;
-		background: var(--surface-2);
-		gap: var(--size-3);
-		padding-block: var(--size-3);
-		padding-inline: var(--size-5);
 	}
 
 	li :global(.katex-display) {

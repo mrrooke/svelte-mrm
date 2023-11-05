@@ -11,18 +11,18 @@
 	import Tooltip from './Tooltip.svelte';
 
 	import {
-		ProblemRequest,
-		ProblemResponse,
 		type ConstraintType,
 		type DomainType,
-		type ProblemOptionsType
+		type ProblemOptionsType,
+		ProblemRequest,
+		ProblemResponse
 	} from './types';
 
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { addToast } from '$lib/stores/toasts';
 	import { wasm } from '$lib/stores/wasm';
-	import { AlertCircle, ArrowLeft, ArrowRight, ChevronLeft, Save } from 'lucide-svelte';
+	import { AlertCircle, ArrowLeft, ArrowRight, ChevronLeft, Save, X } from 'lucide-svelte';
 	import { safeParse } from 'valibot';
 	import { questions } from '$lib/stores/questions';
 
@@ -51,6 +51,15 @@
 	let lastFocused: HTMLElement;
 	let problemMf: EditableMF;
 	let constraintFields: Record<number, Constraint> = {};
+
+	let options: ProblemOptionsType = {
+		collapseNegatives: true,
+		lexicalOrder: false,
+		multSymbol: '\\cdot',
+		negativeParenthesis: true,
+		printOneMult: false,
+		printZeroAdd: false
+	};
 
 	onMount(async () => {
 		$page.url.searchParams.has('expression') &&
@@ -306,17 +315,18 @@
 		}
 
 		$questions.stream = await $wasm.stream(problem.output);
+		$questions.generate = true;
 
 		const reader = $questions.stream.getReader();
 
-		let isDelayed = false;
 		let processedQuestions: string[] = [];
 
-		setTimeout(() => {
-			isDelayed = true;
+		const timeoutId = setTimeout(async () => {
+			$questions.delayed = true;
+			await tick();
 		}, 300);
 
-		for (;;) {
+		while ($questions.generate) {
 			const { done, value } = await reader.read();
 			if (done) {
 				console.log('stream finished');
@@ -328,14 +338,27 @@
 				if (result.success && result.output.success) {
 					processedQuestions.push(...result.output.questions);
 				}
-				if (isDelayed) {
+				if ($questions.delayed) {
 					$questions.questions = processedQuestions;
-					isDelayed = false;
-					changed = false;
+					$questions.delayed = false;
+					await tick();
 				}
 			}
 		}
+
+		clearTimeout(timeoutId);
+
+		if (!$questions.generate) {
+			addToast('Stopped generating questions');
+		}
+
+		addToast(`Found ${processedQuestions.length} unique questions`);
+
 		$questions.questions = processedQuestions;
+		$questions.delayed = false;
+		$questions.generate = false;
+		$questions.reader = null;
+		$questions.stream = null;
 		changed = false;
 	}
 
@@ -343,10 +366,8 @@
 		focusMF();
 	});
 
-	// TODO: a long expression will break out of the sidebar
 	// TODO: enter or similar to refresh questions
 	// TODO: label alignment shouldn't change with/without tooltip
-
 	const animationDuration = { delay: 500, duration: 500 };
 </script>
 
@@ -392,135 +413,174 @@
 
 <form
 	bind:this={problemContainer}
-	on:submit|preventDefault={() =>
-		generateProblem({
-			collapseNegatives: true,
-			lexicalOrder: false,
-			multSymbol: '\\cdot',
-			negativeParenthesis: true,
-			printOneMult: false,
-			printZeroAdd: false
-		})}
+	on:submit={() => {
+		console.log('submitted form');
+		void generateProblem(options);
+	}}
 	class="problem"
 >
-	<div
-		class="expression"
-		class:focused={focusedIndex === 0}
-		class:invalid={focusedIndex === 0 && err !== undefined}
-		on:focusin={() => {
-			focusedIndex = 0;
-		}}
-		on:focusout={handleBlur}
-	>
-		<div class="label">
-			<div class="number">
-				<Katex math="f" />
-			</div>
-			<div class="error-container">
-				{#if err !== undefined}
-					<div class="error" in:fade={animationDuration} out:fade={animationDuration}>
-						<Tooltip label={err}>
-							<AlertCircle stroke={focusedIndex === 0 ? 'currentColor' : 'var(--red11)'} />
-						</Tooltip>
-					</div>
-				{/if}
-			</div>
-		</div>
-		<EditableMF
-			bind:expression
-			bind:symbols
-			bind:err
-			on:down={handleMoveDown}
-			on:up={handleMoveUp}
-			on:blur={() => {
-				if (edited && expression === '') {
-					err = 'expression cannot be empty';
-				}
-			}}
-			on:edit={() => {
-				if (expression !== '') {
-					edited = true;
-				}
-			}}
-			bind:this={problemMf}
-			bind:focus={focusMF}
-		/>
-	</div>
-	{#each domains as domain, index (domain.variable)}
-		{@const invalid = domain.err !== undefined}
-		{@const focused = focusedIndex === index + 1}
-		<div class="expression" class:focused class:invalid={focused && invalid}>
-			<div class="label">
-				<div class="number">
-					{index + 1}
-				</div>
-				<div class="error-container">
-					{#if invalid}
-						<div class="error" in:fade={animationDuration} out:fade={animationDuration}>
-							<Tooltip label={domain.err ? domain.err : ''}>
-								<AlertCircle stroke={focused ? 'currentColor' : 'var(--red11)'} strokeWidth="3px" />
-							</Tooltip>
-						</div>
-					{/if}
-				</div>
-			</div>
-			<Domain
-				bind:domain
-				handleFocus={handleDomainFocus}
-				{updateDomain}
-				on:delete={() => removeDomain(domain)}
-				on:up={handleMoveUp}
-				on:down={handleMoveDown}
-			/>
-		</div>
-	{/each}
-	{#each constraints as constraint, index (constraint.id)}
-		{@const invalid = constraint.edited && constraint.err !== undefined}
-		{@const focused = focusedIndex === index + domains.length + 1}
+	<div class="container">
 		<div
 			class="expression"
-			class:focused
-			class:invalid={focused && invalid}
-			animate:flip={{ duration: 200 }}
-			out:scale={{ duration: 600, easing: quintOut }}
+			class:focused={focusedIndex === 0}
+			class:invalid={focusedIndex === 0 && err !== undefined}
+			on:focusin={() => {
+				focusedIndex = 0;
+			}}
+			on:focusout={handleBlur}
 		>
-			<div class="label" class:active={constraint.active}>
+			<div class="label">
 				<div class="number">
-					{#if constraint.active}
-						{index + domains.length + 1}
-					{/if}
+					<Katex math="f" />
 				</div>
 				<div class="error-container">
-					{#if invalid}
-						<div in:fade={animationDuration} out:fade={animationDuration} class="error">
-							<Tooltip label={constraint.err ? constraint.err : ''}>
-								<AlertCircle strokeWidth="3px" stroke={focused ? 'currentColor' : 'var(--red11)'} />
+					{#if err !== undefined}
+						<div class="error" in:fade={animationDuration} out:fade={animationDuration}>
+							<Tooltip label={err}>
+								<AlertCircle stroke={focusedIndex === 0 ? 'currentColor' : 'var(--red11)'} />
 							</Tooltip>
 						</div>
 					{/if}
 				</div>
 			</div>
-			<Constraint
-				bind:this={constraintFields[constraint.id]}
-				bind:constraint
-				{updateConstraint}
-				{handleBackspace}
-				{handleDelete}
-				handleFocus={handleConstraintFocus}
-				{handleMoveDown}
-				{handleMoveUp}
-				{handleBlur}
+			<EditableMF
+				bind:expression
+				bind:symbols
+				bind:err
+				on:down={handleMoveDown}
+				on:up={handleMoveUp}
+				on:blur={() => {
+					if (edited && expression === '') {
+						err = 'expression cannot be empty';
+					}
+				}}
+				on:edit={() => {
+					if (expression !== '') {
+						edited = true;
+					}
+				}}
+				on:keydown={(e) => {
+					if (e.key === 'Enter') {
+						void generateProblem(options);
+					}
+				}}
+				bind:this={problemMf}
+				bind:focus={focusMF}
 			/>
 		</div>
-	{/each}
+		{#each domains as domain, index (domain.variable)}
+			{@const invalid = domain.err !== undefined}
+			{@const focused = focusedIndex === index + 1}
+			<div class="expression" class:focused class:invalid={focused && invalid}>
+				<div class="label">
+					<div class="number">
+						{index + 1}
+					</div>
+					<div class="error-container">
+						{#if invalid}
+							<div class="error" in:fade={animationDuration} out:fade={animationDuration}>
+								<Tooltip label={domain.err ? domain.err : ''}>
+									<AlertCircle
+										stroke={focused ? 'currentColor' : 'var(--red11)'}
+										strokeWidth="3px"
+									/>
+								</Tooltip>
+							</div>
+						{/if}
+					</div>
+				</div>
+				<Domain
+					bind:domain
+					handleFocus={handleDomainFocus}
+					{updateDomain}
+					on:delete={() => removeDomain(domain)}
+					on:up={handleMoveUp}
+					on:down={handleMoveDown}
+					on:keydown={(e) => {
+						if (e.key === 'Enter') {
+							void generateProblem(options);
+						}
+					}}
+				/>
+			</div>
+		{/each}
+		{#each constraints as constraint, index (constraint.id)}
+			{@const invalid = constraint.edited && constraint.err !== undefined}
+			{@const focused = focusedIndex === index + domains.length + 1}
+			<div
+				class="expression"
+				class:focused
+				class:invalid={focused && invalid}
+				animate:flip={{ duration: 200 }}
+				out:scale={{ duration: 600, easing: quintOut }}
+			>
+				<div class="label" class:active={constraint.active}>
+					<div class="number">
+						{#if constraint.active}
+							{index + domains.length + 1}
+						{/if}
+					</div>
+					<div class="error-container">
+						{#if invalid}
+							<div in:fade={animationDuration} out:fade={animationDuration} class="error">
+								<Tooltip label={constraint.err ? constraint.err : ''}>
+									<AlertCircle
+										strokeWidth="3px"
+										stroke={focused ? 'currentColor' : 'var(--red11)'}
+									/>
+								</Tooltip>
+							</div>
+						{/if}
+					</div>
+				</div>
+				<Constraint
+					bind:this={constraintFields[constraint.id]}
+					bind:constraint
+					on:keydown={(e) => {
+						if (e.key === 'Enter') {
+							void generateProblem(options);
+						}
+					}}
+					{updateConstraint}
+					{handleBackspace}
+					{handleDelete}
+					handleFocus={handleConstraintFocus}
+					{handleMoveDown}
+					{handleMoveUp}
+					{handleBlur}
+				/>
+			</div>
+		{/each}
+	</div>
+	{#if $questions.generate && $questions.delayed}
+		<div>
+			Processing...
+			<button
+				class="ghost-icon"
+				on:click={async () => {
+					$questions.generate = false;
+					await tick();
+				}}><X /></button
+			>
+		</div>
+	{:else}
+		<button type="submit" disabled={!valid}> Generate </button>
+	{/if}
 </form>
 
 <style>
 	.problem {
 		display: grid;
+		grid-template-rows: 1fr 48px;
 		height: 100%;
-		grid-auto-rows: min-content;
-		overflow-y: auto;
+		min-height: 0;
+	}
+
+	.container {
+		overflow: hidden auto;
+		height: 100%;
+		min-height: 0;
+		min-width: 0;
 	}
 
 	.expression {

@@ -122,10 +122,12 @@
 </script>
 
 <span
+	role="math"
 	class="container"
 	{style}
 	on:focusin={(e) => dispatchFocus('focus', e)}
 	on:focusout={(e) => dispatchFocus('blur', e)}
+	on:keydown
 	use:mathquill={{ ...config, handlers }}
 	use:getInstance>{expression}</span
 >

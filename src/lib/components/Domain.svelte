@@ -9,9 +9,9 @@
 </script>
 
 {#if domain.type === 'integer'}
-	<Integer {domain} {handleFocus} {updateDomain} on:down on:up />
+	<Integer on:keydown {domain} {handleFocus} {updateDomain} on:down on:up />
 {:else if domain.type === 'discrete'}
-	<Discrete {domain} {handleFocus} {updateDomain} on:down on:up />
+	<Discrete on:keydown {domain} {handleFocus} {updateDomain} on:down on:up />
 {:else}
 	<p>invalid domain type</p>
 {/if}

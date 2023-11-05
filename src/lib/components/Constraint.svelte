@@ -49,6 +49,7 @@
 		updateConstraint({ ...constraint, edited });
 	}}
 	on:edit={() => updateConstraint({ ...constraint, edited: true })}
+	on:keydown
 />
 {#if constraint.active}
 	<button

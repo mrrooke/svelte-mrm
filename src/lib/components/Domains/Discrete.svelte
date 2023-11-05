@@ -45,6 +45,7 @@
 			}
 		}}
 		bind:instance
+		on:keydown
 		expression={`${domain.variable}\\in\\left\\{\\MathQuillMathField{x,y,z}\\right\\}`}
 	/>
 </div>

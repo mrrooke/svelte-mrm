@@ -22,7 +22,7 @@
 </script>
 
 <div class="container">
-	<span style="width: 100%;" bind:this={el} use:staticMathField={config} use:getInstance
+	<span style="width: 100%;" bind:this={el} use:staticMathField={config} use:getInstance on:keydown
 		>{expression}</span
 	>
 </div>

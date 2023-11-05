@@ -121,6 +121,7 @@
 	}
 </script>
 
+<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <span
 	role="math"
 	class="container"

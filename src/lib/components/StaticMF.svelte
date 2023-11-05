@@ -22,6 +22,7 @@
 </script>
 
 <div class="container">
+	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<span style="width: 100%;" bind:this={el} use:staticMathField={config} use:getInstance on:keydown
 		>{expression}</span
 	>

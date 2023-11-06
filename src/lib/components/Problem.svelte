@@ -286,7 +286,6 @@
 	}
 
 	function updateDomain(domain: DomainType) {
-		console.log('here');
 		const index = domains.findIndex((d) => d.variable === domain.variable);
 		domains[index] = domain;
 		domains = [...domains];
@@ -302,6 +301,7 @@
 	}
 
 	export async function generateProblem(options: ProblemOptionsType) {
+		// 0. Check if problem is valid. This probably isn't necessary
 		const problem = safeParse(ProblemRequest, {
 			constraints: constraints.filter((c) => c.active === true),
 			domains: domains,
@@ -310,51 +310,72 @@
 		});
 
 		if (!problem.success) {
+			// TODO handle this better. Likely needs resetting of problem state.
 			console.error(problem.issues);
 			return;
 		}
 
-		$questions.stream = await $wasm.stream(problem.output);
+		// 0.a If a previous problem set is being generated, cancel it.
+		if ($questions.generate) {
+			$questions.generate = false; // TODO no idea if this actually cancels the stream
+			await tick(); // not sure if this is necessary
+		}
+
+		// 1. Send problem to wasm and get readable stream.
+		$questions.changed = false;
 		$questions.generate = true;
+		$questions.allQuestions = [];
+		$questions.questions = [];
+		$questions.stream = await $wasm.stream(problem.output);
 
 		const reader = $questions.stream.getReader();
 
-		let processedQuestions: string[] = [];
+		let delayedShown = false; // only process a delay once
 
-		const timeoutId = setTimeout(async () => {
+		// 1a. If the stream works for more than 300ms, show a processing message.
+		const timeoutId = setTimeout(() => {
 			$questions.delayed = true;
-			await tick();
 		}, 300);
 
+		// 2. Until the stream is finished, read from the stream and parse the result..
 		while ($questions.generate) {
 			const { done, value } = await reader.read();
 			if (done) {
-				console.log('stream finished');
 				reader.releaseLock();
 				break;
 			}
 			if (value) {
 				const result = safeParse(ProblemResponse, JSON.parse(value));
 				if (result.success && result.output.success) {
-					processedQuestions.push(...result.output.questions);
+					$questions.allQuestions.push(...result.output.questions);
 				}
-				if ($questions.delayed) {
-					$questions.questions = processedQuestions;
-					$questions.delayed = false;
-					await tick();
+				if ($questions.delayed && !delayedShown) {
+					// After 300ms set the initial questions and show processing message
+					$questions.questions = $questions.allQuestions
+						.sort(() => 0.5 - Math.random())
+						.slice(0, 10);
+					$questions.changed = true;
+					delayedShown = true;
 				}
 			}
 		}
 
+		// 3. Successfully found all solutions, so clear the timeout and show the results.
 		clearTimeout(timeoutId);
 
-		if (!$questions.generate) {
-			addToast('Stopped generating questions');
+		// 4. If we didn't set the questions with a delay timeout, set them now.
+		if ($questions.questions.length === 0) {
+			addToast(`Found ${$questions.allQuestions.length} unique questions`);
+			$questions.questions = $questions.allQuestions.sort(() => 0.5 - Math.random()).slice(0, 10);
+		} else {
+			// 4a. If we did set the questions with a delay timeout, indicate that there are more questions.
+			addToast(
+				`Found ${$questions.allQuestions.length} unique questions\nYou may want to refresh to see more.`
+			);
 		}
 
-		addToast(`Found ${processedQuestions.length} unique questions`);
-
-		$questions.questions = processedQuestions;
+		// 5. Reset question state.
+		$questions.changed = true;
 		$questions.delayed = false;
 		$questions.generate = false;
 		$questions.reader = null;
@@ -552,6 +573,7 @@
 			</div>
 		{/each}
 	</div>
+	<!-- If generating and it is delayed show processing with option to cancel -->
 	{#if $questions.generate && $questions.delayed}
 		<div>
 			Processing...

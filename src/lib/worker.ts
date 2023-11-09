@@ -1,8 +1,13 @@
 import * as Comlink from 'comlink';
 import { array, literal, object, safeParse, string, union, type Output } from 'valibot';
+import {
+	ProblemResponse,
+	type ProblemRequest,
+	type ProblemRequestType,
+	type ProblemResponseType
+} from './components/types';
 import init from './main.wasm?init';
 import './wasm_exec.js';
-import type { ProblemRequest, ProblemRequestType, ProblemResponseType } from './components/types';
 
 declare class Go {
 	argv: string[];
@@ -47,7 +52,6 @@ const obj: {
 		await waInit; // ensure that WASM is initialized
 
 		const response = safeParse(ParseResponse, JSON.parse(self.mrm_parse(latex)));
-
 		if (response.success) {
 			return response.output;
 		} else {
@@ -56,8 +60,19 @@ const obj: {
 	},
 	async stream(problem: Output<typeof ProblemRequest>) {
 		await waInit; // ensure that WASM is initialized
-		const stream = self.mrm_stream(JSON.stringify(problem));
-		return Comlink.transfer(stream, [stream]);
+		const response = self.mrm_stream(JSON.stringify(problem));
+
+		// Errors can be returned in the problem
+		if (response instanceof ReadableStream) {
+			return Comlink.transfer(response, [response]);
+		} else {
+			const parsed = safeParse(ProblemResponse, JSON.parse(response));
+			if (parsed.success && !parsed.output.success) {
+				throw new Error(parsed.output.error);
+			} else {
+				throw new Error('Unhandled error');
+			}
+		}
 	}
 };
 

@@ -1,19 +1,37 @@
 <svelte:options accessors />
 
+<script context="module" lang="ts">
+	export interface MathFieldEventDetail {
+		edit:
+			| {
+					mf: MathQuill.v3.BaseMathQuill;
+					success: true;
+					expression: string;
+					symbols: string[];
+			  }
+			| {
+					success: false;
+					error: string;
+			  };
+		delete: MathQuill.v3.BaseMathQuill;
+		down: MathQuill.v3.BaseMathQuill;
+		up: MathQuill.v3.BaseMathQuill;
+	}
+</script>
+
 <script lang="ts">
 	// TODO selection colour overlaps (transluscent?) creating weird effect
 	import { wasm } from '$lib/stores/wasm';
 	import { createEventDispatcher } from 'svelte';
 	import { mathquill } from '../actions/useMq';
 
+	export let expression = '';
+
 	let instance: MathQuill.v3.EditableMathQuill;
 
-	let dispatch = createEventDispatcher();
+	let dispatch = createEventDispatcher<MathFieldEventDetail>();
 	let dispatchFocus = createEventDispatcher<{ blur: FocusEvent; focus: FocusEvent }>();
 
-	export let expression = '';
-	export let symbols: string[] = [];
-	export let err: string | undefined = undefined;
 	export let style = '';
 	export let config: MathQuill.v3.Config = {};
 	export let handlers: MathQuill.v3.HandlerOptions = {};
@@ -87,26 +105,29 @@
 			dispatch('up', mf);
 		},
 		edit: (mf) => {
-			dispatch('edit', mf);
 			expression = mf.latex();
 			if (expression == '') {
-				symbols = [];
-				err = undefined;
+				dispatch('edit', { mf, success: true, expression: '', symbols: [] });
 			} else {
-				// TODO use zod parse here or something
 				$wasm
 					.parse(expression)
-					.then((res) => {
-						if (res.success) {
-							symbols = res.symbols;
-							err = undefined;
+					.then((result) => {
+						if (result.success) {
+							dispatch('edit', {
+								mf,
+								success: true,
+								expression: result.latex,
+								symbols: result.symbols
+							});
 						} else {
-							console.error(res.error);
-							err = res.error;
+							console.error(result.error);
+							throw new Error(result.error);
 						}
 					})
 					.catch((e) => {
-						console.error(e);
+						if (typeof e === 'string') {
+							throw new Error(e);
+						}
 					});
 			}
 		}

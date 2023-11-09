@@ -11,20 +11,20 @@
 	import Tooltip from './Tooltip.svelte';
 
 	import {
+		ProblemRequest,
+		ProblemResponse,
 		type ConstraintType,
 		type DomainType,
-		type ProblemOptionsType,
-		ProblemRequest,
-		ProblemResponse
+		type ProblemOptionsType
 	} from './types';
 
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import { questions } from '$lib/stores/questions';
 	import { addToast } from '$lib/stores/toasts';
 	import { wasm } from '$lib/stores/wasm';
 	import { AlertCircle, ArrowLeft, ArrowRight, ChevronLeft, Save, X } from 'lucide-svelte';
 	import { safeParse } from 'valibot';
-	import { questions } from '$lib/stores/questions';
 
 	export let changed = false;
 	export let valid: boolean;
@@ -60,6 +60,8 @@
 		printOneMult: false,
 		printZeroAdd: false
 	};
+
+	const animationDuration = { delay: 500, duration: 500 };
 
 	onMount(async () => {
 		$page.url.searchParams.has('expression') &&
@@ -147,7 +149,6 @@
 		const idx = fields.findIndex((mf) => mf.el().contains(document.activeElement));
 		if (idx > 0) {
 			const mf = fields[idx - 1];
-			console.log(mf);
 			mf?.focus();
 			mf?.moveToRightEnd();
 		}
@@ -263,7 +264,7 @@
 		}
 		const index = constraints.findIndex((c) => c.id === constraint.id);
 		constraints[index] = constraint;
-		constraints = [...constraints];
+		constraints = constraints;
 	}
 
 	function checkVariables(constraintSymbols: string[], symbols: string[]): string | undefined {
@@ -300,8 +301,14 @@
 		domains = domains; // trigger reactivity
 	}
 
+	// TODO This should be refactored into a store, or just a separate TS file (somehow?
 	export async function generateProblem(options: ProblemOptionsType) {
 		// 0. Check if problem is valid. This probably isn't necessary
+		if (!valid) {
+			addToast("can't generate questions, please check for any errors");
+			return;
+		}
+
 		const problem = safeParse(ProblemRequest, {
 			constraints: constraints.filter((c) => c.active === true),
 			domains: domains,
@@ -311,6 +318,7 @@
 
 		if (!problem.success) {
 			// TODO handle this better. Likely needs resetting of problem state.
+			// I don't even really know how this is reachable.
 			console.error(problem.issues);
 			return;
 		}
@@ -322,11 +330,27 @@
 		}
 
 		// 1. Send problem to wasm and get readable stream.
+		// TODO can this be refactored to a reset function?
 		$questions.changed = false;
 		$questions.generate = true;
 		$questions.allQuestions = [];
 		$questions.questions = [];
-		$questions.stream = await $wasm.stream(problem.output);
+
+		// TODO is there a way to emit a warning after applying unary constraints
+		// that there is large domain to check? e.g. 10^10 but 2^10 after pruning is
+		// better.
+		try {
+			$questions.stream = await $wasm.stream(problem.output);
+		} catch (e) {
+			if (e instanceof Error) {
+				addToast(`could not generate questions: ${e.message}`);
+			} else {
+				addToast(`could not generate questions: unhandled error`);
+			}
+			// TODO handle this better
+			$questions.generate = false;
+			return;
+		}
 
 		const reader = $questions.stream.getReader();
 
@@ -386,10 +410,6 @@
 	onMount(() => {
 		focusMF();
 	});
-
-	// TODO: enter or similar to refresh questions
-	// TODO: label alignment shouldn't change with/without tooltip
-	const animationDuration = { delay: 500, duration: 500 };
 </script>
 
 <div class="toolbar">
@@ -465,9 +485,7 @@
 				</div>
 			</div>
 			<EditableMF
-				bind:expression
-				bind:symbols
-				bind:err
+				{expression}
 				on:down={handleMoveDown}
 				on:up={handleMoveUp}
 				on:blur={() => {
@@ -475,13 +493,17 @@
 						err = 'expression cannot be empty';
 					}
 				}}
-				on:edit={() => {
-					if (expression !== '') {
-						edited = true;
+				on:edit={({ detail }) => {
+					if (detail.success) {
+						expression = detail.expression;
+						symbols = detail.symbols;
+						err = undefined;
+					} else {
+						err = detail.error;
 					}
 				}}
 				on:keydown={(e) => {
-					if (e.key === 'Enter') {
+					if (e.key === 'Enter' && valid) {
 						void generateProblem(options);
 					}
 				}}
@@ -518,7 +540,7 @@
 					on:up={handleMoveUp}
 					on:down={handleMoveDown}
 					on:keydown={(e) => {
-						if (e.key === 'Enter') {
+						if (e.key === 'Enter' && valid) {
 							void generateProblem(options);
 						}
 					}}
@@ -558,7 +580,7 @@
 					bind:this={constraintFields[constraint.id]}
 					bind:constraint
 					on:keydown={(e) => {
-						if (e.key === 'Enter') {
+						if (e.key === 'Enter' && valid) {
 							void generateProblem(options);
 						}
 					}}

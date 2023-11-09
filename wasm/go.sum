@@ -46,5 +46,11 @@ github.com/mrrooke/calc v0.0.0-20231102213659-cf421e2e67c9 h1:U8XqwF+rPiJN8POsJr
 github.com/mrrooke/calc v0.0.0-20231102213659-cf421e2e67c9/go.mod h1:xZ9rzrLh4C05vmyhXvJ8Nv/GFn99uOcmvXOG7x9v/Ss=
 github.com/mrrooke/calc v0.0.0-20231104115152-efca8aa694f6 h1:OGiQ2sMDfQPM9tWXnoUD+scGcINkLVl8rh2jq5BAY8o=
 github.com/mrrooke/calc v0.0.0-20231104115152-efca8aa694f6/go.mod h1:xZ9rzrLh4C05vmyhXvJ8Nv/GFn99uOcmvXOG7x9v/Ss=
+github.com/mrrooke/calc v0.0.0-20231107064048-acd901b8925d h1:Nwoo+WaxaWAPfi/UxKpJNsoipg6J72/20bVfL4Z97cg=
+github.com/mrrooke/calc v0.0.0-20231107064048-acd901b8925d/go.mod h1:xZ9rzrLh4C05vmyhXvJ8Nv/GFn99uOcmvXOG7x9v/Ss=
+github.com/mrrooke/calc v0.0.0-20231107064254-c2d28cc24e3e h1:HG/1uI5o6hdlUDQ199NXItoaAvPkybK0DaXMxGJS1jo=
+github.com/mrrooke/calc v0.0.0-20231107064254-c2d28cc24e3e/go.mod h1:xZ9rzrLh4C05vmyhXvJ8Nv/GFn99uOcmvXOG7x9v/Ss=
+github.com/mrrooke/calc v0.0.0-20231107064358-f7e70d8cc35b h1:e/OXHfn8YxPN2W0+yd0ZoummXpH7YDUSvcSUDxYOlU8=
+github.com/mrrooke/calc v0.0.0-20231107064358-f7e70d8cc35b/go.mod h1:xZ9rzrLh4C05vmyhXvJ8Nv/GFn99uOcmvXOG7x9v/Ss=
 golang.org/x/exp v0.0.0-20230905200255-921286631fa9 h1:GoHiUyI/Tp2nVkLI2mCxVkOjsbSXD66ic0XW0js0R9g=
 golang.org/x/exp v0.0.0-20230905200255-921286631fa9/go.mod h1:S2oDrQGGwySpoQPVqRShND87VCbxmc6bL1Yd2oYrm6k=

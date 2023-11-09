@@ -176,7 +176,11 @@ func MyGeneratornc() js.Func {
 		}
 
 		// 1. Generate the problem set
-		batches, _ := calc.Generate(p.Expression, p.Domains, p.Constraints)
+		batches, err := calc.Generate(p.Expression, p.Domains, p.Constraints)
+
+		if err != nil {
+			return newError(err.Error())
+		}
 
 		// Create the "underlyingSource" object for the ReadableStream constructor
 		// See: https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream/ReadableStream
@@ -188,6 +192,8 @@ func MyGeneratornc() js.Func {
 
 				return nil
 			}),
+			// use the pull method to push data to the stream and allow async generation of problems, rather than
+			// blocking on creating all response.
 			"pull": js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 				controller := args[0]
 

@@ -17,14 +17,8 @@
 
 	export const setLatex = (latex: string) => mf.latex(latex);
 
-	let expression = '',
-		err: string | undefined = undefined,
-		symbols: string[] = [];
-
 	let focusMF: () => MathQuill.v3.EditableMathQuill;
 	let mf: EditableMF;
-
-	$: updateConstraint({ ...constraint, expression, err, symbols });
 
 	onMount(() => {
 		if (constraint.active) {
@@ -35,12 +29,12 @@
 
 <EditableMF
 	bind:this={mf}
-	bind:expression
-	bind:err
-	bind:symbols
 	bind:focus={focusMF}
 	on:delete={() => handleBackspace(constraint)}
-	on:down={handleMoveDown}
+	on:down={(mf) => {
+		mf.detail.el();
+		handleMoveDown;
+	}}
 	on:up={handleMoveUp}
 	on:focus={() => handleFocus(constraint)}
 	on:blur={(e) => {
@@ -48,7 +42,18 @@
 		handleBlur(e);
 		updateConstraint({ ...constraint, edited });
 	}}
-	on:edit={() => updateConstraint({ ...constraint, edited: true })}
+	on:edit={({ detail }) => {
+		if (detail.success) {
+			updateConstraint({
+				...constraint,
+				expression: detail.expression,
+				symbols: detail.symbols,
+				err: undefined
+			});
+		} else {
+			updateConstraint({ ...constraint, err: detail.error, expression: '', symbols: [] });
+		}
+	}}
 	on:keydown
 />
 {#if constraint.active}

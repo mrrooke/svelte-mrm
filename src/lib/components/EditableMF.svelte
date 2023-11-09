@@ -116,7 +116,7 @@
 							dispatch('edit', {
 								mf,
 								success: true,
-								expression: result.latex,
+								expression, // this should not be parsed latex expression
 								symbols: result.symbols
 							});
 						} else {

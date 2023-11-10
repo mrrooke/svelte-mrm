@@ -303,12 +303,6 @@
 
 	// TODO This should be refactored into a store, or just a separate TS file (somehow?
 	export async function generateProblem(options: ProblemOptionsType) {
-		// 0. Check if problem is valid. This probably isn't necessary
-		if (!valid) {
-			addToast("can't generate questions, please check for any errors");
-			return;
-		}
-
 		const problem = safeParse(ProblemRequest, {
 			constraints: constraints.filter((c) => c.active === true),
 			domains: domains,
@@ -326,7 +320,6 @@
 		// 0.a If a previous problem set is being generated, cancel it.
 		if ($questions.generate) {
 			$questions.generate = false; // TODO no idea if this actually cancels the stream
-			await tick(); // not sure if this is necessary
 		}
 
 		// 1. Send problem to wasm and get readable stream.
@@ -389,12 +382,12 @@
 
 		// 4. If we didn't set the questions with a delay timeout, set them now.
 		if ($questions.questions.length === 0) {
-			addToast(`Found ${$questions.allQuestions.length} unique questions`);
+			addToast(`Found ${$questions.allQuestions.length.toLocaleString()} unique questions`);
 			$questions.questions = $questions.allQuestions.sort(() => 0.5 - Math.random()).slice(0, 10);
 		} else {
 			// 4a. If we did set the questions with a delay timeout, indicate that there are more questions.
 			addToast(
-				`Found ${$questions.allQuestions.length} unique questions\nYou may want to refresh to see more.`
+				`Found ${$questions.allQuestions.length.toLocaleString()} unique questions. 	You may want to refresh to see more.`
 			);
 		}
 
@@ -455,8 +448,11 @@
 <form
 	bind:this={problemContainer}
 	on:submit={() => {
-		console.log('submitted form');
-		void generateProblem(options);
+		if (valid) {
+			void generateProblem(options);
+		} else {
+			addToast("can't generate questions, please check for any errors.");
+		}
 	}}
 	class="problem"
 >
@@ -597,18 +593,17 @@
 	</div>
 	<!-- If generating and it is delayed show processing with option to cancel -->
 	{#if $questions.generate && $questions.delayed}
-		<div>
-			Processing...
-			<button
-				class="ghost-icon"
-				on:click={async () => {
-					$questions.generate = false;
-					await tick();
-				}}><X /></button
-			>
-		</div>
+		<button
+			on:click={() => {
+				$questions.generate = false;
+			}}
+			class="processing"
+		>
+			<span>Processing...</span>
+			<X /></button
+		>
 	{:else}
-		<button type="submit" disabled={!valid}> Generate </button>
+		<button type="submit">Generate</button>
 	{/if}
 </form>
 
@@ -702,5 +697,12 @@
 		display: flex;
 		flex-direction: row;
 		gap: var(--size-2);
+	}
+
+	.processing {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding-inline: var(--size-2);
 	}
 </style>

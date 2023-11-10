@@ -31,10 +31,7 @@
 	bind:this={mf}
 	bind:focus={focusMF}
 	on:delete={() => handleBackspace(constraint)}
-	on:down={(mf) => {
-		mf.detail.el();
-		handleMoveDown;
-	}}
+	on:down={() => handleMoveDown()}
 	on:up={handleMoveUp}
 	on:focus={() => handleFocus(constraint)}
 	on:blur={(e) => {

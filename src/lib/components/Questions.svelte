@@ -17,6 +17,7 @@
 		height: 100%;
 		font-size: 1rem;
 		overflow-y: auto;
+		background: var(--bg-default);
 	}
 
 	li :global(.katex-display) {

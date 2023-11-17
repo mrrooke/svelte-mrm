@@ -93,6 +93,10 @@
 		instance.moveToRightEnd();
 	}
 
+	export function el() {
+		return instance.el();
+	}
+
 	$: handlers = {
 		...handlers,
 		deleteOutOf: (_, mf) => {
@@ -120,8 +124,7 @@
 								symbols: result.symbols
 							});
 						} else {
-							console.error(result.error);
-							throw new Error(result.error);
+							dispatch('edit', { success: false, error: result.error });
 						}
 					})
 					.catch((e) => {
@@ -158,7 +161,7 @@
 	.container {
 		display: inline-flex;
 		overflow: auto;
-		min-height: var(--size-8);
+		min-height: var(--size-8, 3rem);
 		max-width: 100%;
 		align-items: center;
 	}

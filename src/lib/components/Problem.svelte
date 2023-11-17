@@ -1,14 +1,9 @@
 <script lang="ts">
 	import EditableMF from './EditableMF.svelte';
-	import Katex from './Katex.svelte';
 
 	import { onMount, tick } from 'svelte';
-	import { flip } from 'svelte/animate';
-	import { quintOut } from 'svelte/easing';
-	import { fade, scale } from 'svelte/transition';
 	import Constraint from './Constraint.svelte';
 	import Domain from './Domain.svelte';
-	import Tooltip from './Tooltip.svelte';
 
 	import {
 		ProblemRequest,
@@ -23,8 +18,10 @@
 	import { questions } from '$lib/stores/questions';
 	import { addToast } from '$lib/stores/toasts';
 	import { wasm } from '$lib/stores/wasm';
-	import { AlertCircle, ArrowLeft, ArrowRight, ChevronLeft, Save, X } from 'lucide-svelte';
+	import { ChevronLeft, Save, X } from 'lucide-svelte';
 	import { safeParse } from 'valibot';
+	import ExpressionContainer from './ExpressionContainer.svelte';
+	import { get_repl_context } from './context';
 
 	export let changed = false;
 	export let valid: boolean;
@@ -44,7 +41,7 @@
 			symbols: []
 		}
 	];
-	let err: string | undefined = undefined;
+	let err: string | null = null;
 	let edited = false;
 	let focusMF: () => MathQuill.v3.EditableMathQuill;
 	let problemContainer: HTMLFormElement;
@@ -61,7 +58,7 @@
 		printZeroAdd: false
 	};
 
-	const animationDuration = { delay: 500, duration: 500 };
+	const { toggleable, collapsed } = get_repl_context();
 
 	onMount(async () => {
 		$page.url.searchParams.has('expression') &&
@@ -88,17 +85,11 @@
 		await tick();
 	});
 
-	$: domains = updateDomains(domains, symbols);
 	$: valid =
-		err === undefined &&
+		err == null &&
 		expression !== '' &&
-		constraints.reduce((prev, curr) => prev && curr.err === undefined, true) &&
-		domains.reduce((prev, curr) => prev && curr.err === undefined, true);
-	$: if (constraints.slice(-1)[0]?.active) {
-		addConstraint('');
-	}
-	$: expression, domains, constraints, (changed = true);
-	$: symbols, constraints.forEach((c) => updateConstraint({ ...c }));
+		constraints.reduce((prev, curr) => prev && curr.err == null, true) &&
+		domains.reduce((prev, curr) => prev && curr.err == null, true); // add this to an event
 
 	function handleBlur(e: CustomEvent<FocusEvent> | FocusEvent) {
 		// TODO there is no way this isn't wrong
@@ -131,27 +122,17 @@
 			.filter((t): t is MathQuill.v3.EditableMathQuill => t != null);
 	}
 
-	function handleMoveDown() {
+	function handleMove(dir: 'up' | 'down') {
 		const fields = getFields();
 		const idx = fields.findIndex((mf) => mf.el().contains(document.activeElement));
-		if (idx < fields.length - 1) {
-			const mf = fields[idx + 1];
-			mf?.focus();
-			mf?.moveToLeftEnd();
+		if (idx < 0 || idx >= fields.length) {
+			return;
 		}
-		if (idx === fields.length - 2) {
-			addConstraint('');
-		}
-	}
-
-	function handleMoveUp() {
-		const fields = getFields();
-		const idx = fields.findIndex((mf) => mf.el().contains(document.activeElement));
-		if (idx > 0) {
-			const mf = fields[idx - 1];
-			mf?.focus();
-			mf?.moveToRightEnd();
-		}
+		const mf = fields[idx + (dir === 'up' ? -1 : 1)];
+		if (!mf) return;
+		mf.focus();
+		mf.select();
+		dir === 'up' ? mf.moveToRightEnd() : mf.moveToLeftEnd();
 	}
 
 	async function handleBackspace(constraint: ConstraintType) {
@@ -192,6 +173,9 @@
 		updateConstraint({ ...constraint, active: true });
 		const index = constraints.findIndex((c) => c.id === constraint.id);
 		focusedIndex = 1 + domains.length + index;
+		if (index === constraints.length - 1) {
+			addConstraint('');
+		}
 	}
 
 	function handleDomainFocus(domain: DomainType) {
@@ -256,15 +240,15 @@
 		if (!active) {
 			return;
 		}
-		if (err === undefined && expression === '') {
+		if (err == null && expression === '') {
 			constraint.err = 'constraints cannot be empty';
-		}
-		if (constraint.err === undefined) {
+		} else if (constraint.err == null) {
 			constraint.err = checkVariables(constraintSymbols, symbols);
 		}
 		const index = constraints.findIndex((c) => c.id === constraint.id);
 		constraints[index] = constraint;
 		constraints = constraints;
+		changed = true;
 	}
 
 	function checkVariables(constraintSymbols: string[], symbols: string[]): string | undefined {
@@ -289,7 +273,8 @@
 	function updateDomain(domain: DomainType) {
 		const index = domains.findIndex((d) => d.variable === domain.variable);
 		domains[index] = domain;
-		domains = [...domains];
+		domains = domains;
+		changed = true;
 	}
 
 	function removeDomain(domain: DomainType) {
@@ -403,294 +388,191 @@
 	onMount(() => {
 		focusMF();
 	});
+
+	$: focusedIndex;
 </script>
 
-<div class="toolbar">
-	<button
-		class="icon-button"
-		on:click={async () => {
-			const params = new URLSearchParams();
-			params.set('expression', expression);
-			params.set(
-				'constraints',
-				constraints
-					.filter((c) => c.expression !== '')
-					.map((c) => encodeURIComponent(c.expression))
-					.join(',')
-			);
-			if ('clipboard' in navigator) {
-				await navigator.clipboard.writeText($page.url.pathname + '?' + params.toString());
-				addToast('copied url to clipboard');
-			} else {
-				addToast('could not copy url to clipboard');
-			}
-			await goto(`?${params.toString()}`);
-		}}
-	>
-		<Save />
-	</button>
-	<div class="group">
-		<button class="icon-button" on:click={() => addToast('undo not implemented yet')}>
-			<ArrowLeft />
-		</button>
-		<button class="icon-button" on:click={() => addToast('redo not implemented yet')}>
-			<ArrowRight />
-		</button>
-	</div>
-	<div class="group">
-		<button class="icon-button" on:click={() => addToast('collapse not implemented yet')}>
-			<ChevronLeft />
-		</button>
-	</div>
-</div>
-<div />
-
-<form
-	bind:this={problemContainer}
-	on:submit={() => {
-		if (valid) {
-			void generateProblem(options);
-		} else {
-			addToast("can't generate questions, please check for any errors.");
-		}
-	}}
-	class="problem"
->
-	<div class="container">
-		<div
-			class="expression"
-			class:focused={focusedIndex === 0}
-			class:invalid={focusedIndex === 0 && err !== undefined}
-			on:focusin={() => {
-				focusedIndex = 0;
-			}}
-			on:focusout={handleBlur}
-		>
-			<div class="label">
-				<div class="number">
-					<Katex math="f" />
-				</div>
-				<div class="error-container">
-					{#if err !== undefined}
-						<div class="error" in:fade={animationDuration} out:fade={animationDuration}>
-							<Tooltip label={err}>
-								<AlertCircle stroke={focusedIndex === 0 ? 'currentColor' : 'var(--red11)'} />
-							</Tooltip>
-						</div>
-					{/if}
-				</div>
-			</div>
-			<EditableMF
-				{expression}
-				on:down={handleMoveDown}
-				on:up={handleMoveUp}
-				on:blur={() => {
-					if (edited && expression === '') {
-						err = 'expression cannot be empty';
-					}
-				}}
-				on:edit={({ detail }) => {
-					if (detail.success) {
-						expression = detail.expression;
-						symbols = detail.symbols;
-						err = undefined;
-					} else {
-						err = detail.error;
-					}
-				}}
-				on:keydown={(e) => {
-					if (e.key === 'Enter' && valid) {
-						void generateProblem(options);
-					}
-				}}
-				bind:this={problemMf}
-				bind:focus={focusMF}
-			/>
-		</div>
-		{#each domains as domain, index (domain.variable)}
-			{@const invalid = domain.err !== undefined}
-			{@const focused = focusedIndex === index + 1}
-			<div class="expression" class:focused class:invalid={focused && invalid}>
-				<div class="label">
-					<div class="number">
-						{index + 1}
-					</div>
-					<div class="error-container">
-						{#if invalid}
-							<div class="error" in:fade={animationDuration} out:fade={animationDuration}>
-								<Tooltip label={domain.err ? domain.err : ''}>
-									<AlertCircle
-										stroke={focused ? 'currentColor' : 'var(--red11)'}
-										strokeWidth="3px"
-									/>
-								</Tooltip>
-							</div>
-						{/if}
-					</div>
-				</div>
-				<Domain
-					bind:domain
-					handleFocus={handleDomainFocus}
-					{updateDomain}
-					on:delete={() => removeDomain(domain)}
-					on:up={handleMoveUp}
-					on:down={handleMoveDown}
-					on:keydown={(e) => {
-						if (e.key === 'Enter' && valid) {
-							void generateProblem(options);
-						}
-					}}
-				/>
-			</div>
-		{/each}
-		{#each constraints as constraint, index (constraint.id)}
-			{@const invalid = constraint.edited && constraint.err !== undefined}
-			{@const focused = focusedIndex === index + domains.length + 1}
-			<div
-				class="expression"
-				class:focused
-				class:invalid={focused && invalid}
-				animate:flip={{ duration: 200 }}
-				out:scale={{ duration: 600, easing: quintOut }}
-			>
-				<div class="label" class:active={constraint.active}>
-					<div class="number">
-						{#if constraint.active}
-							{index + domains.length + 1}
-						{/if}
-					</div>
-					<div class="error-container">
-						{#if invalid}
-							<div in:fade={animationDuration} out:fade={animationDuration} class="error">
-								<Tooltip label={constraint.err ? constraint.err : ''}>
-									<AlertCircle
-										strokeWidth="3px"
-										stroke={focused ? 'currentColor' : 'var(--red11)'}
-									/>
-								</Tooltip>
-							</div>
-						{/if}
-					</div>
-				</div>
-				<Constraint
-					bind:this={constraintFields[constraint.id]}
-					bind:constraint
-					on:keydown={(e) => {
-						if (e.key === 'Enter' && valid) {
-							void generateProblem(options);
-						}
-					}}
-					{updateConstraint}
-					{handleBackspace}
-					{handleDelete}
-					handleFocus={handleConstraintFocus}
-					{handleMoveDown}
-					{handleMoveUp}
-					{handleBlur}
-				/>
-			</div>
-		{/each}
-	</div>
-	<!-- If generating and it is delayed show processing with option to cancel -->
-	{#if $questions.generate && $questions.delayed}
+<div class="container">
+	<div class="toolbar">
 		<button
-			on:click={() => {
-				$questions.generate = false;
+			data-variant="secondary"
+			on:click={async () => {
+				const params = new URLSearchParams();
+				params.set('expression', expression);
+				params.set(
+					'constraints',
+					constraints
+						.filter((c) => c.expression !== '')
+						.map((c) => encodeURIComponent(c.expression))
+						.join(',')
+				);
+				if ('clipboard' in navigator) {
+					await navigator.clipboard.writeText($page.url.pathname + '?' + params.toString());
+					addToast('copied url to clipboard');
+				} else {
+					addToast('could not copy url to clipboard');
+				}
+				await goto(`?${params.toString()}`);
 			}}
-			class="processing"
 		>
-			<span>Processing...</span>
-			<X /></button
-		>
-	{:else}
-		<button type="submit">Generate</button>
-	{/if}
-</form>
+			<Save />
+		</button>
+		<div class="group">
+			{#if !$toggleable && !$collapsed}
+				<button
+					data-variant="secondary"
+					on:click={() => {
+						$collapsed = true;
+					}}
+				>
+					<ChevronLeft />
+				</button>
+			{/if}
+		</div>
+	</div>
+	<div />
+
+	<form
+		bind:this={problemContainer}
+		on:submit={() => {
+			if (valid) {
+				void generateProblem(options);
+			} else {
+				addToast("can't generate questions, please check for any errors.");
+			}
+		}}
+		class="problem"
+	>
+		<div class="list">
+			<ExpressionContainer focused={focusedIndex === 0} {err} label="f">
+				<EditableMF
+					{expression}
+					on:down={() => handleMove('down')}
+					on:up={() => handleMove('up')}
+					on:blur={() => {
+						if (edited && expression === '') {
+							err = 'expression cannot be empty';
+						}
+					}}
+					on:focus={() => {
+						focusedIndex = 0;
+						getFields()[focusedIndex]?.select;
+					}}
+					on:edit={({ detail }) => {
+						if (detail.success) {
+							expression = detail.expression;
+							symbols = detail.symbols;
+							domains = updateDomains(domains, symbols);
+							constraints.forEach((c) => updateConstraint(c));
+							err = null;
+							changed = true;
+						} else {
+							err = detail.error;
+						}
+					}}
+					on:keydown={(e) => {
+						if (e.key === 'Enter' && valid) {
+							void generateProblem(options);
+						}
+					}}
+					bind:focus={focusMF}
+				/>
+			</ExpressionContainer>
+			{#each domains as domain, index (domain.variable)}
+				<ExpressionContainer
+					focused={focusedIndex === index + 1}
+					err={domain.err}
+					label={(index + 1).toLocaleString()}
+				>
+					<Domain
+						bind:domain
+						handleFocus={handleDomainFocus}
+						{updateDomain}
+						on:delete={() => removeDomain(domain)}
+						on:up={() => handleMove('up')}
+						on:down={() => handleMove('down')}
+						on:keydown={(e) => {
+							if (e.key === 'Enter' && valid) {
+								void generateProblem(options);
+							}
+						}}
+					/>
+				</ExpressionContainer>
+			{/each}
+			{#each constraints as constraint, index (constraint.id)}
+				<ExpressionContainer
+					focused={focusedIndex === index + domains.length + 1}
+					label={constraint.active ? (index + domains.length + 1).toLocaleString() : null}
+					err={constraint.err}
+				>
+					<Constraint
+						bind:this={constraintFields[constraint.id]}
+						bind:constraint
+						on:keydown={(e) => {
+							if (e.key === 'Enter' && valid) {
+								void generateProblem(options);
+							}
+						}}
+						{updateConstraint}
+						{handleBackspace}
+						{handleDelete}
+						handleFocus={handleConstraintFocus}
+						{handleMove}
+						{handleBlur}
+					/>
+				</ExpressionContainer>
+			{/each}
+		</div>
+		<!-- If generating and it is delayed show processing with option to cancel -->
+		{#if $questions.generate && $questions.delayed}
+			<button
+				on:click={() => {
+					$questions.generate = false;
+				}}
+				class="processing"
+			>
+				<span>Processing...</span>
+				<X /></button
+			>
+		{:else}
+			<button type="submit">Generate</button>
+		{/if}
+	</form>
+</div>
 
 <style>
-	.problem {
-		display: grid;
-		grid-template-rows: 1fr 48px;
-		height: 100%;
-		min-height: 0;
-	}
-
 	.container {
 		overflow: hidden auto;
 		height: 100%;
 		min-height: 0;
 		min-width: 0;
+		display: flex;
+		flex-direction: column;
 	}
 
-	.expression {
-		--expression-border-width: var(--border-size-1);
-		--expression-border-color: var(--violet3);
-		--label-color: var(--violet3);
-
+	form {
 		display: grid;
-		grid-template-columns: 60px 1fr 40px;
-		align-items: center;
-		width: 100%;
-		border: var(--expression-border-width) solid var(--expression-border-color);
-		cursor: pointer;
-		gap: var(--size-2);
-		transition:
-			0.5s box-shadow ease,
-			0.5s border ease;
-		transition-delay: 0.5s;
-	}
-
-	.focused {
-		--label-color: var(--violet5);
-		--expression-border-color: var(--violet5);
-	}
-
-	.invalid {
-		--label-color: var(--red5);
-		--expression-border-color: var(--red5);
-	}
-
-	.label {
-		position: relative;
-		width: 60px;
+		grid-template-rows: 1fr 48px;
 		height: 100%;
-		border: none;
-		border-right: var(--expression-border-width) solid var(--label-color);
-		background-color: var(--label-color);
-		font-size: var(--font-size-0);
-		padding-left: var(--border-size-1);
-		transition:
-			0.5s background-color ease,
-			0.5s border-color ease;
-		transition-delay: 0.5s;
-		user-select: none;
-		padding-block: var(--size-1);
-		padding-inline: var(--size-1);
+		min-height: 0;
+		max-height: 100%;
 	}
 
-	.error-container {
-		position: absolute;
-		inset: 0;
-	}
-
-	.error {
-		display: grid;
-		place-content: center;
-		place-items: center;
-		height: 100%;
+	.list {
+		overflow: hidden auto;
+		min-height: 0;
+		min-width: 0;
 	}
 
 	.toolbar {
 		display: flex;
-		height: var(--size-9);
+		height: 3rem;
+		padding-inline: 10px;
 		flex-wrap: nowrap;
 		place-content: center space-between;
 		align-items: center;
-		padding: var(--size-2);
-		border-top: solid 1px var(--mauve6);
-		border-right: solid 1px var(--mauve6);
-		border-bottom: solid 1px var(--mauve6);
-		background-color: var(--mauve2);
+		border-left: var(--border-size-1) solid hsl(var(--border));
+		border-right: var(--border-size-1) solid hsl(var(--border));
 	}
 
 	.group {

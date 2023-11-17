@@ -20,18 +20,14 @@
 
 <style>
 	nav {
-		position: fixed;
-		z-index: 100;
 		display: flex;
 		width: 100vw;
-		height: var(--nav-h);
 		align-items: center;
 		justify-content: space-between;
-		margin: 0 auto;
-		background-color: var(--lo-contrast);
-		box-shadow: 0 0 0 1px var(--mauve5);
+		font-weight: 500;
+		border-bottom: solid 1px hsl(var(--border));
 		padding-inline: var(--size-8);
-		user-select: none;
+		height: var(--size-8);
 	}
 
 	@media (width <= 768px) {
@@ -53,6 +49,8 @@
 
 	.home {
 		display: flex;
-		height: var(--nav-h);
+		text-decoration: none;
+		font-weight: 600;
+		color: hsl(var(--foreground));
 	}
 </style>

@@ -12,5 +12,6 @@
 	"gopls": {},
 	"[go]": {
 		"editor.defaultFormatter": "golang.go"
-	}
+	},
+	"html.customData": ["./node_modules/@shoelace-style/shoelace/dist/vscode.html-custom-data.json"]
 }

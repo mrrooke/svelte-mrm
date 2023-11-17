@@ -8,8 +8,7 @@
 
 	export let constraint: ConstraintType,
 		updateConstraint: (constraint: ConstraintType) => void,
-		handleMoveDown: () => void,
-		handleMoveUp: () => void,
+		handleMove: (dir: 'up' | 'down') => void,
 		handleDelete: (constraint: ConstraintType) => void,
 		handleBackspace: (constraint: ConstraintType) => void,
 		handleFocus: (constraint: ConstraintType) => void,
@@ -31,8 +30,8 @@
 	bind:this={mf}
 	bind:focus={focusMF}
 	on:delete={() => handleBackspace(constraint)}
-	on:down={() => handleMoveDown()}
-	on:up={handleMoveUp}
+	on:down={() => handleMove('down')}
+	on:up={() => handleMove('up')}
 	on:focus={() => handleFocus(constraint)}
 	on:blur={(e) => {
 		const edited = constraint.expression !== '';
@@ -45,6 +44,7 @@
 				...constraint,
 				expression: detail.expression,
 				symbols: detail.symbols,
+				edited: true,
 				err: undefined
 			});
 		} else {
@@ -55,7 +55,7 @@
 />
 {#if constraint.active}
 	<button
-		class="icon-ghost-button"
+		data-variant="ghost"
 		on:click={(e) => {
 			e.stopPropagation();
 			e.preventDefault();

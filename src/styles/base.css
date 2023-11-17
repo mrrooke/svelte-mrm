@@ -1,0 +1,16 @@
+@import url('./tokens');
+@import url('./reset');
+@import url('./buttons');
+@import url('./mathquill');
+@import url('./mathquill-changes');
+
+body {
+	font-family: var(--sans);
+	line-height: 1.618;
+	color: hsl(var(--foreground));
+	background-color: hsl(var(--background));
+}
+
+* {
+	scrollbar-width: thin;
+}

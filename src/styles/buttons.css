@@ -1,0 +1,129 @@
+/* Variables */
+:where(button, input[type='button']) {
+	--_bg: var(--primary);
+	--_hover: var(--primary) / 0.9;
+	--_hover-text: var(--primary-foreground);
+	--_padding-inline: 1.75ch;
+	--_padding-block: 0.75ch;
+	--_border-radius: var(--radius);
+	--_border-size: 0px;
+	--_border: var(--border);
+	--_text: var(--primary-foreground);
+	--_icon-size: 2ch;
+	--_icon-color: var(--accent-foreground);
+	--_accent: var(--accent);
+	--_size: inherit;
+	--_transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1),
+		background-color 150ms cubic-bezier(0.4, 0, 0.2, 1),
+		border-color 150ms cubic-bezier(0.4, 0, 0.2, 1),
+		text-decoration-color 150ms cubic-bezier(0.4, 0, 0.2, 1),
+		fill 150ms cubic-bezier(0.4, 0, 0.2, 1), stroke 150ms cubic-bezier(0.4, 0, 0.2, 1);
+
+	font: inherit;
+	letter-spacing: inherit;
+	line-height: 1.5;
+	border-radius: var(--_border-radius);
+}
+
+:where(button, input[type='button'], input[type='submit'], input[type='reset'], .btn) {
+	cursor: pointer;
+	touch-action: manipulation;
+	font-size: var(--_size);
+	font-weight: 500;
+	background: hsl(var(--_bg));
+	color: hsl(var(--_text));
+	border: var(--_border-size) solid hsl(var(--_border));
+	transition: var(--_transition);
+	padding-inline: var(--_padding-inline);
+	padding-block: var(--_padding-block);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	gap: 1ch;
+	user-select: none;
+	-webkit-tap-highlight-color: transparent;
+	-webkit-touch-callout: none;
+	white-space: nowrap;
+}
+
+:where(button, input[type='button'], input[type='submit'], input[type='reset'], .btn):where(
+		[data-variant='primary']
+	) {
+	--_bg: var(--primary);
+	--_text: var(--primary-foreground);
+	--_hover: var(--primary) / 0.9;
+	--_hover-text: var(--primary-foreground);
+}
+
+:where(button, input[type='button'], input[type='submit'], input[type='reset'], .btn):where(
+		[data-variant='secondary']
+	) {
+	--_bg: var(--secondary);
+	--_text: var(--secondary-foreground);
+	--_hover: var(--secondary) / 0.8;
+	--_hover-text: var(--secondary-foreground);
+}
+
+:where(button, input[type='button'], input[type='submit'], input[type='reset'], .btn):where(
+		[data-variant='destructive']
+	) {
+	--_bg: var(--destructive);
+	--_text: var(--destructive-foreground);
+	--_hover: var(--destructive) / 0.9;
+	--_hover-text: var(--destructive-foreground);
+}
+
+:where(button, input[type='button'], input[type='submit'], input[type='reset'], .btn):where(
+		[data-variant='outline']
+	) {
+	--_border-size: 1px;
+	--_border: var(--input);
+	--_hover: var(--_accent);
+	--_hover-text: var(--accent-foreground);
+	--_bg: transparent;
+}
+
+:where(button, input[type='button'], input[type='submit'], input[type='reset'], .btn):where(
+		[data-variant='ghost']
+	) {
+	--_bg: transparent;
+	--_hover: var(--_accent);
+	--_hover-text: var(--accent-foreground);
+}
+
+:where(button, input[type='button'], input[type='submit'], input[type='reset'], .btn)
+	> :where(svg, [data-icon]) {
+	block-size: var(--_icon-size);
+	inline-size: var(--_icon-size);
+	stroke: hsl(var(--_icon-color));
+	flex-shrink: 0;
+	fill: none;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+
+:where(button, input[type='button'], input[type='submit'], input[type='reset'], .btn):where(
+		:hover
+	) {
+	--_bg: var(--_hover);
+	--_text: var(--_hover-text);
+}
+
+:where(button, input[type='button'], input[type='submit'], input[type='reset'], .btn):where(
+		[data-size='small']
+	) {
+	--_size: 0.75rem;
+
+	padding-inline: var(--size-3);
+	height: var(--size-7);
+}
+
+:where(button, input[type='button'], input[type='submit'], input[type='reset'], .btn):where(
+		[data-size='large']
+	) {
+	--_size: 1rem;
+
+	padding-inline: var(--size-7);
+	height: var(--size-8);
+}

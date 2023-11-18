@@ -2,7 +2,13 @@
 	"extends": ["stylelint-config-standard", "stylelint-config-html"],
 	"rules": {
 		"selector-pseudo-class-no-unknown": [true, { "ignorePseudoClasses": ["global"] }],
-		"custom-property-pattern": null
+		"custom-property-pattern": null,
+		"at-rule-no-unknown": [
+			true,
+			{
+				"ignoreAtRules": ["tailwind"]
+			}
+		]
 	},
 	"ignoreFiles": ["src/styles/mathquill.css"]
 }

@@ -21,18 +21,9 @@
 	}
 </script>
 
-<div class="container">
+<div class="flex w-full min-h-[3rem] items-center">
 	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<span style="width: 100%;" bind:this={el} use:staticMathField={config} use:getInstance on:keydown
 		>{expression}</span
 	>
 </div>
-
-<style>
-	.container {
-		display: flex;
-		width: 100%;
-		min-height: 3rem;
-		align-items: center;
-	}
-</style>

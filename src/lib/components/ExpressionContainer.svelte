@@ -1,8 +1,9 @@
 <script lang="ts">
-	import { AlertCircle } from 'lucide-svelte';
-	import Tooltip from './Tooltip.svelte';
-	import Katex from './Katex.svelte';
+	import { AlertTriangle } from 'lucide-svelte';
 	import { fade } from 'svelte/transition';
+	import Katex from './Katex.svelte';
+	import { Button } from './ui/button';
+	import * as Tooltip from './ui/tooltip';
 
 	export let err: string | null = null;
 	export let label: string | null = null;
@@ -10,18 +11,29 @@
 </script>
 
 <div class="expression" class:focused class:invalid={err != null}>
-	<div class="label">
+	<div class="w-12 h-full border-right pl-2.5 select-none py-1 relative">
 		{#if label != null}
-			<div class="number">
+			<div class="ml-[-8px] mt-[-4px] text-sm">
 				<Katex math={label} />
 			</div>
 		{/if}
 		<div class="error-container">
 			{#if err != null}
-				<div class="error" in:fade={{ delay: 500, duration: 500 }} out:fade>
-					<Tooltip message={err}>
-						<AlertCircle />
-					</Tooltip>
+				<div
+					class="absolute inset-0 flex items-center justify-center"
+					in:fade={{ delay: 500, duration: 500 }}
+					out:fade
+				>
+					<Tooltip.Root openDelay={0} closeDelay={20}>
+						<Tooltip.Trigger asChild let:builder>
+							<Button builders={[builder]} variant="ghost" size="icon" class="rounded-full"
+								><AlertTriangle class="h-5 w-5" /></Button
+							>
+						</Tooltip.Trigger>
+						<Tooltip.Content>
+							<p>{err}</p>
+						</Tooltip.Content>
+					</Tooltip.Root>
 				</div>
 			{/if}
 		</div>
@@ -29,23 +41,14 @@
 	<slot />
 </div>
 
-<style>
+<style lang="postcss">
 	.expression {
+		@apply grid items-center w-full border grid-cols-[48px_1fr_40px] gap-1  transition-colors;
+
 		--_border: var(--border);
 		--_text: var(--foreground);
 		--_background: var(--background);
 		--_icon-color: var(--destructive) !important;
-		--_transition-duration: 0.1s;
-		--_transition: var(--_transition-duration) box-shadow ease,
-			var(--_transition-duration) border ease, var(--_transition-duration) stroke ease;
-
-		display: grid;
-		grid-template-columns: 60px 1fr 40px;
-		align-items: center;
-		width: 100%;
-		border: 1px solid hsl(var(--_border));
-		gap: var(--size-2, 0.5rem);
-		transition: var(--_transition);
 	}
 
 	.focused {
@@ -54,40 +57,5 @@
 
 	.focused.invalid {
 		border-color: hsl(var(--destructive));
-	}
-
-	.label {
-		--_text: var(--foreground);
-
-		position: relative;
-		color: hsl(var(--_text));
-		width: 60px;
-		height: 100%;
-		border: none;
-		border-right: var(--border-size-1) solid var(--expression-border-color);
-		background-color: hsl(var(--_background));
-		font-size: var(--_size);
-		padding-left: 10px;
-		transition:
-			0.1s background-color ease,
-			0.1s border-color ease;
-		user-select: none;
-		padding-block: var(--size-1);
-	}
-
-	.label .number {
-		--_size: 0.75rem;
-
-		font-size: var(--_size);
-		margin-left: -8px;
-		margin-top: -4px;
-	}
-
-	.error {
-		position: absolute;
-		inset: 0;
-		display: flex;
-		align-items: center;
-		justify-content: center;
 	}
 </style>

@@ -148,7 +148,7 @@
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <span
 	role="math"
-	class="container"
+	class="inline-flex overflow-auto min-h-[3rem] max-w-full items-center"
 	{style}
 	on:focusin={(e) => dispatchFocus('focus', e)}
 	on:focusout={(e) => dispatchFocus('blur', e)}
@@ -156,13 +156,3 @@
 	use:mathquill={{ ...config, handlers }}
 	use:getInstance>{expression}</span
 >
-
-<style>
-	.container {
-		display: inline-flex;
-		overflow: auto;
-		min-height: var(--size-8, 3rem);
-		max-width: 100%;
-		align-items: center;
-	}
-</style>

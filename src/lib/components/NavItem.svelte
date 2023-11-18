@@ -16,21 +16,20 @@
 	</li>
 {/if}
 
-<style>
+<style lang="postcss">
 	a {
-		color: hsl(var(--foreground) / 60%);
-		text-decoration: none;
+		@apply no-underline text-foreground/60;
 	}
 
 	a:where([aria-current='true']) {
-		color: hsl(var(--foreground));
+		@apply text-foreground;
 	}
 
 	a:where(:not([aria-current='true']):hover) {
-		color: hsl(var(--foreground));
+		@apply text-foreground/80;
 	}
 
 	a:where([aria-current='true']:hover) {
-		color: hsl(var(--foreground) / 60%);
+		@apply text-foreground/60;
 	}
 </style>

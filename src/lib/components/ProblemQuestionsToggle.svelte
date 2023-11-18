@@ -1,14 +1,14 @@
 <script lang="ts">
-	export let checked = false;
+	import Switch from './ui/switch/switch.svelte';
 
-	import Checkbox from './Checkbox.svelte';
+	export let checked = false;
 </script>
 
 <!-- svelte-ignore a11y-label-has-associated-control -->
 <label class="input-output-toggle">
 	<span class:active={!checked} style="text-align: right">constraints</span>
 	<span style="display:grid; place-items: center">
-		<Checkbox bind:checked />
+		<Switch bind:checked />
 	</span>
 	<span class:active={checked}>questions</span>
 </label>

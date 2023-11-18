@@ -22,6 +22,7 @@
 	import { safeParse } from 'valibot';
 	import ExpressionContainer from './ExpressionContainer.svelte';
 	import { get_repl_context } from './context';
+	import Button from './ui/button/button.svelte';
 
 	export let changed = false;
 	export let valid: boolean;
@@ -132,7 +133,6 @@
 		if (!mf) return;
 		mf.focus();
 		mf.select();
-		dir === 'up' ? mf.moveToRightEnd() : mf.moveToLeftEnd();
 	}
 
 	async function handleBackspace(constraint: ConstraintType) {
@@ -392,10 +392,12 @@
 	$: focusedIndex;
 </script>
 
-<div class="container">
-	<div class="toolbar">
-		<button
-			data-variant="secondary"
+<div class="overflow-x-hidden overflow-y-auto h-full min-h-0 min-w-0 flex flex-col">
+	<div class="flex h-12 px-2.5 flex-nowrap justify-between items-center border-x">
+		<Button
+			variant="outline"
+			class="rounded-full"
+			size="icon"
 			on:click={async () => {
 				const params = new URLSearchParams();
 				params.set('expression', expression);
@@ -415,18 +417,20 @@
 				await goto(`?${params.toString()}`);
 			}}
 		>
-			<Save />
-		</button>
-		<div class="group">
+			<Save class="h-4 w-4" />
+		</Button>
+		<div class="flex flex-row gap-4">
 			{#if !$toggleable && !$collapsed}
-				<button
-					data-variant="secondary"
+				<Button
+					variant="outline"
+					class="rounded-full"
+					size="icon"
 					on:click={() => {
 						$collapsed = true;
 					}}
 				>
-					<ChevronLeft />
-				</button>
+					<ChevronLeft class="w-4 h-4" />
+				</Button>
 			{/if}
 		</div>
 	</div>
@@ -441,9 +445,9 @@
 				addToast("can't generate questions, please check for any errors.");
 			}
 		}}
-		class="problem"
+		class="grid grid-rows-[1fr_40px] h-full min-h-0 max-h-full min-w-0 border-x"
 	>
-		<div class="list">
+		<div class="overflow-x-hidden overflow-y-auto min-h-0 min-w-0">
 			<ExpressionContainer focused={focusedIndex === 0} {err} label="f">
 				<EditableMF
 					{expression}
@@ -525,62 +529,22 @@
 		</div>
 		<!-- If generating and it is delayed show processing with option to cancel -->
 		{#if $questions.generate && $questions.delayed}
-			<button
+			<Button
+				class="h-full"
 				on:click={() => {
 					$questions.generate = false;
 				}}
-				class="processing"
 			>
 				<span>Processing...</span>
-				<X /></button
+				<X /></Button
 			>
 		{:else}
-			<button type="submit">Generate</button>
+			<Button class="h-full" variant="default" type="submit">Generate</Button>
 		{/if}
 	</form>
 </div>
 
 <style>
-	.container {
-		overflow: hidden auto;
-		height: 100%;
-		min-height: 0;
-		min-width: 0;
-		display: flex;
-		flex-direction: column;
-	}
-
-	form {
-		display: grid;
-		grid-template-rows: 1fr 48px;
-		height: 100%;
-		min-height: 0;
-		max-height: 100%;
-	}
-
-	.list {
-		overflow: hidden auto;
-		min-height: 0;
-		min-width: 0;
-	}
-
-	.toolbar {
-		display: flex;
-		height: 3rem;
-		padding-inline: 10px;
-		flex-wrap: nowrap;
-		place-content: center space-between;
-		align-items: center;
-		border-left: var(--border-size-1) solid hsl(var(--border));
-		border-right: var(--border-size-1) solid hsl(var(--border));
-	}
-
-	.group {
-		display: flex;
-		flex-direction: row;
-		gap: var(--size-2);
-	}
-
 	.processing {
 		display: flex;
 		justify-content: space-between;

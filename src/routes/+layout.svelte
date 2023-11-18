@@ -13,8 +13,8 @@
 
 <SkipLink href="#main"></SkipLink>
 
-<div class="container">
-	<header>
+<div class="flex flex-col h-screen">
+	<header class="w-full">
 		<Nav logo="🧮">
 			<svelte:fragment slot="nav-center">
 				<NavItem href="/">generator</NavItem>
@@ -27,31 +27,8 @@
 			</svelte:fragment>
 		</Nav>
 	</header>
-	<main>
+	<main class="flex-1 relative overflow-hidden">
 		<slot />
 	</main>
 </div>
 <ModeWatcher />
-
-<style global>
-	:global(body) {
-		height: 100vh;
-		margin: 0;
-	}
-
-	.container {
-		display: flex;
-		flex-direction: column;
-		height: 100vh;
-	}
-
-	main {
-		flex: 1;
-		position: relative;
-		overflow: hidden;
-	}
-
-	header {
-		width: 100%;
-	}
-</style>

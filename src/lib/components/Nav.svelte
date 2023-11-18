@@ -3,54 +3,16 @@
 	export let home_title = 'Homepage';
 </script>
 
-<nav>
-	<a data-sveltekit-prefetch href="/" class="home" title={home_title}>
-		{logo}
-		mrm
+<nav class="flex w-screen items-center justify-between font-medium border-b md:px-4 px-8 h-12">
+	<a data-sveltekit-prefetch href="/" class=" no-underline font-bold" title={home_title}>
+		{logo}&nbsp;mrm
 	</a>
 
-	<ul>
+	<ul class="relative flex items-center gap-4 justify-center w-full p-0 list-none m-0">
 		<slot name="nav-center" />
 	</ul>
 
-	<ul>
+	<ul class="relative flex items-center gap-4 space-between p-0 list-none m-0">
 		<slot name="nav-right" />
 	</ul>
 </nav>
-
-<style>
-	nav {
-		display: flex;
-		width: 100vw;
-		align-items: center;
-		justify-content: space-between;
-		font-weight: 500;
-		border-bottom: solid 1px hsl(var(--border));
-		padding-inline: var(--size-8);
-		height: var(--size-8);
-	}
-
-	@media (width <= 768px) {
-		nav {
-			padding-inline: var(--size-3);
-		}
-	}
-
-	ul {
-		position: relative;
-		display: flex;
-		gap: var(--size-4);
-		width: 100%;
-		width: auto;
-		padding: 0;
-		margin: 0;
-		list-style: none;
-	}
-
-	.home {
-		display: flex;
-		text-decoration: none;
-		font-weight: 600;
-		color: hsl(var(--foreground));
-	}
-</style>

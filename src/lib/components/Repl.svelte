@@ -1,16 +1,13 @@
 <script lang="ts">
-	import { SplitPane } from '@rich_harris/svelte-split-pane';
+	import { ChevronRight } from 'lucide-svelte';
 	import { writable } from 'svelte/store';
 	import Problem from './Problem.svelte';
-	import Questions from './Questions.svelte';
 	import ProblemQuestionsToggle from './ProblemQuestionsToggle.svelte';
+	import Questions from './Questions.svelte';
 	import { set_repl_context } from './context';
-	import { ChevronRight } from 'lucide-svelte';
 
 	export let orientation: 'columns' | 'rows' = 'columns';
 	export let loaded = false;
-
-	const fixedPos = '50%';
 
 	let contentRect: DOMRectReadOnly | undefined;
 	let show_questions = false;
@@ -28,50 +25,36 @@
 	}
 </script>
 
-<div class="container" class:toggleable={$toggleable} bind:contentRect>
-	<div class="viewport" class:output={show_questions}>
-		<SplitPane
-			--color="hsl(var(--border))"
-			id="main"
-			type={'horizontal'}
-			pos={mobile ? fixedPos : $collapsed ? '65px' : '30%'}
-		>
-			<section slot="a" class="panel">
-				{#if loaded}
-					{#if $collapsed}
-						<div class="collapsed-sidebar">
-							<button
-								data-variant="secondary"
-								on:click={() => {
-									$collapsed = false;
-								}}><ChevronRight /></button
-							>
-						</div>
-					{:else}
-						<Problem valid={true} />
-					{/if}
+<div class="relative w-full h-full" class:toggleable={$toggleable} bind:contentRect>
+	<div class="h-full flex" class:output={show_questions}>
+		<section class="w-1/3 max-w-1/3">
+			{#if loaded}
+				{#if $collapsed}
+					<div class="collapsed-sidebar">
+						<button
+							data-variant="secondary"
+							on:click={() => {
+								$collapsed = false;
+							}}><ChevronRight /></button
+						>
+					</div>
+				{:else}
+					<Problem valid={true} />
 				{/if}
-			</section>
-			<section slot="b">
-				{#if loaded}
-					<Questions />
-				{/if}
-			</section>
-		</SplitPane>
+			{/if}
+		</section>
+		<section class="w-2/3">
+			{#if loaded}
+				<Questions />
+			{/if}
+		</section>
 	</div>
 	{#if $toggleable}
 		<ProblemQuestionsToggle bind:checked={show_questions} />
 	{/if}
 </div>
 
-<style>
-	.container {
-		background-color: var(--bg-1);
-		position: relative;
-		width: 100%;
-		height: 100%;
-	}
-
+<style lang="postcss">
 	.viewport {
 		height: 100%;
 	}
@@ -84,10 +67,6 @@
 
 	.toggleable .viewport.output {
 		transform: translate(-50%);
-	}
-
-	.panel {
-		box-shadow: var(--shadow-3);
 	}
 
 	.collapsed-sidebar {

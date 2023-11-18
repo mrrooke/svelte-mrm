@@ -5,6 +5,7 @@
 	import { onMount } from 'svelte';
 	import EditableMF from './EditableMF.svelte';
 	import type { ConstraintType } from './types';
+	import Button from './ui/button/button.svelte';
 
 	export let constraint: ConstraintType,
 		updateConstraint: (constraint: ConstraintType) => void,
@@ -54,14 +55,16 @@
 	on:keydown
 />
 {#if constraint.active}
-	<button
-		data-variant="ghost"
+	<Button
+		variant="ghost"
+		size="icon"
+		class="rounded-full"
 		on:click={(e) => {
 			e.stopPropagation();
 			e.preventDefault();
 			handleDelete(constraint);
 		}}
 	>
-		<X />
-	</button>
+		<X class="h-4 w-4" />
+	</Button>
 {/if}

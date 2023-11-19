@@ -5,9 +5,11 @@
 	export let displayMode = false;
 	export let fleqn = false;
 
-	const options = {
+	const options: katex.KatexOptions = {
 		displayMode,
 		throwOnError: false,
+		minRuleThickness: 0.06,
+		output: 'mathml',
 		fleqn
 	};
 
@@ -16,3 +18,9 @@
 
 <!-- eslint-disable-next-line svelte/no-at-html-tags -->
 {@html katexString}
+
+<style lang="postcss">
+	:global(math) {
+		math-style: normal;
+	}
+</style>

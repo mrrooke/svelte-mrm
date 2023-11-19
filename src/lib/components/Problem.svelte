@@ -349,13 +349,17 @@
 			if (value) {
 				const result = safeParse(ProblemResponse, JSON.parse(value));
 				if (result.success && result.output.success) {
-					$questions.allQuestions.push(...result.output.questions);
+					const questionStateArray = result.output.questions.map((q) => ({
+						question: q,
+						answer: 'no answer',
+						used: false,
+						active: false
+					}));
+					$questions.allQuestions.push(...questionStateArray);
 				}
 				if ($questions.delayed && !delayedShown) {
 					// After 300ms set the initial questions and show processing message
-					$questions.questions = $questions.allQuestions
-						.sort(() => 0.5 - Math.random())
-						.slice(0, 10);
+					questions.pull();
 					$questions.changed = true;
 					delayedShown = true;
 				}
@@ -368,7 +372,7 @@
 		// 4. If we didn't set the questions with a delay timeout, set them now.
 		if ($questions.questions.length === 0) {
 			addToast(`Found ${$questions.allQuestions.length.toLocaleString()} unique questions`);
-			$questions.questions = $questions.allQuestions.sort(() => 0.5 - Math.random()).slice(0, 10);
+			questions.pull();
 		} else {
 			// 4a. If we did set the questions with a delay timeout, indicate that there are more questions.
 			addToast(
@@ -445,7 +449,7 @@
 				addToast("can't generate questions, please check for any errors.");
 			}
 		}}
-		class="grid grid-rows-[1fr_40px] h-full min-h-0 max-h-full min-w-0 border-x"
+		class="grid grid-rows-[1fr_40px] h-full min-h-0 max-h-full min-w-0 border-x text-lg"
 	>
 		<div class="overflow-x-hidden overflow-y-auto min-h-0 min-w-0">
 			<ExpressionContainer focused={focusedIndex === 0} {err} label="f">
@@ -543,12 +547,3 @@
 		{/if}
 	</form>
 </div>
-
-<style>
-	.processing {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		padding-inline: var(--size-2);
-	}
-</style>

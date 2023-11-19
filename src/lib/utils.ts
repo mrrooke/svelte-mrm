@@ -26,9 +26,7 @@ export const flyAndScale = (
 		const [minB, maxB] = scaleB;
 
 		const percentage = (valueA - minA) / (maxA - minA);
-		const valueB = percentage * (maxB - minB) + minB;
-
-		return valueB;
+		return percentage * (maxB - minB) + minB;
 	};
 
 	const styleToString = (style: Record<string, number | string | undefined>): string => {
@@ -54,3 +52,26 @@ export const flyAndScale = (
 		easing: cubicOut
 	};
 };
+
+/** Shuffles a given array */
+export function shuffle<T>(array: T[]) {
+	let currentIndex = array.length;
+	let randomIndex: number;
+
+	// While there remain elements to shuffle...
+	while (0 !== currentIndex) {
+		// Pick a remaining element...
+		randomIndex = Math.floor(Math.random() * currentIndex);
+		currentIndex -= 1;
+
+		// And swap it with the current element.
+		const tempA = array[currentIndex];
+		const tempB = array[randomIndex];
+		if (tempA && tempB) {
+			array[currentIndex] = tempB;
+			array[randomIndex] = tempA;
+		}
+	}
+
+	return array;
+}

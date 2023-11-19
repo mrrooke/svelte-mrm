@@ -17,7 +17,7 @@
 
 	set_repl_context({ toggleable, collapsed });
 
-	$: mobile = contentRect != null && contentRect.width < 540;
+	$: mobile = contentRect !== undefined && contentRect.width < 540;
 
 	$: $toggleable = mobile && orientation === 'columns';
 	$: if ($toggleable && $collapsed) {
@@ -26,8 +26,11 @@
 </script>
 
 <div class="relative w-full h-full" class:toggleable={$toggleable} bind:contentRect>
-	<div class="h-full flex" class:output={show_questions}>
-		<section class="w-1/3 max-w-1/3">
+	<div
+		class="w-[200%] h-[calc(100%-42px)] md:w-full transition-transform viewport md:h-full flex"
+		class:output={show_questions}
+	>
+		<section class="w-full max-w-full md:w-1/3 md:max-w-1/3">
 			{#if loaded}
 				{#if $collapsed}
 					<div class="collapsed-sidebar">
@@ -35,15 +38,17 @@
 							data-variant="secondary"
 							on:click={() => {
 								$collapsed = false;
-							}}><ChevronRight /></button
+							}}
 						>
+							<ChevronRight />
+						</button>
 					</div>
 				{:else}
 					<Problem valid={true} />
 				{/if}
 			{/if}
 		</section>
-		<section class="w-2/3">
+		<section class="w-full md:w-2/3">
 			{#if loaded}
 				<Questions />
 			{/if}
@@ -55,25 +60,7 @@
 </div>
 
 <style lang="postcss">
-	.viewport {
-		height: 100%;
-	}
-
-	.toggleable .viewport {
-		width: 200%;
-		height: calc(100% - 42px);
-		transition: transform 0.3s;
-	}
-
 	.toggleable .viewport.output {
-		transform: translate(-50%);
-	}
-
-	.collapsed-sidebar {
-		height: 3rem;
-		display: flex;
-		padding-inline: 10px;
-		flex-wrap: nowrap;
-		align-items: center;
+		@apply -translate-x-1/2;
 	}
 </style>

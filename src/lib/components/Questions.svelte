@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import Katex from './Katex.svelte';
 
 	import { questions } from '$lib/stores/questions';
@@ -58,7 +57,7 @@
 	</div>
 	<div
 		bind:this={questionDiv}
-		class="grid grid-rows-5 grid-flow-col-dense gap-4 h-full max-h-full text-2xl overflow-hidden"
+		class="grid grid-rows-5 grid-flow-col-dense gap-4 h-full max-h-full text-xl overflow-hidden"
 	>
 		{#each $questions.questions as question, index}
 			<p class="w-fit">

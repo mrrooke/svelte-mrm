@@ -4,16 +4,12 @@
 	import NavItem from '$lib/components/NavItem.svelte';
 	import SkipLink from '$lib/components/SkipLink.svelte';
 	import { ModeWatcher } from 'mode-watcher';
-
-	// import '../styles/main.css';
-	// import '../styles/base.css';
-	import '../app.postcss';
 	import ThemeToggle from '$lib/components/theme-toggle.svelte';
 </script>
 
 <SkipLink href="#main"></SkipLink>
 
-<div class="flex flex-col h-screen">
+<div class="flex flex-col h-[calc(100dvh)]">
 	<header class="w-full">
 		<Nav logo="🧮">
 			<svelte:fragment slot="nav-center">

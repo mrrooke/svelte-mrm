@@ -10,12 +10,12 @@
 		"postinstall": "svelte-kit sync",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"lint": "prettier --plugin prettier-plugin-svelte --check . && eslint . --fix",
+		"lint": "prettier --plugin prettier-plugin-svelte --write . && eslint . --fix",
 		"format": "prettier --plugin prettier-plugin-svelte --write ."
 	},
 	"devDependencies": {
 		"@melt-ui/pp": "^0.1.4",
-		"@melt-ui/svelte": "^0.61.1",
+		"@melt-ui/svelte": "^0.62.1",
 		"@sveltejs/adapter-auto": "^2.1.0",
 		"@sveltejs/adapter-vercel": "^3.0.3",
 		"@sveltejs/kit": "^1.25.0",
@@ -50,19 +50,18 @@
 	"dependencies": {
 		"bits-ui": "^0.9.8",
 		"clsx": "^2.0.0",
-		"cmdk-sv": "^0.0.9",
+		"cmdk-sv": "^0.0.12",
 		"comlink": "^4.4.1",
 		"formsnap": "^0.4.1",
 		"html-to-image": "^1.11.11",
 		"katex": "^0.16.2",
-		"lucide-svelte": "^0.292.0",
+		"lucide-svelte": "^0.293.0",
 		"mode-watcher": "^0.1.1",
-		"open-props": "^1.4.16",
 		"radix-icons-svelte": "^1.2.1",
 		"sveltekit-superforms": "^1.10.2",
 		"tailwind-merge": "^2.0.0",
 		"tailwind-variants": "^0.1.18",
-		"valibot": "^0.20.0",
+		"valibot": "^0.21.0",
 		"zod": "^3.22.4"
 	}
 }

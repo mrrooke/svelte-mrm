@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { AlertTriangle } from 'lucide-svelte';
 	import { fade } from 'svelte/transition';
-	import Katex from './Katex.svelte';
 	import { Button } from './ui/button';
 	import * as Tooltip from './ui/tooltip';
 
@@ -14,7 +13,13 @@
 	<div class="w-12 h-full border-right pl-2.5 select-none py-1 relative">
 		{#if label != null}
 			<div class="ml-[-8px] mt-[-4px] text-sm">
-				<Katex math={label} />
+				<math xmlns="http://www.w3.org/1998/Math/MathML"
+					><semantics
+						><mrow><mi>{label}</mi></mrow><annotation encoding="application/x-tex"
+							>{label}</annotation
+						></semantics
+					></math
+				>
 			</div>
 		{/if}
 		<div class="error-container">

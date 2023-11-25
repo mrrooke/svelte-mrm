@@ -7,27 +7,14 @@
 			href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧮</text></svg>"
 		/>
 
-		<link
-			rel="preload"
-			crossorigin="anonymous"
-			href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
-			as="style"
-			onload="this.onload=null;this.rel='stylesheet'"
-		/>
-		<noscript>
-			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" />
-		</noscript>
-
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-
 		<script>
-			/*to prevent Firefox FOUC, this must be here*/
 			let FF_FOUC_FIX;
 		</script>
-
+		<title>mrm</title>
 		%sveltekit.head%
 	</head>
-	<body class="m-0  h-[calc(100dvh)]">
+	<body class="m-0 h-[calc(100dvh)]">
 		<div class="contents h-calc(100dvh)]">%sveltekit.body%</div>
 		<script defer src="/mathquill.min.js"></script>
 		<script src="/wasm_exec.js"></script>

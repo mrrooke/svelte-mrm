@@ -1,8 +1,8 @@
-@import url('./tokens');
-@import url('./reset');
-@import url('./buttons');
-@import url('./mathquill');
-@import url('./mathquill-changes');
+@import url('./tokens.css');
+@import url('./reset.css');
+@import url('./buttons.css');
+@import url('./mathquill.css');
+@import url('./mathquill-changes.css');
 
 body {
 	font-family: var(--sans);
@@ -13,4 +13,8 @@ body {
 
 * {
 	scrollbar-width: thin;
+}
+
+math {
+	math-style: normal;
 }

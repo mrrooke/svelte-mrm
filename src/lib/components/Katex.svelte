@@ -18,9 +18,3 @@
 
 <!-- eslint-disable-next-line svelte/no-at-html-tags -->
 {@html katexString}
-
-<style lang="postcss">
-	:global(math) {
-		math-style: normal;
-	}
-</style>

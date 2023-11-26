@@ -15,9 +15,13 @@
 			<div class="ml-[-8px] mt-[-4px] text-sm">
 				<math xmlns="http://www.w3.org/1998/Math/MathML"
 					><semantics
-						><mrow><mi>{label}</mi></mrow><annotation encoding="application/x-tex"
-							>{label}</annotation
-						></semantics
+						><mrow>
+							{#if Number.isNaN(parseInt(label))}
+								<mi>{label}</mi>
+							{:else}
+								<mn>{label}</mn>
+							{/if}
+						</mrow><annotation encoding="application/x-tex">{label}</annotation></semantics
 					></math
 				>
 			</div>

@@ -3,6 +3,7 @@
 @import url('./buttons.css');
 @import url('./mathquill.css');
 @import url('./mathquill-changes.css');
+@import url('./fonts.css');
 
 body {
 	font-family: var(--sans);

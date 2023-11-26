@@ -4,5 +4,4 @@
 		"prettier --check --plugin prettier-plugin-svelte"
 	],
 	"*.{js,ts,svelte}": "eslint",
-	"*.{svelte,css,scss,postcss}": ["stylelint --fix", "stylelint"]
 }

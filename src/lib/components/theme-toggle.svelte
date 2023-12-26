@@ -6,7 +6,7 @@
 	import { setMode, resetMode } from 'mode-watcher';
 </script>
 
-<DropdownMenu.Root positioning={{ placement: 'bottom-end' }}>
+<DropdownMenu.Root>
 	<DropdownMenu.Trigger asChild let:builder>
 		<Button builders={[builder]} variant="ghost" class="rounded-full" size="icon">
 			<Sun class="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />

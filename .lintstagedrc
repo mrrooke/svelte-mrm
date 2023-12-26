@@ -3,5 +3,5 @@
 		"prettier --write --plugin prettier-plugin-svelte",
 		"prettier --check --plugin prettier-plugin-svelte"
 	],
-	"*.{js,ts,svelte}": "eslint",
+	"*.{js,ts,svelte}": "eslint"
 }
